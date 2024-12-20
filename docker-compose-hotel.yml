@@ -1,36 +1,36 @@
 version: '3.8'
 
 services:
-  auth-postgres:
+  hotel-postgres:
     image: 'postgres:latest'
-    container_name: auth-postgres
+    container_name: hotel-postgres
     environment:
-      POSTGRES_DB: ${AUTH_POSTGRES_DB_NAME}
+      POSTGRES_DB: ${HOTEL_POSTGRES_DB_NAME}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - online-traveling-network
     ports:
-      - '${AUTH_POSTGRES_PORT}:5432'
+      - '${HOTEL_POSTGRES_PORT}:5432'
   
-  auth-service:
+  hotel-service:
     build:
-      context: ./auth
-    container_name: auth-service
+      context: ./hotel
+    container_name: hotel-service
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       - ENV=production
       - TZ=Asia/Tehran
-      - AUTH_CONFIG_PATH=/app/config.json
+      - HOTEL_CONFIG_PATH=/app/config.json
       - KAFKA_BROKER=kafka:9092
     networks:
       - online-traveling-network
     restart: unless-stopped
     depends_on:
-      - auth-postgres
+      - hotel-postgres
     volumes:
-      - ${AUTH_CONFIG_PATH}:/app/config.json
+      - ${HOTEL_CONFIG_PATH}:/app/config.json
 
 networks:
   online-traveling-network:
