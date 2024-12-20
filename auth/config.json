@@ -1,8 +1,8 @@
 {
   "db": {
-    "host": "postgres",
+    "host": "auth-postgres",
     "port": 5432,
-    "database": "TravelingOnlineDB",
+    "database": "AuthenticationDB",
     "schema": "public",
     "user": "admin",
     "password": "12345"

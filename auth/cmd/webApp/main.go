@@ -16,7 +16,7 @@ var configPath = flag.String("config", "config.json", "service configuration fil
 func main() {
 	flag.Parse()
 
-	if v := os.Getenv("CONFIG_PATH"); len(v) > 0 {
+	if v := os.Getenv("AUTH_CONFIG_PATH"); len(v) > 0 {
 		*configPath = v
 	}
 	c := config.MustReadConfig(*configPath)
