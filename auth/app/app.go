@@ -42,12 +42,12 @@ func (a *app) Config(ctx context.Context) config.Config {
 
 func (a *app) setDB() error {
 	db, err := postgres.NewPsqlGormConnection(postgres.DBConnOptions{
-		User:   a.cfg.DB.User,
-		Pass:   a.cfg.DB.Password,
-		Host:   a.cfg.DB.Host,
-		Port:   a.cfg.DB.Port,
-		DBName: a.cfg.DB.Database,
-		Schema: a.cfg.DB.Schema,
+		User:   a.cfg.AUTH_DB.User,
+		Pass:   a.cfg.AUTH_DB.Password,
+		Host:   a.cfg.AUTH_DB.Host,
+		Port:   a.cfg.AUTH_DB.Port,
+		DBName: a.cfg.AUTH_DB.Database,
+		Schema: a.cfg.AUTH_DB.Schema,
 	})
 
 	postgres.GormMigrations(db)

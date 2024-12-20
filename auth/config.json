@@ -1,5 +1,5 @@
 {
-  "db": {
+  "auth_db": {
     "host": "auth-postgres",
     "port": 5432,
     "database": "AuthenticationDB",
