@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 
-	"github.com/travelingOnline/config"
+	"github.com/onlineTraveling/auth/config"
 	"gorm.io/gorm"
-	// userPort "github.com/travelingOnline/internal/user/port"
+	// userPort "github.com/onlineTraveling/auth/internal/user/port"
 )
 
 type App interface {

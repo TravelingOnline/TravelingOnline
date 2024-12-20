@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/travelingOnline/app"
-	"github.com/travelingOnline/config"
+	"github.com/onlineTraveling/auth/app"
+	"github.com/onlineTraveling/auth/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"

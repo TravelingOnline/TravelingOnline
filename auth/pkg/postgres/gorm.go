@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/travelingOnline/pkg/adapters/storage/types"
+	"github.com/onlineTraveling/auth/pkg/adapters/storage/types"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

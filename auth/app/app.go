@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 
-	"github.com/travelingOnline/config"
+	"github.com/onlineTraveling/auth/config"
 
-	"github.com/travelingOnline/pkg/postgres"
+	"github.com/onlineTraveling/auth/pkg/postgres"
 
 	"gorm.io/gorm"
 )

@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/travelingOnline/config"
+	"github.com/onlineTraveling/auth/config"
 )
 
 type LogLevel int

@@ -41,7 +41,8 @@ services:
       - online-traveling-network
 
   traveling-online:
-    build: .
+    build:
+      context: ./auth
     container_name: traveling-online
     ports:
       - "8080:8080"

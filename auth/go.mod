@@ -1,4 +1,4 @@
-module github.com/travelingOnline
+module github.com/onlineTraveling/auth
 
 go 1.22.5
 

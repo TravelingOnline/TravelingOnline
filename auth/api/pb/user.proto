@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/travelingOnline/api/pb";
+option go_package = "github.com/onlineTraveling/auth/api/pb";
 
 
 message UserSignUpFirstRequest {

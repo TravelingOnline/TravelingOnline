@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/travelingOnline/api/handlers/http"
-	"github.com/travelingOnline/app"
-	"github.com/travelingOnline/config"
-	"github.com/travelingOnline/pkg/logger"
+	"github.com/onlineTraveling/auth/api/handlers/http"
+	"github.com/onlineTraveling/auth/app"
+	"github.com/onlineTraveling/auth/config"
+	"github.com/onlineTraveling/auth/pkg/logger"
 )
 
 var configPath = flag.String("config", "config.json", "service configuration file")

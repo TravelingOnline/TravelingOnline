@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"github.com/travelingOnline/internal/user/port"
+	"github.com/onlineTraveling/auth/internal/user/port"
 	"gorm.io/gorm"
 )
 
