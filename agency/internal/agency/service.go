@@ -38,7 +38,7 @@ func (s *service) GetAllAgencies(ctx context.Context, page int, pagesize int) ([
 	agencies, err := s.repo.GetAll(ctx, page, pagesize)
 
 	if err != nil {
-		return []domain.Agency{}, nil
+		return []domain.Agency{}, ErrAgencyNotFound
 	}
 
 	return agencies, nil
@@ -47,7 +47,7 @@ func (s *service) GetAllAgencies(ctx context.Context, page int, pagesize int) ([
 func (s *service) GetAgencyByID(ctx context.Context, id uint) (*domain.Agency, error) {
 	agency, err := s.repo.GetByID(ctx, id)
 	if err != nil {
-		return &domain.Agency{}, err
+		return &domain.Agency{}, ErrAgencyNotFound
 	}
 
 	return agency, nil
@@ -56,7 +56,7 @@ func (s *service) GetAgencyByID(ctx context.Context, id uint) (*domain.Agency, e
 func (s *service) GetAgencyByOwnerID(ctx context.Context, id uint) (*domain.Agency, error) {
 	agency, err := s.repo.GetByOwnerID(ctx, id)
 	if err != nil {
-		return &domain.Agency{}, err
+		return &domain.Agency{}, ErrAgencyNotFound
 	}
 
 	return agency, nil
@@ -66,7 +66,7 @@ func (s *service) UpdateAgency(ctx context.Context, agency *domain.Agency) error
 	err := s.repo.Update(ctx, agency)
 
 	if err != nil {
-		return err
+		return ErrAgencyOnUpdate
 	}
 
 	return nil
@@ -76,7 +76,7 @@ func (s *service) DeleteAgency(ctx context.Context, id uint) error {
 	err := s.repo.Delete(ctx, id)
 
 	if err != nil {
-		return err
+		return ErrAgencyOnDelete
 	}
 
 	return nil
