@@ -1,9 +1,9 @@
 package config
 
 type Config struct {
-	AUTH_DB DBConfig     `json:"auth_db"  yaml:"auth_db"`
-	Logger  LoggerConfig `json:"logger"  yaml:"logger"`
-	Server  ServerConfig `json:"server"  yaml:"server"`
+	AgencyDB DBConfig     `json:"auth_db"  yaml:"auth_db"`
+	Logger   LoggerConfig `json:"logger"  yaml:"logger"`
+	Server   ServerConfig `json:"server"  yaml:"server"`
 }
 
 type ServerConfig struct {
