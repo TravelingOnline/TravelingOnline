@@ -1,16 +1,16 @@
 package app
 
-import (
-	"context"
+// import (
+// 	"context"
 
-	"github.com/onlineTraveling/bank/config"
-	"gorm.io/gorm"
-	// userPort "github.com/onlineTraveling/bank/internal/user/port"
-)
+// 	"github.com/onlineTraveling/bank/api/service"
+// 	"github.com/onlineTraveling/bank/config"
+// 	"gorm.io/gorm"
+// )
 
-type App interface {
-	DB() *gorm.DB
+// type App interface {
+// 	DB() *gorm.DB
 
-	Config(ctx context.Context) config.Config
-	// UserService(ctx context.Context) userPort.Service
-}
+// 	Config(ctx context.Context) config.Config
+// 	BankService(ctx context.Context) service.BankService
+// }
