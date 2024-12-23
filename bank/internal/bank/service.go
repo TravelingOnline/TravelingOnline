@@ -68,6 +68,6 @@ func NewBankTransactionService(repo port.BankTransactionRepo) *bankTransactionSe
 		repo: repo,
 	}
 }
-func (b *bankTransactionService) Transfer(ctx context.Context, transaction *domain.BankTransaction) error {
+func (b *bankTransactionService) Transfer(ctx context.Context, transaction *domain.BankTransaction) (*domain.BankTransaction, error) {
 	return b.repo.Transfer(ctx, transaction)
 }

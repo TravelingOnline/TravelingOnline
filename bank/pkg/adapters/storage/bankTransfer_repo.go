@@ -28,7 +28,7 @@ func (r *bankTransactionRepo) GetTransactionsByUserId(ctx context.Context, userI
 	}
 	return mapper.TransactionEntitiesToDomainTransactions(transactions), nil
 }
-func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTransaction) error {
+func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTransaction) (*domain.BankTransaction, error) {
 	transaction := mapper.DomainTransactionToTransactionEntity(tr)
 	var wallets []types.Wallet
 	var walletIDs []uuid.UUID
@@ -39,13 +39,13 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 	}
 	err := r.db.Where("user_id IN ?", walletIDs).Find(&wallets).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if transaction.Amount < 100 {
-		return port.ErrNotEnoughBalance
+		return nil, port.ErrNotEnoughBalance
 	}
 	if !(len(wallets) == 2 && !transaction.IsPaidToSystem || len(wallets) == 1 && transaction.IsPaidToSystem) {
-		return port.ErrUserWalletDoesNotExists
+		return nil, port.ErrUserWalletDoesNotExists
 	}
 	var fromWalEntity *types.Wallet
 	var toWalEntity *types.Wallet
@@ -59,16 +59,16 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 		}
 	}
 	if fromWalEntity.Balance < transaction.Amount {
-		return port.ErrNotEnoughBalance
+		return nil, port.ErrNotEnoughBalance
 	}
 	fromWalEntity.Balance -= transaction.Amount
 	if err := r.db.WithContext(ctx).Save(&fromWalEntity).Error; err != nil {
-		return err
+		return nil, err
 	}
 	var systemWalEntity *types.Wallet
 	err = r.db.Where("is_system_wallet = ?", true).First(&systemWalEntity).Error
 	if err != nil {
-		return port.ErrSystemWalletDoesNotExists
+		return nil, port.ErrSystemWalletDoesNotExists
 	}
 	if transaction.IsPaidToSystem {
 		systemWalEntity.Balance += transaction.Amount
@@ -76,23 +76,23 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 		var commissionEntity *types.Commission
 		err := r.db.WithContext(ctx).First(&commissionEntity).Error
 		if err != nil {
-			return err
+			return nil, err
 		}
 		tax := transaction.Amount * commissionEntity.AppCommissionPercentage / 100
 		toWalEntity.Balance += transaction.Amount - tax
 		if err := r.db.WithContext(ctx).Save(&toWalEntity).Error; err != nil {
-			return err
+			return nil, err
 		}
 		systemWalEntity.Balance += tax
 	}
 	if err := r.db.WithContext(ctx).Save(&systemWalEntity).Error; err != nil {
-		return err
+		return nil, err
 	}
 	transaction.Status = types.TransactionSuccess
 	err = r.db.WithContext(ctx).Create(&transaction).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
-	// createdTransaction := mapper.TransactionEntityToDomain(transaction)
-	return nil
+	createdTransaction := mapper.TransactionEntityToDomain(transaction)
+	return createdTransaction, nil
 }

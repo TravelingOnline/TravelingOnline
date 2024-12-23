@@ -22,5 +22,4 @@ type WalletRepo interface {
 	Withdraw(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error)
 	GetWallet(ctx context.Context, userID uuid.UUID) (*domain.Wallet, error)
 	DeleteWallet(ctx context.Context, userID uuid.UUID) error
-	// Transfer(ctx context.Context, tr *domain.BankTransaction) (*domain.BankTransaction, error)
 }
