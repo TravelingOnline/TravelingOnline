@@ -21,6 +21,15 @@ func NewWalletRepo(db *gorm.DB) port.WalletRepo {
 		db: db,
 	}
 }
+func (r *walletRepo) DeleteWallet(ctx context.Context, userID uuid.UUID) error {
+	var walletEntity *types.Wallet
+	err := r.db.Where("user_id =?", userID).First(&walletEntity).Error
+	if err != nil {
+		return err
+	}
+	err = r.db.Delete(walletEntity).Error
+	return err
+}
 func (r *walletRepo) Create(ctx context.Context, wl *domain.Wallet) (*domain.Wallet, error) {
 	newWallet := mapper.WalletDomainToEntity(wl)
 	err := r.db.WithContext(ctx).Create(&newWallet).Error
@@ -100,73 +109,4 @@ func (r *walletRepo) GetWallet(ctx context.Context, userID uuid.UUID) (*domain.W
 	}
 	fetchedWalletDomain := mapper.WalletEntityToDomain(fetchedWalletEntity)
 	return fetchedWalletDomain, nil
-}
-
-func (r *walletRepo) Transfer(ctx context.Context, tr *domain.BankTransaction) (*domain.BankTransaction, error) {
-	transaction := mapper.DomainTransactionToTransactionEntity(tr)
-	var wallets []types.Wallet
-	var walletIDs []uuid.UUID
-	if tr.IsPaidToSystem {
-		walletIDs = []uuid.UUID{*transaction.FromWallet.UserID}
-	} else {
-		walletIDs = []uuid.UUID{*transaction.FromWallet.UserID, *transaction.ToWallet.UserID}
-	}
-	err := r.db.Where("user_id IN ?", walletIDs).Find(&wallets).Error
-	if err != nil {
-		return nil, err
-	}
-	if transaction.Amount < 100 {
-		return nil, port.ErrNotEnoughBalance
-	}
-	if !(len(wallets) == 2 && !transaction.IsPaidToSystem || len(wallets) == 1 && transaction.IsPaidToSystem) {
-		return nil, port.ErrUserWalletDoesNotExists
-	}
-	var fromWalEntity *types.Wallet
-	var toWalEntity *types.Wallet
-	for _, wal := range wallets {
-		if *wal.UserID == *transaction.FromWallet.UserID {
-			fromWalEntity = &wal
-			transaction.FromWallet.ID = fromWalEntity.ID
-		} else if *wal.UserID == *transaction.ToWallet.UserID {
-			toWalEntity = &wal
-			transaction.ToWallet.ID = toWalEntity.ID
-		}
-	}
-	if fromWalEntity.Balance < transaction.Amount {
-		return nil, port.ErrNotEnoughBalance
-	}
-	fromWalEntity.Balance -= transaction.Amount
-	if err := r.db.WithContext(ctx).Save(&fromWalEntity).Error; err != nil {
-		return nil, err
-	}
-	var systemWalEntity *types.Wallet
-	err = r.db.Where("is_system_wallet = ?", true).First(&systemWalEntity).Error
-	if err != nil {
-		return nil, port.ErrSystemWalletDoesNotExists
-	}
-	if transaction.IsPaidToSystem {
-		systemWalEntity.Balance += transaction.Amount
-	} else {
-		var commissionEntity *types.Commission
-		err := r.db.WithContext(ctx).First(&commissionEntity).Error
-		if err != nil {
-			return nil, err
-		}
-		tax := transaction.Amount * commissionEntity.AppCommissionPercentage / 100
-		toWalEntity.Balance += transaction.Amount - tax
-		if err := r.db.WithContext(ctx).Save(&toWalEntity).Error; err != nil {
-			return nil, err
-		}
-		systemWalEntity.Balance += tax
-	}
-	if err := r.db.WithContext(ctx).Save(&systemWalEntity).Error; err != nil {
-		return nil, err
-	}
-	transaction.Status = types.TransactionSuccess
-	err = r.db.WithContext(ctx).Create(&transaction).Error
-	if err != nil {
-		return nil, err
-	}
-	createdTransaction := mapper.TransactionEntityToDomain(transaction)
-	return createdTransaction, nil
 }

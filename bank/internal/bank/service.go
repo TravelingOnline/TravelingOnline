@@ -34,10 +34,6 @@ func (o *walletService) GetWallet(ctx context.Context, userID uuid.UUID) (*domai
 	return o.repo.GetWallet(ctx, userID)
 }
 
-func (o *walletService) Transfer(ctx context.Context, transaction *domain.BankTransaction) (*domain.BankTransaction, error) {
-	return o.repo.Transfer(ctx, transaction)
-}
-
 ////////////////////////////////////////////////////////
 
 type CreditCardService struct {
@@ -59,4 +55,19 @@ func (o *CreditCardService) CreateCardAndAddToWallet(ctx context.Context, credit
 
 func (o *CreditCardService) GetUserWalletCards(ctx context.Context, userID uuid.UUID) ([]domain.CreditCard, error) {
 	return o.repo.GetUserWalletCards(ctx, userID)
+}
+
+//////////////////////////////
+
+type bankTransactionService struct {
+	repo port.BankTransactionRepo
+}
+
+func NewBankTransactionService(repo port.BankTransactionRepo) *bankTransactionService {
+	return &bankTransactionService{
+		repo: repo,
+	}
+}
+func (b *bankTransactionService) Transfer(ctx context.Context, transaction *domain.BankTransaction) error {
+	return b.repo.Transfer(ctx, transaction)
 }

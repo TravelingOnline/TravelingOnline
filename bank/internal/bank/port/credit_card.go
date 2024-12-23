@@ -20,8 +20,8 @@ type CreditCardRepo interface {
 	DeleteCard(ctx context.Context, creditCardId uuid.UUID) error
 }
 
-func NewCreditCard(number string) *domain.CreditCard {
-	return &domain.CreditCard{
-		Number: number,
-	}
-}
+// func NewCreditCard(number string) *domain.CreditCard {
+// 	return &domain.CreditCard{
+// 		Number: number,
+// 	}
+// }

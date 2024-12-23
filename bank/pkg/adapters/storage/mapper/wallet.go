@@ -27,14 +27,6 @@ func CreditCardEntityToDomain(entity *types.CreditCard) *domain.CreditCard {
 	}
 }
 
-func BatchCreditCardEntityToDomain(entities []*types.CreditCard) []domain.CreditCard {
-	var domainCreditCards []domain.CreditCard
-	for _, e := range entities {
-		domainCreditCards = append(domainCreditCards, domain.CreditCard{ID: e.ID, Number: e.Number})
-	}
-	return domainCreditCards
-}
-
 func CreditCardDomainToEntity(domainWallet *domain.CreditCard) *types.CreditCard {
 	return &types.CreditCard{
 		Number: domainWallet.Number,
@@ -68,4 +60,24 @@ func TransactionEntityToDomain(entity *types.BankTransaction) *domain.BankTransa
 		ToWallet:       toWalDomain,
 		IsPaidToSystem: entity.IsPaidToSystem,
 	}
+}
+func TransactionEntitiesToDomainTransactions(entities []types.BankTransaction) []domain.BankTransaction {
+	var domainBankTransactions []domain.BankTransaction
+	for _, e := range entities {
+		domainBankTransactions = append(domainBankTransactions, domain.BankTransaction{Amount: e.Amount,
+			Status:         e.Status,
+			FromWallet:     WalletEntityToDomain(e.FromWallet),
+			ToWallet:       WalletEntityToDomain(e.ToWallet),
+			IsPaidToSystem: e.IsPaidToSystem,
+		})
+	}
+	return domainBankTransactions
+}
+
+func BatchCreditCardEntityToDomain(entities []*types.CreditCard) []domain.CreditCard {
+	var domainCreditCards []domain.CreditCard
+	for _, e := range entities {
+		domainCreditCards = append(domainCreditCards, domain.CreditCard{ID: e.ID, Number: e.Number})
+	}
+	return domainCreditCards
 }
