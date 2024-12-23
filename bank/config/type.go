@@ -8,6 +8,7 @@ type Config struct {
 
 type ServerConfig struct {
 	HttpPort            uint `json:"httpPort"  yaml:"httpPort"`
+	GRPCPort            int  `json:"grpcPort"`
 	RateLimitMaxAttempt int  `json:"rate_limit_max_attempt"  yaml:"rate_limit_max_attempt"`
 	RatelimitTimePeriod int  `json:"ratelimit_time_period"  yaml:"ratelimit_time_period"`
 }
