@@ -8,29 +8,29 @@ import (
 	"github.com/onlineTraveling/bank/internal/bank/port"
 )
 
-type walletService struct {
+type WalletService struct {
 	repo port.WalletRepo
 }
 
-func NewWalletService(repo port.WalletRepo) *walletService {
-	return &walletService{
+func NewWalletService(repo port.WalletRepo) *WalletService {
+	return &WalletService{
 		repo: repo,
 	}
 }
 
-func (o *walletService) Create(ctx context.Context, wallet *domain.Wallet) (*domain.Wallet, error) {
+func (o *WalletService) Create(ctx context.Context, wallet *domain.Wallet) (*domain.Wallet, error) {
 	return o.repo.Create(ctx, wallet)
 }
 
-func (o *walletService) Deposit(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (o *WalletService) Deposit(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
 	return o.repo.Deposit(ctx, creditCard, amount, userID)
 }
 
-func (o *walletService) Withdraw(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (o *WalletService) Withdraw(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
 	return o.repo.Withdraw(ctx, creditCard, amount, userID)
 }
 
-func (o *walletService) GetWallet(ctx context.Context, userID uuid.UUID) (*domain.Wallet, error) {
+func (o *WalletService) GetWallet(ctx context.Context, userID uuid.UUID) (*domain.Wallet, error) {
 	return o.repo.GetWallet(ctx, userID)
 }
 
@@ -59,15 +59,15 @@ func (o *CreditCardService) GetUserWalletCards(ctx context.Context, userID uuid.
 
 //////////////////////////////
 
-type bankTransactionService struct {
+type BankTransactionService struct {
 	repo port.BankTransactionRepo
 }
 
-func NewBankTransactionService(repo port.BankTransactionRepo) *bankTransactionService {
-	return &bankTransactionService{
+func NewBankTransactionService(repo port.BankTransactionRepo) *BankTransactionService {
+	return &BankTransactionService{
 		repo: repo,
 	}
 }
-func (b *bankTransactionService) Transfer(ctx context.Context, transaction *domain.BankTransaction) (*domain.BankTransaction, error) {
+func (b *BankTransactionService) Transfer(ctx context.Context, transaction *domain.BankTransaction) (*domain.BankTransaction, error) {
 	return b.repo.Transfer(ctx, transaction)
 }
