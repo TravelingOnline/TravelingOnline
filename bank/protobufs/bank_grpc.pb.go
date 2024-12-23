@@ -4,7 +4,7 @@
 // - protoc             v5.28.3
 // source: bank.proto
 
-package pb
+package protobufs
 
 import (
 	context "context"

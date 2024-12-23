@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/onlineTraveling/bank/api/pb";
+option go_package = "github.com/onlineTraveling/bank/protobufs";
 package bank;
 
 service BankService {
