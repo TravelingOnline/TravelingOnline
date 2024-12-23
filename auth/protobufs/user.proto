@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option go_package = "github.com/onlineTraveling/auth/api/pb";
-
+option go_package = "github.com/onlineTraveling/auth/protobufs";
+package user;
 
 message UserSignUpFirstRequest {
     string firstName = 1 [json_name = "firstName"];
