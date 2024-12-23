@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/google/uuid"
@@ -15,6 +16,33 @@ import (
 
 type creditCardRepo struct {
 	db *gorm.DB
+}
+
+func (r *creditCardRepo) DeleteCard(ctx context.Context, creditCardID uuid.UUID) error {
+	result := r.db.WithContext(ctx).Table("credit_cards").Where("id = ?", creditCardID).Delete(&types.CreditCard{})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("credit card not found")
+	}
+	return nil
+}
+
+func (r *creditCardRepo) UpdateCard(ctx context.Context, creditCard *domain.CreditCard) error {
+	// Map domain credit card to database entity
+	updatedCard := mapper.CreditCardDomainToEntity(creditCard)
+
+	// Use GORM's Save method to update the record
+	result := r.db.WithContext(ctx).Model(&types.CreditCard{}).Where("id = ?", creditCard.ID).Updates(updatedCard)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("no records updated, credit card may not exist")
+	}
+	return nil
 }
 
 func NewCreditCardRepo(db *gorm.DB) port.CreditCardRepo {
