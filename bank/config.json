@@ -20,6 +20,7 @@
     "path": ""
   },
   "server": {
+    "grpcPort":3030,
     "httpPort": 8080,
     "rate_limit_max_attempt": 10,
     "ratelimit_time_period": 30
