@@ -7,7 +7,12 @@ import (
 	"github.com/onlineTraveling/bank/internal/bank"
 
 	"github.com/onlineTraveling/bank/api/service"
+	"github.com/onlineTraveling/bank/pkg/adapters/clients/grpc"
+
+	// "github.com/onlineTraveling/bank/pkg/adapters/consul"
 	"github.com/onlineTraveling/bank/pkg/adapters/storage"
+	"github.com/onlineTraveling/bank/pkg/ports"
+	"github.com/onlineTraveling/bank/pkg/ports/clients/clients"
 	"github.com/onlineTraveling/bank/pkg/postgres"
 	"github.com/onlineTraveling/bank/pkg/valuecontext"
 
@@ -15,9 +20,11 @@ import (
 )
 
 type App struct {
-	db          *gorm.DB
-	cfg         config.Config
-	bankService *service.BankService
+	db              *gorm.DB
+	cfg             config.Config
+	bankService     *service.BankService
+	serviceRegistry ports.IServiceRegistry
+	authClient      clients.IAuthClient
 }
 
 func NewApp(cfg config.Config) (*App, error) {
@@ -28,6 +35,9 @@ func NewApp(cfg config.Config) (*App, error) {
 	if err := a.setDB(); err != nil {
 		return nil, err
 	}
+	// a.mustRegisterService()
+	a.setAuthClient(cfg.Server.ServiceRegistry.AuthServiceName)
+
 	a.setBankService()
 
 	return a, nil
@@ -96,4 +106,25 @@ func (a *App) BankServiceFromCtx(ctx context.Context) *service.BankService {
 		bank.NewWalletService(storage.NewWalletRepo(gc)),
 		bank.NewCreditCardService(storage.NewCreditCardRepo(gc)),
 		bank.NewBankTransactionService(storage.NewBankTransactionRepo(gc)))
+}
+
+// func (a *App) mustRegisterService() {
+// 	srvCfg := a.cfg.Server
+// 	registry := consul.NewConsul(srvCfg.ServiceRegistry.Address)
+// 	err := registry.RegisterService(srvCfg.ServiceRegistry.ServiceName, srvCfg.ServiceHostAddress, srvCfg.ServiceHTTPPrefixPath, srvCfg.ServiceHTTPHealthPath, srvCfg.GRPCPort, srvCfg.HttpPort)
+// 	if err != nil {
+// 		log.Fatalf("Failed to register service with Consul: %v", err)
+// 	}
+// 	a.serviceRegistry = registry
+// }
+
+func (a *App) AuthClient() clients.IAuthClient {
+	return a.authClient
+}
+
+func (a *App) setAuthClient(authServiceName string) {
+	if a.authClient != nil {
+		return
+	}
+	a.authClient = grpc.NewGRPCAuthClient(a.serviceRegistry, authServiceName)
 }
