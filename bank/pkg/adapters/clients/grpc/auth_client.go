@@ -53,5 +53,6 @@ func (g *GRPCAuthClient) GetUserByToken(token string) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	print(domainUser)
 	return domainUser, nil
 }
