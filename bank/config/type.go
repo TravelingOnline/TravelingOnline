@@ -7,11 +7,24 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	HttpPort            uint `json:"httpPort"  yaml:"httpPort"`
-	GRPCPort            int  `json:"grpcPort"`
-	RateLimitMaxAttempt int  `json:"rate_limit_max_attempt"  yaml:"rate_limit_max_attempt"`
-	RatelimitTimePeriod int  `json:"ratelimit_time_period"  yaml:"ratelimit_time_period"`
+	HttpPort            int `json:"httpPort"  yaml:"httpPort"`
+	GRPCPort            int `json:"grpcPort"`
+	RateLimitMaxAttempt int `json:"rate_limit_max_attempt"  yaml:"rate_limit_max_attempt"`
+	RatelimitTimePeriod int `json:"ratelimit_time_period"  yaml:"ratelimit_time_period"`
+
+	Host                  string          `json:"host"`
+	ServiceRegistry       ServiceRegistry `json:"service_registry"`
+	ServiceHostAddress    string          `json:"service_host_address"`
+	ServiceHTTPHealthPath string          `json:"service_http_health_path"`
+	ServiceHTTPPrefixPath string          `json:"service_http_prefix_path"`
 }
+
+type ServiceRegistry struct {
+	Address         string `json:"address"`
+	ServiceName     string `json:"service_name"`
+	AuthServiceName string `json:"auth_service_name"`
+}
+
 type DBConfig struct {
 	Host     string `json:"host"`
 	Port     uint   `json:"port"`

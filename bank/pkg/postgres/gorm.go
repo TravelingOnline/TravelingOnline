@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -59,16 +60,25 @@ func SeedWalletAndCommisionTableRecords(db *gorm.DB) error {
 }
 
 func seedCommissionDB(db *gorm.DB) error {
-	var commission *types.Commission
-	err := db.Table("commission").First(&commission).Error
+	var commission types.Commission
 
+	// Attempt to find the first commission record
+	err := db.First(&commission).Error
 	if err != nil {
-		commission = &types.Commission{AppCommissionPercentage: 1}
+		// If the error is "record not found," create a new record
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			commission = types.Commission{AppCommissionPercentage: 1}
+			// Create the new commission record
+			if createErr := db.Create(&commission).Error; createErr != nil {
+				return fmt.Errorf("failed to create commission record: %w", createErr)
+			}
+			return nil
+		}
+		// For other errors, return the error
+		return fmt.Errorf("failed to query commission table: %w", err)
 	}
-	err = db.Table("commissions").Create(&commission).Error
-	if err != nil {
-		return err
-	}
+
+	// If a commission record already exists, do nothing
 	return nil
 }
 func seedWalletDB(db *gorm.DB) error {

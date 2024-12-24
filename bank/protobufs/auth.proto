@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "github.com/onlineTraveling/auth/protobufs";
+service AuthService {
+  rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse) {}
+}
+
+
+message GetUserByTokenRequest {
+  string token = 1;
+}
+
+message GetUserByTokenResponse {
+  string userId = 1;
+  bool isAdmin = 2;
+}
