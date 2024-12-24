@@ -2,13 +2,11 @@ package domain
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type (
 	AgencyID uint
-	OwnerID  uuid.UUID
+	OwnerID  uint
 )
 
 type Agency struct {
