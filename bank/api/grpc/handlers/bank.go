@@ -43,9 +43,6 @@ func (g *GRPCBankHandler) Transfer(ctx context.Context, tr *protobufs.TransferRe
 	}
 	createdTransaction, err := g.bankService.Transfer(ctx, domainTransaction)
 	if err != nil {
-		//if errors.Is(err, wallet.ErrUserAlreadyHasWallet) {
-		//	return nil, status.Errorf(codes.AlreadyExists, "wallet already exists")
-		//}
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	receiverOwnerID := ""

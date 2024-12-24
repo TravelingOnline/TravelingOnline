@@ -4,9 +4,10 @@ import (
 	"flag"
 	"log"
 	"os"
+	"sync"
 
-	// "github.com/onlineTraveling/bank/api/handlers/http"
-
+	"github.com/onlineTraveling/bank/api/grpc"
+	"github.com/onlineTraveling/bank/app"
 	"github.com/onlineTraveling/bank/config"
 	"github.com/onlineTraveling/bank/pkg/logger"
 )
@@ -25,10 +26,14 @@ func main() {
 		log.Fatal("can not initialize logger")
 	}
 	logger.Info("Starting the program", nil)
-	// appContainer := app.NewMustApp(c)
-	// err = http.Run(appContainer, c.Server)
-	// if err != nil {
-	// 	log.Fatal("can not start the programm")
-	// }
+	appContainer := app.NewMustApp(c)
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go func() {
+		defer wg.Done()
+		grpc.Run(c, appContainer)
+	}()
+	wg.Wait()
 
 }
