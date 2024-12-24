@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	presenter "github.com/onlineTraveling/bank/api/grpc/handlers/presentor"
+	"github.com/onlineTraveling/bank/api/grpc/handlers/grpcMapper"
 	"github.com/onlineTraveling/bank/api/service"
 	"github.com/onlineTraveling/bank/internal/bank/port"
 	"github.com/onlineTraveling/bank/protobufs"
@@ -23,7 +23,7 @@ func NewGRPCBankHandler(bankService *service.BankService) *GRPCBankHandler {
 }
 
 func (g *GRPCBankHandler) CreateWallet(ctx context.Context, wl *protobufs.CreateWalletRequest) (*protobufs.CreateWalletRequestResponse, error) {
-	domainWallet, err := presenter.CreateWalletReqToWalletDomain(wl)
+	domainWallet, err := grpcMapper.CreateWalletReqToWalletDomain(wl)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
@@ -37,7 +37,7 @@ func (g *GRPCBankHandler) CreateWallet(ctx context.Context, wl *protobufs.Create
 	return &protobufs.CreateWalletRequestResponse{Message: "wallet created"}, nil
 }
 func (g *GRPCBankHandler) Transfer(ctx context.Context, tr *protobufs.TransferRequest) (*protobufs.TransferResponse, error) {
-	domainTransaction, err := presenter.TransferReqToTransferTransactionDomain(tr)
+	domainTransaction, err := grpcMapper.TransferReqToTransferTransactionDomain(tr)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}

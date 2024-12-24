@@ -1,4 +1,4 @@
-package presenter
+package grpcMapper
 
 import (
 	"github.com/google/uuid"
