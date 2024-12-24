@@ -37,7 +37,7 @@ func (g *GRPCBankHandler) CreateWallet(ctx context.Context, wl *protobufs.Create
 	return &protobufs.CreateWalletRequestResponse{Message: "wallet created"}, nil
 }
 func (g *GRPCBankHandler) Transfer(ctx context.Context, tr *protobufs.TransferRequest) (*protobufs.TransferResponse, error) {
-	domainTransaction, err := grpcMapper.TransferReqToTransferTransactionDomain(tr)
+	domainTransaction, err := grpcMapper.TransferReqToBankTransactionDomain(tr)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}

@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - online-traveling-network
+      - bank-network
     ports:
       - '${BANK_POSTGRES_PORT}:5432'
   
@@ -25,7 +25,7 @@ services:
       - BANK_CONFIG_PATH=/app/config.json
       - KAFKA_BROKER=kafka:9092
     networks:
-      - online-traveling-network
+      - bank-network
     restart: unless-stopped
     depends_on:
       - bank-postgres
@@ -33,5 +33,5 @@ services:
       - ${BANK_CONFIG_PATH}:/app/config.json
 
 networks:
-  online-traveling-network:
+  bank-network:
     driver: bridge

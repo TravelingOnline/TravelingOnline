@@ -26,14 +26,15 @@ type CreditCard struct {
 	Number    string         `gorm:"uniqueIndex;not null"`
 	Wallets   []*Wallet      `gorm:"many2many:wallet_credit_cards;"`
 }
-type WalletTransaction struct {
-	gorm.Model
-	Amount             uint
-	Type               string
-	Status             string
-	WalletCreditCardID uint
-	WalletCreditCard   *WalletCreditCard `gorm:"foreignKey:WalletCreditCardID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-}
+
+//	type WalletTransaction struct {
+//		gorm.Model
+//		Amount             uint
+//		Type               string
+//		Status             string
+//		WalletCreditCardID uint
+//		WalletCreditCard   *WalletCreditCard `gorm:"foreignKey:WalletCreditCardID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+//	}
 type WalletCreditCard struct {
 	ID           uuid.UUID   `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	WalletID     uint        `gorm:"index:idx_together_wallet_card,unique"`

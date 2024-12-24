@@ -36,7 +36,7 @@ func GormMigrations(db *gorm.DB) {
 		&types.Wallet{},
 		&types.WalletCreditCard{},
 		&types.BankTransaction{},
-		&types.WalletTransaction{},
+		// &types.WalletTransaction{},
 		&types.Commission{},
 	)
 	if err != nil {
