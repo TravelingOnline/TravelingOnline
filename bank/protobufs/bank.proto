@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option go_package = "github.com/onlineTraveling/bank/protobufs";
 package bank;
+option go_package = "github.com/onlineTraveling/bank/protobufs";
 
 service BankService {
   rpc CreateWallet (CreateWalletRequest) returns (CreateWalletRequestResponse) {}

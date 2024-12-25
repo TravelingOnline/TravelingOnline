@@ -45,6 +45,7 @@ services:
     container_name: bank-service
     ports:
       - "8082:8080"
+      - "50051:50051"
     environment:
       - ENV=production
       - TZ=Asia/Tehran
