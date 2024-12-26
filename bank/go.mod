@@ -6,6 +6,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/consul/api v1.31.0
 	github.com/joho/godotenv v1.5.1
+	github.com/rabbitmq/amqp091-go v1.10.0
 	google.golang.org/grpc v1.69.2
 	google.golang.org/protobuf v1.36.0
 	gorm.io/driver/postgres v1.5.11
