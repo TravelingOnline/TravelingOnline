@@ -78,12 +78,12 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 		if err != nil {
 			return nil, err
 		}
-		tax := transaction.Amount * commissionEntity.AppCommissionPercentage / 100
-		toWalEntity.Balance += transaction.Amount - tax
+		commissionee := transaction.Amount * commissionEntity.AppCommissionPercentage / 100
+		toWalEntity.Balance += transaction.Amount - commissionee
 		if err := r.db.WithContext(ctx).Save(&toWalEntity).Error; err != nil {
 			return nil, err
 		}
-		systemWalEntity.Balance += tax
+		systemWalEntity.Balance += commissionee
 	}
 	if err := r.db.WithContext(ctx).Save(&systemWalEntity).Error; err != nil {
 		return nil, err
