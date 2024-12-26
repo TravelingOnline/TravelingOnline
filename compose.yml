@@ -68,6 +68,18 @@ services:
     volumes:
       - ${AUTH_CONFIG_PATH}:/app/config.json
 
+  vehicle-postgres:
+    image: 'postgres:latest'
+    container_name: vehicle-postgres
+    environment:
+      POSTGRES_DB: ${VEHICLE_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - online-traveling-network
+    ports:
+      - '${VEHICLE_POSTGRES_PORT}:5432'
+
 networks:
   online-traveling-network:
     driver: bridge
