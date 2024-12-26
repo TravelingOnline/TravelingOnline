@@ -1,9 +1,11 @@
 package config
 
 type Config struct {
-	BANK_DB DBConfig     `json:"bank_db"  yaml:"bank_db"`
-	Logger  LoggerConfig `json:"logger"  yaml:"logger"`
-	Server  ServerConfig `json:"server"  yaml:"server"`
+	BANK_DB       DBConfig            `json:"bank_db"  yaml:"bank_db"`
+	Logger        LoggerConfig        `json:"logger"  yaml:"logger"`
+	Server        ServerConfig        `json:"server"  yaml:"server"`
+	MessageBroker MessageBrokerConfig `json:"rabbitmq"`
+	Redis         RedisConfig         `json:"redis"`
 }
 
 type ServerConfig struct {
@@ -38,4 +40,18 @@ type LoggerConfig struct {
 	Level  string `json:"level"  yaml:"level"`
 	Output string `json:"output"  yaml:"output"`
 	Path   string `json:"path"  yaml:"path"`
+}
+type RedisConfig struct {
+	Pass string `json:"pass"`
+	Host string `json:"host"`
+	Port int    `json:"port"`
+}
+
+type MessageBrokerConfig struct {
+	Username              string `json:"username"`
+	Password              string `json:"password"`
+	Host                  string `json:"host"`
+	Port                  int    `json:"port"`
+	CreateWalletQueueName string `json:"CreateWalletQueueName"`
+	TransferQueueName     string `json:"TransferQueueName"`
 }
