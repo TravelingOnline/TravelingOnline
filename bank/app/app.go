@@ -9,8 +9,10 @@ import (
 	"github.com/onlineTraveling/bank/api/service"
 
 	// "github.com/onlineTraveling/bank/pkg/adapters/consul"
+	"github.com/onlineTraveling/bank/pkg/adapters/rabbitmq"
 	"github.com/onlineTraveling/bank/pkg/adapters/storage"
-	// "github.com/onlineTraveling/bank/pkg/ports"
+	"github.com/onlineTraveling/bank/pkg/ports"
+
 	// "github.com/onlineTraveling/bank/pkg/ports/clients/clients"
 	"github.com/onlineTraveling/bank/pkg/postgres"
 	"github.com/onlineTraveling/bank/pkg/valuecontext"
@@ -19,9 +21,10 @@ import (
 )
 
 type App struct {
-	db          *gorm.DB
-	cfg         config.Config
-	bankService *service.BankService
+	db            *gorm.DB
+	cfg           config.Config
+	bankService   *service.BankService
+	messageBroker ports.IMessageBroker
 	// serviceRegistry ports.IServiceRegistry
 	// authClient clients.IAuthClient
 }
@@ -36,7 +39,7 @@ func NewApp(cfg config.Config) (*App, error) {
 	}
 	// a.mustRegisterService()
 	// a.setAuthClient(cfg.Server.ServiceRegistry.AuthServiceName)
-
+	a.setMessageBroker()
 	a.setBankService()
 
 	return a, nil
@@ -44,7 +47,9 @@ func NewApp(cfg config.Config) (*App, error) {
 func (a *App) DB() *gorm.DB {
 	return a.db
 }
-
+func (a *App) GetConfig() config.Config {
+	return a.cfg
+}
 func (a *App) Config(ctx context.Context) config.Config {
 	return a.cfg
 }
@@ -71,7 +76,17 @@ func (a *App) setDB() error {
 	a.db = db
 	return nil
 }
+func (a *App) MessageBroker() ports.IMessageBroker {
+	return a.messageBroker
+}
 
+func (a *App) setMessageBroker() {
+	messageBrokerCfg := a.cfg.MessageBroker
+	if a.messageBroker != nil {
+		return
+	}
+	a.messageBroker = rabbitmq.NewRabbitMQ(messageBrokerCfg.Username, messageBrokerCfg.Password, messageBrokerCfg.Host, messageBrokerCfg.Port)
+}
 func NewMustApp(cfg config.Config) *App {
 	app, err := NewApp(cfg)
 	if err != nil {
