@@ -8,11 +8,12 @@ type Vehicle struct {
 	RentPrice       int32
 	IsActive        bool
 	Type            string
-	Owner           *Owner
+	OwnerID         uint64 // Foreign key to Owner
+	Owner           *Owner  `gorm:"foreignKey:OwnerID"` // Define the relationship
 }
 
 type Owner struct {
-	Id        uint64
+	Id        uint64 `gorm:"primaryKey"` // Primary key
 	FirstName string
 	LastName  string
 	Email     string

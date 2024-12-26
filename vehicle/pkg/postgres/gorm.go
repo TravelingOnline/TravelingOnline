@@ -2,11 +2,11 @@ package postgres
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/onlineTraveling/vehicle/pkg/adapters/storage/types"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 type DBConnOptions struct {
@@ -19,14 +19,14 @@ type DBConnOptions struct {
 }
 
 func (o DBConnOptions) PostgresDSN() string {
+	log.Printf(">>>>>>>>>>host=%s port=%d user=%s password=%s dbname=%s search_path=%s sslmode=disable",
+		o.Host, o.Port, o.User, o.Pass, o.DBName, o.Schema)
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s search_path=%s sslmode=disable",
 		o.Host, o.Port, o.User, o.Pass, o.DBName, o.Schema)
 }
 
 func NewPsqlGormConnection(opt DBConnOptions) (*gorm.DB, error) {
-	return gorm.Open(postgres.Open(opt.PostgresDSN()), &gorm.Config{
-		Logger: logger.Default,
-	})
+	return gorm.Open(postgres.Open(opt.PostgresDSN()))
 }
 func GormMigrations(db *gorm.DB) {
 

@@ -8,18 +8,18 @@ import (
 	"github.com/onlineTraveling/vehicle/internal/vehicle/port"
 )
 
-type service struct {
+type Service struct {
 	repo port.Repo
 }
 
-func NewService(repo port.Repo) port.Service {
-	return &service {
+func NewService(repo port.Repo) *Service {
+	return &Service {
 		repo: repo,
 	}
 
 }
 
-func (s *service) CreateVehicle(ctx context.Context, vehicle domain.Vehicle) (domain.VehicleID, error){
+func (s *Service) CreateVehicle(ctx context.Context, vehicle domain.Vehicle) (domain.VehicleID, error){
 	var vehicleID domain.VehicleID
 	vehicleID, err := s.repo.CreateVehicle(ctx, vehicle)
 	if err!=nil{
