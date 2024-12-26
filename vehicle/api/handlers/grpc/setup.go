@@ -7,15 +7,17 @@ import (
 
 	"github.com/onlineTraveling/vehicle/api/pb"
 	"github.com/onlineTraveling/vehicle/app"
-	"github.com/onlineTraveling/vehicle/api/handlers/grpc/vehicle"
 	"github.com/onlineTraveling/vehicle/config"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 )
 
 type Server struct {
 	pb.UnimplementedVehicleServiceServer
+}
+
+func NewGRPCServer() pb.VehicleServiceServer {
+	return new(Server)
 }
 
 func Run(cfg config.Config, app *app.App) {
@@ -27,8 +29,8 @@ func Run(cfg config.Config, app *app.App) {
 	s := grpc.NewServer()
 	// auth.RegisterBankServiceServer(s, handlers.NewGRPCBankHandler(app.BankService()))
 	// Register the Health Service server
-	healthServer := &vehicle.GRPCServer{}
-	grpc_health_v1.RegisterHealthServer(s, healthServer)
+	// healthServer := &vehicle.GRPCServer{}
+	pb.RegisterVehicleServiceServer(s, NewGRPCServer())
 
 	// Register reflection service on gRPC server
 	reflection.Register(s)
