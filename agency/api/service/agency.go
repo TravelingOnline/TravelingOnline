@@ -1,7 +1,9 @@
 package service
 
 import (
+	"agency/api/pb"
 	"agency/internal/agency"
+	"agency/internal/agency/domain"
 	agencyPort "agency/internal/agency/port"
 	"context"
 )
@@ -21,7 +23,15 @@ var (
 	ErrAgencyOnDelete = agency.ErrAgencyOnDelete
 )
 
-func (s *AgencyService) CreateAgency(ctx context.Context) error {
+func (s *AgencyService) CreateAgency(ctx context.Context, req *pb.AgencyCreateRequest) error {
+	err := s.svc.CreateAgency(ctx, domain.Agency{
+		Name: req.GetName(),
+	})
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -33,6 +43,11 @@ func (s *AgencyService) UpdateAgency(ctx context.Context) {
 
 }
 
-func (s *AgencyService) DeleteAgency(ctx context.Context) {
+func (s *AgencyService) DeleteAgency(ctx context.Context, id uint) error {
+	err := s.svc.DeleteAgency(ctx, id)
+	if err != nil {
+		return err
+	}
 
+	return nil
 }

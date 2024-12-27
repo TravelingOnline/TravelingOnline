@@ -25,6 +25,6 @@ func registerAgencyAPI(appContainer app.App, router fiber.Router) {
 	router.Post("/agency", setTransaction(appContainer.DB()), CreateAgency(agencySvcGetter))
 	router.Get("/agency", setTransaction(appContainer.DB())) // TODO: FINISH SERVICE
 	router.Patch("/agency/:id", setTransaction(appContainer.DB()))
-	router.Delete("/agency/:id", setTransaction(appContainer.DB()))
+	router.Delete("/agency/:id", setTransaction(appContainer.DB()), DeleteAgency(agencySvcGetter))
 
 }
