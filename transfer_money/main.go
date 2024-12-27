@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/google/uuid"
 	"github.com/streadway/amqp"
 )
 
@@ -13,9 +12,9 @@ type CreateWalletRequest struct {
 	UserID string `json:"user_id"`
 }
 type TransferRequest struct {
-	UserIDFrom string `json:"user_id_from"`
-	UserIDTo   string `json:"user_id_to"`
-	Amount     int    `json:"amount"`
+	WalletIDFrom string `json:"wallet_id_from"`
+	WalletIDTo   string `json:"wallet_id_to"`
+	Amount       int    `json:"amount"`
 }
 
 // Function to publish a message to RabbitMQ
@@ -85,9 +84,9 @@ func main() {
 
 	// log.Println("CreateWalletRequest message sent to RabbitMQ successfully")
 	request := TransferRequest{
-		UserIDFrom: uuid.New().String(), // Replace with actual UserID
-		UserIDTo:   uuid.New().String(), // Replace with actual UserID
-		Amount:     120,                 // Replace with actual amount
+		WalletIDFrom: "477245af-7dc5-4394-ba9c-2e181ae9ab11",
+		WalletIDTo:   "127ae3f1-10f3-4bc9-87e5-233e2186ad80",
+		Amount:       120,
 	}
 	// Serialize the message to JSON
 	message, err := json.Marshal(request)

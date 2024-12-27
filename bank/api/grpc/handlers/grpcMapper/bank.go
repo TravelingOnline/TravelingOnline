@@ -34,9 +34,8 @@ func TransferReqToBankTransactionDomain(t *protobufs.TransferRequest) (*domain.B
 		UserID: receiverUserUUID,
 	}
 	return &domain.BankTransaction{
-		Amount:         uint(t.Amount),
-		FromWallet:     fromWl,
-		ToWallet:       toWl,
-		IsPaidToSystem: t.IsPaidToSystem,
+		Amount:     uint(t.Amount),
+		FromWallet: fromWl,
+		ToWallet:   toWl,
 	}, nil
 }

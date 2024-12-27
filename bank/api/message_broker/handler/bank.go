@@ -37,30 +37,30 @@ func (h *BankHandler) CreateWallet(createWalletData []byte) {
 
 func (h *BankHandler) Transfer(transferdata []byte) {
 	type TransferRequest struct {
-		FromUserID string `json:"user_id_from"`
-		ToUserID   string `json:"user_id_to"`
-		Amount     uint   `json:"amount"`
+		FromWalletID string `json:"wallet_id_from"`
+		ToWalletID   string `json:"wallet_id_to"`
+		Amount       uint   `json:"amount"`
 	}
 	var req TransferRequest
 	err := json.Unmarshal(transferdata, &req)
 	if err != nil {
 		log.Printf("Failed to deserialize message: %v", err)
 	}
-	uidFrom, err := uuid.Parse(req.FromUserID)
+	uidFrom, err := uuid.Parse(req.FromWalletID)
 	if err != nil {
-		log.Printf("Failed to parse FromUserID: %v", err)
+		log.Printf("Failed to parse FromWalletID: %v", err)
 		return
 	}
-	uidTo, err := uuid.Parse(req.ToUserID)
+	uidTo, err := uuid.Parse(req.ToWalletID)
 	if err != nil {
-		log.Printf("Failed to parse ToUserID: %v", err)
+		log.Printf("Failed to parse ToWalletID: %v", err)
 		return
 	}
-	log.Printf("Transfering money from ID: %s to %s", req.FromUserID, req.ToUserID)
+	// log.Printf("Transfering money from ID: %s to %s", req.FromWalletID, req.ToWalletID)
 
 	h.bankService.Transfer(context.Background(), &domain.BankTransaction{
-		FromWallet: &domain.Wallet{UserID: uidFrom},
-		ToWallet:   &domain.Wallet{UserID: uidTo},
+		FromWallet: &domain.Wallet{ID: &uidFrom},
+		ToWallet:   &domain.Wallet{ID: &uidTo},
 		Amount:     req.Amount,
 	})
 }

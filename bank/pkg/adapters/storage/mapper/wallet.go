@@ -15,6 +15,7 @@ func WalletEntityToDomain(entity *types.Wallet) *domain.Wallet {
 
 func WalletDomainToEntity(domainWallet *domain.Wallet) *types.Wallet {
 	return &types.Wallet{
+		ID:      *domainWallet.ID,
 		UserID:  &domainWallet.UserID,
 		Balance: domainWallet.Balance,
 	}
@@ -34,41 +35,34 @@ func CreditCardDomainToEntity(domainWallet *domain.CreditCard) *types.CreditCard
 }
 
 func DomainTransactionToTransactionEntity(domainTr *domain.BankTransaction) *types.BankTransaction {
-	var toWl *types.Wallet
-	fromWl := WalletDomainToEntity(domainTr.FromWallet)
-	if !domainTr.IsPaidToSystem {
-		toWl = WalletDomainToEntity(domainTr.ToWallet)
-	}
 	return &types.BankTransaction{
-		Amount:         domainTr.Amount,
-		FromWallet:     fromWl,
-		ToWallet:       toWl,
-		IsPaidToSystem: domainTr.IsPaidToSystem,
+		Amount:       domainTr.Amount,
+		FromWallet:   WalletDomainToEntity(domainTr.FromWallet),
+		ToWallet:     WalletDomainToEntity(domainTr.ToWallet),
+		FromWalletID: domainTr.FromWallet.ID,
+		ToWalletID:   domainTr.ToWallet.ID,
+		Status:       domainTr.Status,
 	}
 }
 
 func TransactionEntityToDomain(entity *types.BankTransaction) *domain.BankTransaction {
 	var toWalDomain *domain.Wallet
 	fromWalDomain := WalletEntityToDomain(entity.FromWallet)
-	if !entity.IsPaidToSystem {
-		toWalDomain = WalletEntityToDomain(entity.ToWallet)
-	}
+	toWalDomain = WalletEntityToDomain(entity.ToWallet)
 	return &domain.BankTransaction{
-		Amount:         entity.Amount,
-		Status:         entity.Status,
-		FromWallet:     fromWalDomain,
-		ToWallet:       toWalDomain,
-		IsPaidToSystem: entity.IsPaidToSystem,
+		Amount:     entity.Amount,
+		Status:     entity.Status,
+		FromWallet: fromWalDomain,
+		ToWallet:   toWalDomain,
 	}
 }
 func TransactionEntitiesToDomainTransactions(entities []types.BankTransaction) []domain.BankTransaction {
 	var domainBankTransactions []domain.BankTransaction
 	for _, e := range entities {
 		domainBankTransactions = append(domainBankTransactions, domain.BankTransaction{Amount: e.Amount,
-			Status:         e.Status,
-			FromWallet:     WalletEntityToDomain(e.FromWallet),
-			ToWallet:       WalletEntityToDomain(e.ToWallet),
-			IsPaidToSystem: e.IsPaidToSystem,
+			Status:     e.Status,
+			FromWallet: WalletEntityToDomain(e.FromWallet),
+			ToWallet:   WalletEntityToDomain(e.ToWallet),
 		})
 	}
 	return domainBankTransactions

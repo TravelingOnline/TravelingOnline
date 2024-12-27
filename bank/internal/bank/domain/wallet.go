@@ -13,9 +13,8 @@ type Wallet struct {
 }
 
 type BankTransaction struct {
-	Amount         uint
-	Status         types.TransferTransactionStatus
-	FromWallet     *Wallet
-	ToWallet       *Wallet
-	IsPaidToSystem bool
+	Amount     uint
+	Status     types.TransferTransactionStatus
+	FromWallet *Wallet
+	ToWallet   *Wallet
 }

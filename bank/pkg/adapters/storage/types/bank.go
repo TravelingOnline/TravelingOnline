@@ -51,17 +51,17 @@ const (
 )
 
 type BankTransaction struct {
-	ID             uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      gorm.DeletedAt `gorm:"index"`
-	Amount         uint
-	Status         TransferTransactionStatus
-	FromWalletID   *uuid.UUID
-	FromWallet     *Wallet `gorm:"foreignKey:FromWalletID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	ToWalletID     *uuid.UUID
-	ToWallet       *Wallet `gorm:"foreignKey:ToWalletID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	IsPaidToSystem bool    `gorm:"default:false"`
+	ID           uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
+	Amount       uint
+	Status       TransferTransactionStatus
+	FromWalletID *uuid.UUID
+	FromWallet   *Wallet `gorm:"foreignKey:FromWalletID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ToWalletID   *uuid.UUID
+	ToWallet     *Wallet `gorm:"foreignKey:ToWalletID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	// IsPaidToSystem bool    `gorm:"default:false"`
 }
 
 type Commission struct {

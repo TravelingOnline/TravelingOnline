@@ -46,15 +46,15 @@ func (g *GRPCBankHandler) Transfer(ctx context.Context, tr *protobufs.TransferRe
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	receiverOwnerID := ""
-	if !createdTransaction.IsPaidToSystem {
-		receiverOwnerID = createdTransaction.ToWallet.UserID.String()
-	}
+	// if !createdTransaction.IsPaidToSystem {
+	receiverOwnerID = createdTransaction.ToWallet.UserID.String()
+	// }
 	return &protobufs.TransferResponse{
 		SenderOwnerID:   createdTransaction.FromWallet.UserID.String(),
 		ReceiverOwnerID: receiverOwnerID,
-		IsPaidToSystem:  createdTransaction.IsPaidToSystem,
-		Amount:          uint64(createdTransaction.Amount),
-		Status:          string(createdTransaction.Status),
+		// IsPaidToSystem:  createdTransaction.IsPaidToSystem,
+		Amount: uint64(createdTransaction.Amount),
+		Status: string(createdTransaction.Status),
 	}, nil
 }
 
