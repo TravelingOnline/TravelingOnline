@@ -60,6 +60,6 @@ func (r *RabbitMQ) Consume(queueName string, execute func(msg []byte)) {
 		}
 	}()
 
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	// log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
 }

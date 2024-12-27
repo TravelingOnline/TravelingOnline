@@ -22,39 +22,36 @@ func NewGRPCBankHandler(bankService *service.BankService) *GRPCBankHandler {
 	return &GRPCBankHandler{bankService: bankService}
 }
 
-func (g *GRPCBankHandler) CreateWallet(ctx context.Context, wl *protobufs.CreateWalletRequest) (*protobufs.CreateWalletRequestResponse, error) {
+func (g *GRPCBankHandler) CreateWallet(ctx context.Context, wl *protobufs.CreateWalletRequest) (*protobufs.CreateWalletResponse, error) {
 	domainWallet, err := grpcMapper.CreateWalletReqToWalletDomain(wl)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, "%s", err.Error())
 	}
 	_, err = g.bankService.CreateWallet(ctx, domainWallet)
 	if err != nil {
 		if errors.Is(err, port.ErrUserAlreadyHasWallet) {
 			return nil, status.Errorf(codes.AlreadyExists, "wallet already exists")
 		}
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "%s", err.Error())
 	}
-	return &protobufs.CreateWalletRequestResponse{Message: "wallet created"}, nil
+	return &protobufs.CreateWalletResponse{Message: "wallet created"}, nil
 }
 func (g *GRPCBankHandler) Transfer(ctx context.Context, tr *protobufs.TransferRequest) (*protobufs.TransferResponse, error) {
 	domainTransaction, err := grpcMapper.TransferReqToBankTransactionDomain(tr)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, "%s", err.Error())
 	}
 	createdTransaction, err := g.bankService.Transfer(ctx, domainTransaction)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "%s", err.Error())
 	}
 	receiverOwnerID := ""
-	// if !createdTransaction.IsPaidToSystem {
 	receiverOwnerID = createdTransaction.ToWallet.UserID.String()
-	// }
 	return &protobufs.TransferResponse{
 		SenderOwnerID:   createdTransaction.FromWallet.UserID.String(),
 		ReceiverOwnerID: receiverOwnerID,
-		// IsPaidToSystem:  createdTransaction.IsPaidToSystem,
-		Amount: uint64(createdTransaction.Amount),
-		Status: string(createdTransaction.Status),
+		Amount:          uint64(createdTransaction.Amount),
+		Status:          string(createdTransaction.Status),
 	}, nil
 }
 

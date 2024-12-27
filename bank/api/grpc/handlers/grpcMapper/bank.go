@@ -21,11 +21,9 @@ func TransferReqToBankTransactionDomain(t *protobufs.TransferRequest) (*domain.B
 	if err != nil {
 		return nil, err
 	}
-	if !t.IsPaidToSystem {
-		receiverUserUUID, err = uuid.Parse(t.ReceiverOwnerID)
-		if err != nil {
-			return nil, err
-		}
+	receiverUserUUID, err = uuid.Parse(t.ReceiverOwnerID)
+	if err != nil {
+		return nil, err
 	}
 	fromWl := &domain.Wallet{
 		UserID: senderUserUUID,
