@@ -2,12 +2,16 @@ package storage
 
 import (
 	"context"
+	// "errors"
 
 	"github.com/google/uuid"
 	"github.com/onlineTraveling/bank/internal/bank/domain"
 	"github.com/onlineTraveling/bank/internal/bank/port"
 	"github.com/onlineTraveling/bank/pkg/adapters/storage/mapper"
 	"github.com/onlineTraveling/bank/pkg/adapters/storage/types"
+
+	// _context "github.com/onlineTraveling/bank/pkg/context"
+
 	"gorm.io/gorm"
 )
 
@@ -29,54 +33,83 @@ func (r *bankTransactionRepo) GetTransactionsByUserId(ctx context.Context, userI
 	return mapper.TransactionEntitiesToDomainTransactions(transactions), nil
 }
 func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTransaction) (*domain.BankTransaction, error) {
-	var walletFrom *domain.Wallet
-	var walletTo *domain.Wallet
-
-	er := r.db.Table("wallets").Where("id=?", tr.FromWallet.ID).First(&walletFrom).Error
-	if er != nil {
-		return nil, er
-	}
-	er = r.db.Table("wallets").Where("id=?", tr.ToWallet.ID).First(&walletTo).Error
-	if er != nil {
-		return nil, er
+	// Begin a transaction
+	tx := r.db.Begin()
+	if tx.Error != nil {
+		return nil, tx.Error
 	}
 
-	if tr.Amount < 100 {
-		return nil, port.ErrNotEnoughBalance
-	}
+	var walletFrom, walletTo *domain.Wallet
 
-	if walletFrom.Balance < tr.Amount {
-		return nil, port.ErrNotEnoughBalance
-	}
-	walletFrom.Balance -= tr.Amount
-	if err := r.db.WithContext(ctx).Save(&walletFrom).Error; err != nil {
+	// Fetch the source wallet
+	if err := tx.Table("wallets").Where("id=?", tr.FromWallet.ID).First(&walletFrom).Error; err != nil {
+		tx.Rollback()
 		return nil, err
 	}
+
+	// Fetch the destination wallet
+	if err := tx.Table("wallets").Where("id=?", tr.ToWallet.ID).First(&walletTo).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// Check transfer amount and balance
+	if tr.Amount < 100 || walletFrom.Balance < tr.Amount {
+		tx.Rollback()
+		return nil, port.ErrNotEnoughBalance
+	}
+
+	// Deduct from source wallet
+	walletFrom.Balance -= tr.Amount
+	if err := tx.WithContext(ctx).Save(&walletFrom).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// Fetch the system wallet
 	var systemWalEntity *types.Wallet
-	err := r.db.Where("is_system_wallet = ?", true).First(&systemWalEntity).Error
-	if err != nil {
+	if err := tx.Where("is_system_wallet = ?", true).First(&systemWalEntity).Error; err != nil {
+		tx.Rollback()
 		return nil, port.ErrSystemWalletDoesNotExists
 	}
-	var commissionEntity *types.Commission
-	err = r.db.WithContext(ctx).First(&commissionEntity).Error
-	if err != nil {
-		return nil, err
-	}
-	commissionee := tr.Amount * commissionEntity.AppCommissionPercentage / 100
-	walletTo.Balance += (tr.Amount - commissionee)
 
-	if err := r.db.WithContext(ctx).Save(&walletTo).Error; err != nil {
+	// Fetch commission settings
+	var commissionEntity *types.Commission
+	if err := tx.WithContext(ctx).First(&commissionEntity).Error; err != nil {
+		tx.Rollback()
 		return nil, err
 	}
-	systemWalEntity.Balance += commissionee
-	if err := r.db.WithContext(ctx).Save(&systemWalEntity).Error; err != nil {
+
+	// Calculate and apply commission
+	commission := tr.Amount * commissionEntity.AppCommissionPercentage / 100
+	walletTo.Balance += (tr.Amount - commission)
+
+	// Save destination wallet
+	if err := tx.WithContext(ctx).Save(&walletTo).Error; err != nil {
+		tx.Rollback()
 		return nil, err
 	}
+
+	// Update system wallet balance
+	systemWalEntity.Balance += commission
+	if err := tx.WithContext(ctx).Save(&systemWalEntity).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// Update transaction status
 	tr.Status = types.TransactionSuccess
 	createdTransaction := mapper.DomainTransactionToTransactionEntity(tr)
-	err = r.db.WithContext(ctx).Create(&createdTransaction).Error
-	if err != nil {
+	if err := tx.WithContext(ctx).Create(&createdTransaction).Error; err != nil {
+		tx.Rollback()
 		return nil, err
 	}
+
+	// Commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
 	return tr, nil
 }
