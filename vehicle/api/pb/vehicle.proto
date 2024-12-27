@@ -20,6 +20,8 @@ message CreateVehicleRequest {
     bool is_active = 6;
     string type = 7;
     Owner owner = 8;
+    int32 passenger = 9;
+    int32 model = 10;
 }
 
 message CreateVehicleResponse {
@@ -39,6 +41,8 @@ message GetVehicleResponse {
     bool is_active = 6;
     string type = 7;
     Owner owner = 8;
+    int32 passenger = 9;
+    int32 model = 10;
 }
 
 message UpdateVehicleRequest {
@@ -50,6 +54,8 @@ message UpdateVehicleRequest {
     bool is_active = 6;
     string type = 7;
     Owner owner = 8;
+    int32 passenger = 9;
+    int32 model = 10;
 }
 
 message UpdateVehicleResponse {

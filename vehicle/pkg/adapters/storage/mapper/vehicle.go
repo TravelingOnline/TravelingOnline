@@ -31,6 +31,8 @@ func VehicleStroage2Domain(v types.Vehicle) (domain.Vehicle, error) {
 		RentPrice:       v.RentPrice,
 		IsActive:        v.IsActive,
 		Type:            v.Type,
+		Passenger:       v.Passenger,
+		Model:           v.Model,
 		Owner: &domain.Owner{
 			Id:        v.Owner.Id,
 			FirstName: v.Owner.FirstName,
@@ -52,6 +54,8 @@ func DomainVehicle2Storage(v domain.Vehicle) types.Vehicle {
 		RentPrice:       v.RentPrice,
 		IsActive:        v.IsActive,
 		Type:            v.Type,
+		Passenger:       v.Passenger,
+		Model:           v.Model,
 		Owner: &types.Owner{
 			Id:        v.Owner.Id,
 			FirstName: v.Owner.FirstName,

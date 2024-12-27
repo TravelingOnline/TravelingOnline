@@ -11,6 +11,8 @@ type Vehicle struct {
 	IsActive        bool
 	Type            string
 	Owner           *Owner
+	Passenger       int
+	Model           int
 }
 
 type Owner struct {

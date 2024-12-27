@@ -11,4 +11,3 @@ COPY --from=builder /app/vehicle .
 COPY --from=builder /app/config.yml .
 EXPOSE 8081
 CMD ["./vehicle"]
-# CMD ["ping", "vehicle-postgres"]
