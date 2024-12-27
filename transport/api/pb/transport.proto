@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package transport;
+
+option go_package = "github.com/onlineTraveling/transport/pb";
+
+service TrasportService{
+    rpc CreateCompany (CreateCompanyRequest) returns (CreateCompanyResponse);
+    rpc UpdateCompany (UpdateCompanyRequest) returns (UpdateCompanyResponse);
+    rpc DeleteCompany (DeleteCompanyRequest) returns (DeleteCompanyResponse);
+    rpc GetByIDCompany (GetByIDCompanyRequest) returns (GetByIDCompanyResponse);
+}
+
+message CreateCompanyRequest{
+    string id = 1;
+    string name = 2;
+    Owner owner = 3;
+
+}
+
+message CreateCompanyResponse{
+    string id = 1;
+}
+
+message UpdateCompanyRequest{
+    string id = 1;
+    string name = 2;
+    Owner owner = 3;
+
+}
+
+message UpdateCompanyResponse{
+    string id = 1;
+}
+
+message DeleteCompanyRequest{
+    string id = 1;
+}
+
+
+message DeleteCompanyResponse{
+    string id = 1;
+}
+
+message GetByIDCompanyRequest{
+    string id = 1;
+}
+
+message GetByIDCompanyResponse{
+    string id = 1;
+    string name = 2;
+    Owner owner = 3;
+
+}
+
+message Owner {
+    uint64 id = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string email = 4;  
+}
