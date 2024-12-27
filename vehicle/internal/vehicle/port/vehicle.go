@@ -11,4 +11,5 @@ type Repo interface {
 	UpdateVehicle(ctx context.Context, vehicle domain.Vehicle) (domain.VehicleID, error)
 	DeleteVehicle(ctx context.Context, vehicleID domain.VehicleID) (domain.VehicleID, error)
 	GetByIDVehicle(ctx context.Context, vehicleID domain.VehicleID) (domain.Vehicle, error)
+	RentVehicle(ctx context.Context, passengerNo int32) (domain.Vehicle, error)
 }

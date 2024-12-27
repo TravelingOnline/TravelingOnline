@@ -50,9 +50,18 @@ func (s *service) DeleteVehicleService(ctx context.Context, vehicleID domain.Veh
 
 func (s *service) GetByIDVehicleService(ctx context.Context, vehicleID domain.VehicleID) (domain.Vehicle, error) {
 	vehicle, err := s.repo.GetByIDVehicle(ctx, vehicleID)
-	if err!=nil{
+	if err != nil {
 		log.Fatalf("Unable to Get Vehicle, error: %v", err)
 		return domain.Vehicle{}, err
 	}
 	return vehicle, nil
+}
+
+func (s *service) RentVehicleService(ctx context.Context, passengerNo int32) (domain.Vehicle, error) {
+	bestVehicle, err := s.repo.RentVehicle(ctx, passengerNo)
+	if err!=nil{
+		log.Fatalf("Unable to Get Best Vehicle, error: %v", err)
+		return domain.Vehicle{}, err
+	}
+	return bestVehicle, nil
 }

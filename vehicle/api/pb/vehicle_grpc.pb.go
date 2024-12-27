@@ -23,6 +23,7 @@ const (
 	VehicleService_GetVehicle_FullMethodName    = "/vehicle.VehicleService/GetVehicle"
 	VehicleService_UpdateVehicle_FullMethodName = "/vehicle.VehicleService/UpdateVehicle"
 	VehicleService_DeleteVehicle_FullMethodName = "/vehicle.VehicleService/DeleteVehicle"
+	VehicleService_RentVehicle_FullMethodName   = "/vehicle.VehicleService/RentVehicle"
 )
 
 // VehicleServiceClient is the client API for VehicleService service.
@@ -33,6 +34,7 @@ type VehicleServiceClient interface {
 	GetVehicle(ctx context.Context, in *GetVehicleRequest, opts ...grpc.CallOption) (*GetVehicleResponse, error)
 	UpdateVehicle(ctx context.Context, in *UpdateVehicleRequest, opts ...grpc.CallOption) (*UpdateVehicleResponse, error)
 	DeleteVehicle(ctx context.Context, in *DeleteVehicleRequest, opts ...grpc.CallOption) (*DeleteVehicleResponse, error)
+	RentVehicle(ctx context.Context, in *RentVehicleRequest, opts ...grpc.CallOption) (*RentVehicleResponse, error)
 }
 
 type vehicleServiceClient struct {
@@ -83,6 +85,16 @@ func (c *vehicleServiceClient) DeleteVehicle(ctx context.Context, in *DeleteVehi
 	return out, nil
 }
 
+func (c *vehicleServiceClient) RentVehicle(ctx context.Context, in *RentVehicleRequest, opts ...grpc.CallOption) (*RentVehicleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RentVehicleResponse)
+	err := c.cc.Invoke(ctx, VehicleService_RentVehicle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VehicleServiceServer is the server API for VehicleService service.
 // All implementations must embed UnimplementedVehicleServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type VehicleServiceServer interface {
 	GetVehicle(context.Context, *GetVehicleRequest) (*GetVehicleResponse, error)
 	UpdateVehicle(context.Context, *UpdateVehicleRequest) (*UpdateVehicleResponse, error)
 	DeleteVehicle(context.Context, *DeleteVehicleRequest) (*DeleteVehicleResponse, error)
+	RentVehicle(context.Context, *RentVehicleRequest) (*RentVehicleResponse, error)
 	mustEmbedUnimplementedVehicleServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedVehicleServiceServer) UpdateVehicle(context.Context, *UpdateV
 }
 func (UnimplementedVehicleServiceServer) DeleteVehicle(context.Context, *DeleteVehicleRequest) (*DeleteVehicleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVehicle not implemented")
+}
+func (UnimplementedVehicleServiceServer) RentVehicle(context.Context, *RentVehicleRequest) (*RentVehicleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RentVehicle not implemented")
 }
 func (UnimplementedVehicleServiceServer) mustEmbedUnimplementedVehicleServiceServer() {}
 func (UnimplementedVehicleServiceServer) testEmbeddedByValue()                        {}
@@ -206,6 +222,24 @@ func _VehicleService_DeleteVehicle_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VehicleService_RentVehicle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RentVehicleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VehicleServiceServer).RentVehicle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VehicleService_RentVehicle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VehicleServiceServer).RentVehicle(ctx, req.(*RentVehicleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VehicleService_ServiceDesc is the grpc.ServiceDesc for VehicleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var VehicleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteVehicle",
 			Handler:    _VehicleService_DeleteVehicle_Handler,
+		},
+		{
+			MethodName: "RentVehicle",
+			Handler:    _VehicleService_RentVehicle_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

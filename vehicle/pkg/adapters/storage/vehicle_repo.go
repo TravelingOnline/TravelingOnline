@@ -100,3 +100,27 @@ func (r *vehicleRepo) GetByIDVehicle(ctx context.Context, vehicleID domain.Vehic
 
 	return domainVehicle, nil
 }
+
+func (r *vehicleRepo) RentVehicle(ctx context.Context, passengerNo int32) (domain.Vehicle, error) {
+	var bestVehicle domain.Vehicle
+
+	// Query the database with filtering and ordering
+	err := r.db.WithContext(ctx).
+		Where("passenger >= ?", passengerNo). // Match vehicles with sufficient passenger capacity
+		Order("passenger ASC").                  // Closest matching passenger capacity first
+		Order("rent_price ASC").                 // Cheapest rent price
+		Order("model ASC").                      // Oldest model
+		Order("created_at ASC").                 // Earliest creation date
+		First(&bestVehicle).                     // Get the best match
+		Error
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Vehicle{}, fmt.Errorf("no vehicle found for passenger count %d", passengerNo)
+		}
+		log.Printf("Failed to fetch the best vehicle: %v", err)
+		return domain.Vehicle{}, err
+	}
+
+	return bestVehicle, nil
+}

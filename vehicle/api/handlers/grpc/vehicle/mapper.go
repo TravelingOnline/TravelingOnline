@@ -188,3 +188,27 @@ func DomainVehicle2PBVehicleResponse(vehicle domain.Vehicle) (*pb.GetVehicleResp
 
 	return PBreq, nil
 }
+
+func DomainVehicle2PBRentVehicleRequest(vehicle domain.Vehicle) (*pb.RentVehicleResponse, error) {
+	// Validate input
+	if vehicle.Owner == nil {
+		return nil, errors.New("vehicle.Owner cannot be nil")
+	}
+
+	// Construct and return the protobuf CreateVehicleRequest
+	PBreq := &pb.RentVehicleResponse{
+		Id:              "",
+		Unicode:         vehicle.Unicode,
+		RequiredExperts: vehicle.RequiredExperts,
+		Speed:           vehicle.Speed,
+		RentPrice:       vehicle.RentPrice,
+		IsActive:        vehicle.IsActive,
+		Type:            vehicle.Type,
+		Owner:           &pb.Owner{Id: vehicle.Owner.Id, FirstName: vehicle.Owner.FirstName, LastName: vehicle.Owner.LastName, Email: vehicle.Owner.Email},
+		Passenger:       int32(vehicle.Passenger),
+		Model:           int32(vehicle.Model),
+	}
+
+	return PBreq, nil
+}
+
