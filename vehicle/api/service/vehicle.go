@@ -3,17 +3,17 @@ package service
 import (
 	"context"
 
-	"github.com/onlineTraveling/vehicle/internal/vehicle"
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/vehicle/internal/vehicle/domain"
+	"github.com/onlineTraveling/vehicle/internal/vehicle/port"
 )
 
 type VehicleService struct {
-	srv *vehicle.Service
+	srv port.Service
 }
 
-func NewVehicleService(srv *vehicle.Service) *VehicleService {
+func NewVehicleService(srv port.Service) *VehicleService {
 	return &VehicleService{
-
 		srv: srv,
 	}
 }
@@ -21,26 +21,28 @@ func NewVehicleService(srv *vehicle.Service) *VehicleService {
 func (v *VehicleService) CreateVehicle(ctx context.Context, req *domain.Vehicle) (*domain.VehicleID, error) {
 	// Call the underlying service to create the vehicle
 	// TODO mapping req to domain.Vehicle
-	// newVehicle := domain.Vehicle{
-	// 	Id:              uuid.New().String(), // Generate a unique ID
-	// 	Unicode:         req.Unicode,
-	// 	RequiredExperts: req.RequiredExperts,
-	// 	Speed:           req.Speed,
-	// 	RentPrice:       req.RentPrice,
-	// 	IsActive:        req.IsActive,
-	// 	Type:            req.Type,
-	// 	Owner: &domain.Owner{
-	// 		Id:        req.Owner.Id,
-	// 		FirstName: req.Owner.FirstName,
-	// 		LastName:  req.Owner.LastName,
-	// 		Email:     req.Owner.Email,
-	// 	},
-	// }
-	vID, err := v.CreateVehicle(ctx, req)
+	var vID domain.VehicleID = domain.VehicleID(uuid.New().String())
+	newVehicle := domain.Vehicle{
+		Id:              string(vID),
+		Unicode:         req.Unicode,
+		RequiredExperts: req.RequiredExperts,
+		Speed:           req.Speed,
+		RentPrice:       req.RentPrice,
+		IsActive:        req.IsActive,
+		Type:            req.Type,
+		Owner: &domain.Owner{
+			Id:        req.Owner.Id,
+			FirstName: req.Owner.FirstName,
+			LastName:  req.Owner.LastName,
+			Email:     req.Owner.Email,
+		},
+	}
+
+	vID, err := v.srv.CreateVehicleService(ctx, newVehicle)
 	if err != nil {
 		return nil, err
 	}
-	return vID, nil
+	return &vID, nil
 	// vehicleID, err := v.srv.CreateVehicle(ctx, newVehicle)
 	// if err != nil {
 	// 	log.Printf("failed to create vehicle: %v", err)

@@ -1,11 +1,9 @@
 package app
 
 import (
-	"log"
-
-	"github.com/onlineTraveling/vehicle/api/service"
 	"github.com/onlineTraveling/vehicle/config"
 	"github.com/onlineTraveling/vehicle/internal/vehicle"
+	"github.com/onlineTraveling/vehicle/internal/vehicle/port"
 	"github.com/onlineTraveling/vehicle/pkg/adapters/storage"
 	"github.com/onlineTraveling/vehicle/pkg/postgres"
 
@@ -13,26 +11,9 @@ import (
 )
 
 type App struct {
-	db             *gorm.DB
-	cfg            config.Config
-	vehicleService *service.VehicleService
-}
-
-func NewApp(cfg config.Config) (*App, error) {
-	a := &App{
-		cfg: cfg,
-	}
-
-	if err := a.setDB(); err != nil {
-		return nil, err
-	}
-	a.setVehicleService()
-
-	return a, nil
-}
-
-func (a *App) DB() *gorm.DB {
-	return a.db
+	db            *gorm.DB
+	cfg           config.Config
+	vehicleServer port.Service
 }
 
 func (a *App) setDB() error {
@@ -45,37 +26,46 @@ func (a *App) setDB() error {
 		Schema: a.cfg.DB.Schema,
 	})
 
+	postgres.GormMigrations(db)
+
 	if err != nil {
 		return err
 	}
-
-	postgres.GormMigrations(db)
 
 	a.db = db
 
 	return nil
 }
 
+func (a *App) VehicleService() port.Service {
+	return a.vehicleServer
+}
+
 func (a *App) Config() config.Config {
 	return a.cfg
 }
 
-func (a *App) VehicleService() service.VehicleService {
-	return a.VehicleService()
-}
-
-func (a *App) setVehicleService() {
-	if a.vehicleService != nil {
-		return
+func NewApp(cfg config.Config) (*App, error) {
+	a := &App{
+		cfg: cfg,
 	}
-	a.vehicleService = service.NewVehicleService(vehicle.NewService(storage.NewVehicleRepo(a.db)))
+
+	if err := a.setDB(); err != nil {
+		return nil, err
+	}
+	// a.vehicleServer = *service.NewVehicleService(vehicle.NewService())
+	a.vehicleServer = vehicle.NewService(storage.NewVehicleRepo(a.db))
+	return a, nil
 }
 
 func NewMustApp(cfg config.Config) *App {
 	App, err := NewApp(cfg)
 	if err != nil {
-		log.Fatal(err.Error())
 		panic(err)
 	}
 	return App
+}
+
+func (a *App) DB() *gorm.DB {
+	return a.db
 }

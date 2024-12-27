@@ -6,7 +6,6 @@ import (
 	"github.com/onlineTraveling/vehicle/api/pb"
 	"github.com/onlineTraveling/vehicle/api/service"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 )
 
@@ -15,8 +14,8 @@ type GRPCVehicleHandler struct {
 	vehicleService *service.VehicleService
 }
 
-func NewGRPCVehicleHandler(vehicleService *service.VehicleService) *GRPCVehicleHandler {
-	return &GRPCVehicleHandler{vehicleService: vehicleService}
+func NewGRPCVehicleHandler(vehicleService service.VehicleService) *GRPCVehicleHandler {
+	return &GRPCVehicleHandler{vehicleService: &vehicleService}
 }
 
 func (g *GRPCVehicleHandler) CreateVehicle(ctx context.Context, req *pb.CreateVehicleRequest) (*pb.CreateVehicleResponse, error) {
@@ -30,16 +29,5 @@ func (g *GRPCVehicleHandler) CreateVehicle(ctx context.Context, req *pb.CreateVe
 	}
 	return &pb.CreateVehicleResponse{
 		Id: "1111111",
-	}, nil
-}
-
-type GRPCServer struct {
-	pb.UnimplementedVehicleServiceServer
-}
-
-// Check implements Health.Check
-func (s *GRPCServer) Check(ctx context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
-	return &grpc_health_v1.HealthCheckResponse{
-		Status: grpc_health_v1.HealthCheckResponse_SERVING,
 	}, nil
 }
