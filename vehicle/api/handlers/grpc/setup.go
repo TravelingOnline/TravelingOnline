@@ -24,6 +24,7 @@ func Run(cfg config.Config, app *app.App) {
 	d := vehicle.NewGRPCVehicleHandler(*vHandler)
 	pb.RegisterVehicleServiceServer(grpcServer, d)
 
+
 	log.Printf("Server listening at %v", listener.Addr())
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)

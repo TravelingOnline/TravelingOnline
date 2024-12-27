@@ -7,6 +7,8 @@ import (
 )
 
 type Service interface {
-	// CreateVehicleService() (domain.VehicleID, error)
 	CreateVehicleService(ctx context.Context, vehicle domain.Vehicle) (domain.VehicleID, error)
+	UpdateVehicleService(ctx context.Context, vehicle domain.Vehicle) (domain.VehicleID, error)
+	DeleteVehicleService(ctx context.Context, vehicleID domain.VehicleID) (domain.VehicleID, error)
+	GetByIDVehicleService(ctx context.Context, vehicleID domain.VehicleID) (domain.Vehicle, error)
 }

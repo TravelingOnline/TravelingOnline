@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/onlineTraveling/vehicle/pkg/adapters/storage/types"
 	"gorm.io/driver/postgres"
@@ -19,8 +18,6 @@ type DBConnOptions struct {
 }
 
 func (o DBConnOptions) PostgresDSN() string {
-	log.Printf(">>>>>>>>>>host=%s port=%d user=%s password=%s dbname=%s search_path=%s sslmode=disable",
-		o.Host, o.Port, o.User, o.Pass, o.DBName, o.Schema)
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s search_path=%s sslmode=disable",
 		o.Host, o.Port, o.User, o.Pass, o.DBName, o.Schema)
 }

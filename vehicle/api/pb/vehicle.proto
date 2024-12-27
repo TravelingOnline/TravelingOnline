@@ -4,11 +4,14 @@ package vehicle;
 
 option go_package = "github.com/onlineTraveling/vehicle/pb";
 
-service VehicleService{
+service VehicleService {
     rpc CreateVehicle (CreateVehicleRequest) returns (CreateVehicleResponse);
+    rpc GetVehicle (GetVehicleRequest) returns (GetVehicleResponse);
+    rpc UpdateVehicle (UpdateVehicleRequest) returns (UpdateVehicleResponse);
+    rpc DeleteVehicle (DeleteVehicleRequest) returns (DeleteVehicleResponse);
 }
 
-message CreateVehicleRequest{
+message CreateVehicleRequest {
     string id = 1;
     string unicode = 2;
     int32 required_experts = 3;
@@ -19,13 +22,51 @@ message CreateVehicleRequest{
     Owner owner = 8;
 }
 
+message CreateVehicleResponse {
+    string id = 1;
+}
+
+message GetVehicleRequest {
+    string id = 1; // Vehicle ID to fetch
+}
+
+message GetVehicleResponse {
+    string id = 1;
+    string unicode = 2;
+    int32 required_experts = 3;
+    int32 speed = 4;
+    int32 rent_price = 5;
+    bool is_active = 6;
+    string type = 7;
+    Owner owner = 8;
+}
+
+message UpdateVehicleRequest {
+    string id = 1; // Vehicle ID to update
+    string unicode = 2;
+    int32 required_experts = 3;
+    int32 speed = 4;
+    int32 rent_price = 5;
+    bool is_active = 6;
+    string type = 7;
+    Owner owner = 8;
+}
+
+message UpdateVehicleResponse {
+    string id = 1; // Updated Vehicle ID
+}
+
+message DeleteVehicleRequest {
+    string id = 1; // Vehicle ID to delete
+}
+
+message DeleteVehicleResponse {
+    string id = 1; // Deleted Vehicle ID confirmation
+}
+
 message Owner {
     uint64 id = 1;
     string firstName = 2;
     string lastName = 3;
     string email = 4;  
-}
-
-message CreateVehicleResponse{
-    string id = 1;
 }
