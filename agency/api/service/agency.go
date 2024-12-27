@@ -21,4 +21,18 @@ var (
 	ErrAgencyOnDelete = agency.ErrAgencyOnDelete
 )
 
-func (s *AgencyService) CreateAgency(ctx context.Context)
+func (s *AgencyService) CreateAgency(ctx context.Context) error {
+	return nil
+}
+
+func (s *AgencyService) GetAgency(ctx context.Context) {
+
+}
+
+func (s *AgencyService) UpdateAgency(ctx context.Context) {
+
+}
+
+func (s *AgencyService) DeleteAgency(ctx context.Context) {
+
+}

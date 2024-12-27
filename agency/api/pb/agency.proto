@@ -10,6 +10,14 @@ message AgencyUpdateRequest {
     string name = 1 [json_name = "agencyName"];
 }
 
+message AgencyCreateRespone {
+    string id = 1 [json_name = "agencyId"];
+}
+
+message AgencyUpdateResponse {
+    string id = 1 [json_name= "agencyID"];
+}
+
 message Agency {
     uint64 id = 1;
     string name = 2 [json_name = "agencyName"];
