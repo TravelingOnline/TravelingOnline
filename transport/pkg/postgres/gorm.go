@@ -3,7 +3,7 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/onlineTraveling/vehicle/pkg/adapters/storage/types"
+	"github.com/onlineTraveling/transport/pkg/adapters/storage/types"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,6 +28,6 @@ func NewPsqlGormConnection(opt DBConnOptions) (*gorm.DB, error) {
 func GormMigrations(db *gorm.DB) {
 
 	db.AutoMigrate(
-		&types.Vehicle{},
+		&types.Company{},
 	)
 }

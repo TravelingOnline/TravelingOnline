@@ -3,16 +3,9 @@ package domain
 type CompanyID string
 
 type Company struct {
-	Id              string
-	Unicode         string
-	RequiredExperts int32
-	Speed           int32
-	RentPrice       int32
-	IsActive        bool
-	Type            string
-	Owner           *Owner
-	Passenger       int
-	Model           int
+	Id    string
+	Name  string
+	Owner *Owner
 }
 
 type Owner struct {

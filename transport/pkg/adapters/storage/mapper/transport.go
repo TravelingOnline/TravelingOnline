@@ -12,9 +12,6 @@ func CompanyStroage2Domain(v types.Company) (domain.Company, error) {
 	if v.Id == "" {
 		return domain.Company{}, errors.New("company ID is required")
 	}
-	if v.Unicode == "" {
-		return domain.Company{}, errors.New("company Unicode is required")
-	}
 	if v.Owner == nil {
 		return domain.Company{}, errors.New("owner information is missing")
 	}
@@ -24,15 +21,8 @@ func CompanyStroage2Domain(v types.Company) (domain.Company, error) {
 
 	// Construct the domain company
 	vehicle := domain.Company{
-		Id:              v.Id,
-		Unicode:         v.Unicode,
-		RequiredExperts: v.RequiredExperts,
-		Speed:           v.Speed,
-		RentPrice:       v.RentPrice,
-		IsActive:        v.IsActive,
-		Type:            v.Type,
-		Passenger:       v.Passenger,
-		Model:           v.Model,
+		Id:   v.Id,
+		Name: v.Name,
 		Owner: &domain.Owner{
 			Id:        v.Owner.Id,
 			FirstName: v.Owner.FirstName,
@@ -47,15 +37,8 @@ func CompanyStroage2Domain(v types.Company) (domain.Company, error) {
 
 func DomainCompany2Storage(v domain.Company) types.Company {
 	return types.Company{
-		Id:              v.Id,
-		Unicode:         v.Unicode,
-		RequiredExperts: v.RequiredExperts,
-		Speed:           v.Speed,
-		RentPrice:       v.RentPrice,
-		IsActive:        v.IsActive,
-		Type:            v.Type,
-		Passenger:       v.Passenger,
-		Model:           v.Model,
+		Id:   v.Id,
+		Name: v.Name,
 		Owner: &types.Owner{
 			Id:        v.Owner.Id,
 			FirstName: v.Owner.FirstName,

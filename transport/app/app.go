@@ -53,7 +53,7 @@ func NewApp(cfg config.Config) (*App, error) {
 	if err := a.setDB(); err != nil {
 		return nil, err
 	}
-	a.transportService = transport.NewService(storage.NewTransportRepo()(a.db))
+	a.transportService = transport.NewService(storage.NewTransportRepo(a.db))
 	return a, nil
 }
 

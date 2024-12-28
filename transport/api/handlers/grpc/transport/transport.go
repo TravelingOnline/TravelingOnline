@@ -20,38 +20,38 @@ func NewGRPCTransportHandler(trasnsportService service.TransportService) *GRPCTr
 }
 
 func (g *GRPCTransportHandler) CreateVehicle(ctx context.Context, req *pb.CreateCompanyRequest) (*pb.CreateCompanyResponse, error) {
-	domainRequest, err := PBVehicleRequest2DomainVehicle(req)
+	domainRequest, err := PBCompanyRequest2DomainCompany(req)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	vID, err := g.vehicleService.CreateVehicle(ctx, &domainRequest)
+	vID, err := g.trasnportService.CreateCompany(ctx, &domainRequest)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	// log.Println(">>>>>>>>>>>>", string(*vID))
-	return &pb.CreateVehicleResponse{
+	return &pb.CreateCompanyResponse{
 		Id: string(*vID),
 	}, nil
 }
 
 func (g *GRPCTransportHandler) UpdateVehicle(ctx context.Context, req *pb.UpdateCompanyRequest) (*pb.UpdateCompanyResponse, error) {
-	domainRequest, err := PBVehicleRequest2DomainVehicle(req)
+	domainRequest, err := PBCompanyRequest2DomainCompany(req)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	vID, err := g.vehicleService.UpdateVehicle(ctx, &domainRequest)
+	vID, err := g.trasnportService.UpdateCompany(ctx, &domainRequest)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	// log.Println(">>>>>>>>>>>>", string(*vID))
-	return &pb.UpdateVehicleResponse{
+	return &pb.UpdateCompanyResponse{
 		Id: string(*vID),
 	}, nil
 }
 
 func (g *GRPCTransportHandler) DeleteVehicle(ctx context.Context, delReq *pb.DeleteCompanyRequest) (*pb.DeleteCompanyResponse, error) {
-	vID := domain.VehicleID(delReq.Id)
-	deletedVehcileID, err := g.vehicleService.DeleteVehicle(ctx, &vID)
+	vID := domain.CompanyID(delReq.Id)
+	deletedVehcileID, err := g.trasnportService.DeleteCompany(ctx, &vID)
 	if err != nil {
 		return deletedVehcileID, status.Errorf(codes.Internal, err.Error())
 	}
@@ -59,12 +59,12 @@ func (g *GRPCTransportHandler) DeleteVehicle(ctx context.Context, delReq *pb.Del
 }
 
 func (g *GRPCTransportHandler) GetVehicle(ctx context.Context, vehicleReq *pb.GetByIDCompanyRequest) (*pb.GetByIDCompanyResponse, error) {
-	vID := domain.VehicleID(vehicleReq.Id)
-	vehicle, err := g.vehicleService.GetVehicle(ctx, &vID)
+	vID := domain.CompanyID(vehicleReq.Id)
+	vehicle, err := g.trasnportService.GetByIDCompany(ctx, &vID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	domainVehicle, err := DomainVehicle2PBVehicleResponse(*vehicle)
+	domainVehicle, err := DomainCompany2PBCompanyResponse(*vehicle)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
