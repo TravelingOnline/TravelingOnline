@@ -66,23 +66,7 @@ func publishToRabbitMQ(queueName string, message []byte) error {
 }
 
 func main() {
-	// Prepare the request message
-	// request := CreateWalletRequest{
-	// 	UserID: uuid.New().String(), // Replace with actual UserID
-	// }
-	// // Serialize the message to JSON
-	// message, err := json.Marshal(request)
-	// if err != nil {
-	// 	log.Fatalf("Failed to serialize request: %v", err)
-	// }
-	// // Send the message to RabbitMQ
-	// queueName := "bank-service/create-wallet"
-	// err = publishToRabbitMQ(queueName, message)
-	// if err != nil {
-	// 	log.Fatalf("Error publishing to RabbitMQ: %v", err)
-	// }
 
-	// log.Println("CreateWalletRequest message sent to RabbitMQ successfully")
 	request := TransferRequest{
 		WalletIDFrom: "5f664e09-e970-48c2-8fc2-dceb3096bd52",
 		WalletIDTo:   "bd8873c8-be31-4285-b8ef-b7ed2ac82be8",
