@@ -8,6 +8,7 @@ import (
 	"github.com/onlineTraveling/bank/api/grpc/handlers"
 	"github.com/onlineTraveling/bank/app"
 	"github.com/onlineTraveling/bank/config"
+
 	"github.com/onlineTraveling/bank/protobufs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"

@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/google/uuid"
@@ -31,8 +32,11 @@ func (r *walletRepo) DeleteWallet(ctx context.Context, userID uuid.UUID) error {
 	return err
 }
 func (r *walletRepo) Create(ctx context.Context, wl *domain.Wallet) (*domain.Wallet, error) {
-	newWallet := mapper.WalletDomainToEntity(wl)
-	err := r.db.WithContext(ctx).Create(&newWallet).Error
+	newWallet, err := mapper.WalletDomainToEntity(wl)
+	if err != nil {
+		return nil, fmt.Errorf("failed to map domain wallet to entity: %v", err)
+	}
+	err = r.db.WithContext(ctx).Create(&newWallet).Error
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 			return nil, port.ErrUserAlreadyHasWallet

@@ -1,6 +1,8 @@
 package mapper
 
 import (
+	"fmt"
+
 	"github.com/onlineTraveling/bank/internal/bank/domain"
 	"github.com/onlineTraveling/bank/pkg/adapters/storage/types"
 )
@@ -13,12 +15,16 @@ func WalletEntityToDomain(entity *types.Wallet) *domain.Wallet {
 	}
 }
 
-func WalletDomainToEntity(domainWallet *domain.Wallet) *types.Wallet {
+func WalletDomainToEntity(domainWallet *domain.Wallet) (*types.Wallet, error) {
+	if domainWallet == nil {
+
+		return nil, fmt.Errorf("wallet is nil")
+	}
 	return &types.Wallet{
-		ID:      *domainWallet.ID,
+		// ID:      *domainWallet.ID, /////////////
 		UserID:  &domainWallet.UserID,
 		Balance: domainWallet.Balance,
-	}
+	}, nil
 }
 
 func CreditCardEntityToDomain(entity *types.CreditCard) *domain.CreditCard {
@@ -35,10 +41,21 @@ func CreditCardDomainToEntity(domainWallet *domain.CreditCard) *types.CreditCard
 }
 
 func DomainTransactionToTransactionEntity(domainTr *domain.BankTransaction) *types.BankTransaction {
+	fw := &types.Wallet{
+		ID:      *domainTr.FromWallet.ID,
+		UserID:  &domainTr.FromWallet.UserID,
+		Balance: domainTr.FromWallet.Balance,
+	}
+
+	tw := &types.Wallet{
+		ID:      *domainTr.ToWallet.ID,
+		UserID:  &domainTr.ToWallet.UserID,
+		Balance: domainTr.ToWallet.Balance,
+	}
 	return &types.BankTransaction{
 		Amount:       domainTr.Amount,
-		FromWallet:   WalletDomainToEntity(domainTr.FromWallet),
-		ToWallet:     WalletDomainToEntity(domainTr.ToWallet),
+		FromWallet:   fw,
+		ToWallet:     tw,
 		FromWalletID: domainTr.FromWallet.ID,
 		ToWalletID:   domainTr.ToWallet.ID,
 		Status:       domainTr.Status,

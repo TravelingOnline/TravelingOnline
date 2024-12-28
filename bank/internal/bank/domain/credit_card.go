@@ -34,3 +34,7 @@ func IsValidCardNumber(cardNumber string) bool {
 
 	return sum%10 == 0
 }
+
+type Response struct {
+	Message string
+}

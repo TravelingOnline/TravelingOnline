@@ -25,12 +25,16 @@
     "host": "0.0.0.0",
     "rate_limit_max_attempt": 10,
     "ratelimit_time_period": 30,
-    "service_host_name": "auth",
+    "service_host_name": "bank",
     "service_grpc_health_path": "",
     "service_registry":{
       "address": "http://consul:8500",
       "service_name": "bank-service"}
     },
+  "service_registry":{
+    "address": "http://consul:8500",
+    "service_name": "bank-service"
+  },
   "scylla": {
     "host": "scylladb",
     "port": 9042

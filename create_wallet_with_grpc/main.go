@@ -3,42 +3,44 @@ package main
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/google/uuid"
+	"github.com/onlineTraveling/bank/pkg/adapters/clients/grpc/mappers"
 	"github.com/onlineTraveling/bank/protobufs"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	// Define the address of the bank service
-	bankServiceAddress := "localhost:50051" // Replace with the actual address of the bank service
-
-	// Establish a connection to the bank service
-	conn, err := grpc.Dial(bankServiceAddress, grpc.WithInsecure())
+	// Create a gRPC connection to the bank service
+	conn, err := grpc.Dial("0.0.0.0:50051", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Failed to connect to bank service: %v", err)
+		log.Fatalf("client cannot connect to gRPC server: %v", err)
 	}
 	defer conn.Close()
 
-	// Create a gRPC client for the bank service
-	bankClient := protobufs.NewBankServiceClient(conn)
+	// Create a new BankService client
+	client := protobufs.NewBankServiceClient(conn)
 
-	// Create a context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	// Create a context
+	ctx := context.Background()
 
-	// Create a wallet request
-	createWalletReq := &protobufs.CreateWalletRequest{
-		UserID: uuid.New().String(), // Replace with a valid UUID
+	// Prepare the request
+	in := &protobufs.CreateWalletRequest{
+		UserID: uuid.New().String(),
 	}
 
-	// Call the CreateWallet RPC
-	resp, err := bankClient.CreateWallet(ctx, createWalletReq)
+	// Call the CreateWallet method
+	response, err := client.CreateWallet(ctx, in)
 	if err != nil {
-		log.Fatalf("Failed to create wallet: %v", err)
+		log.Fatalf("cannot create wallet: %v", err)
 	}
 
-	// Print the response
-	log.Printf("Wallet created successfully: %s", resp.Message)
+	// Map the response to the domain model
+	domainResponse, err := mappers.CreateWalletResponseToMessageDomain(response)
+	if err != nil {
+		log.Fatalf("cannot map response: %v", err)
+	}
+
+	// Print the domain response
+	log.Printf("Wallet created successfully: %v", *domainResponse)
 }

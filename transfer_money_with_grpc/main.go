@@ -84,8 +84,8 @@ func main() {
 
 	// log.Println("CreateWalletRequest message sent to RabbitMQ successfully")
 	request := TransferRequest{
-		WalletIDFrom: "477245af-7dc5-4394-ba9c-2e181ae9ab11",
-		WalletIDTo:   "127ae3f1-10f3-4bc9-87e5-233e2186ad80",
+		WalletIDFrom: "5f664e09-e970-48c2-8fc2-dceb3096bd52",
+		WalletIDTo:   "bd8873c8-be31-4285-b8ef-b7ed2ac82be8",
 		Amount:       120,
 	}
 	// Serialize the message to JSON

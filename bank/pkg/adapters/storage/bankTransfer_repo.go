@@ -100,6 +100,7 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 	// Update transaction status
 	tr.Status = types.TransactionSuccess
 	createdTransaction := mapper.DomainTransactionToTransactionEntity(tr)
+	print(1111111111, "  ", createdTransaction.FromWalletID, "  ", createdTransaction.ToWalletID)
 	if err := tx.WithContext(ctx).Create(&createdTransaction).Error; err != nil {
 		tx.Rollback()
 		return nil, err

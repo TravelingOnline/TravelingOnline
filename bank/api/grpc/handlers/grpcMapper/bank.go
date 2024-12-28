@@ -7,6 +7,7 @@ import (
 )
 
 func CreateWalletReqToWalletDomain(w *protobufs.CreateWalletRequest) (*domain.Wallet, error) {
+
 	uid, err := uuid.Parse(w.UserID)
 	if err != nil {
 		return nil, err

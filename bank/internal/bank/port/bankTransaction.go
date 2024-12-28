@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/google/uuid"
+	// "github.com/google/uuid"
 	"github.com/onlineTraveling/bank/internal/bank/domain"
 )
 
@@ -14,6 +14,6 @@ var (
 )
 
 type BankTransactionRepo interface {
-	GetTransactionsByUserId(ctx context.Context, userID uuid.UUID) ([]domain.BankTransaction, error)
+	// GetTransactionsByUserId(ctx context.Context, userID uuid.UUID) ([]domain.BankTransaction, error)
 	Transfer(ctx context.Context, transaction *domain.BankTransaction) (*domain.BankTransaction, error)
 }
