@@ -16,7 +16,7 @@ func CreateWalletReqToWalletDomain(w *protobufs.CreateWalletRequest) (*domain.Wa
 		UserID: uid,
 	}, nil
 }
-func TransferReqToBankTransactionDomain(t *protobufs.TransferRequest) (*domain.BankTransaction, error) {
+func TransferReqToBankTransactionDomain(t *protobufs.TransferRequest) (*domain.BankTransaction, error) { //checked
 	var receiverUserUUID uuid.UUID
 	senderUserUUID, err := uuid.Parse(t.SenderOwnerID)
 	if err != nil {
@@ -27,10 +27,10 @@ func TransferReqToBankTransactionDomain(t *protobufs.TransferRequest) (*domain.B
 		return nil, err
 	}
 	fromWl := &domain.Wallet{
-		UserID: senderUserUUID,
+		ID: &senderUserUUID,
 	}
 	toWl := &domain.Wallet{
-		UserID: receiverUserUUID,
+		ID: &receiverUserUUID,
 	}
 	return &domain.BankTransaction{
 		Amount:     uint(t.Amount),

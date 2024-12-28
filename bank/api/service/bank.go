@@ -71,7 +71,6 @@ func (s *BankService) GetWallet(ctx context.Context, userID uuid.UUID) (*domain.
 }
 
 func (s *BankService) Transfer(ctx context.Context, tr *domain.BankTransaction) (*domain.BankTransaction, error) {
-	println(tr.FromWallet.ID, tr.ToWallet.ID, 11111111111)
 	createdTransaction, err := s.bankTransactionService.Transfer(ctx, tr)
 	if err != nil {
 		return nil, err

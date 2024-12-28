@@ -38,11 +38,11 @@ func main() {
 	}
 
 	// Map the response to the domain model
-	domainResponse, err := mappers.TransferEntitieToTransferDomain(response)
+	_, err = mappers.TransferEntitieToTransferDomain(response)
 	if err != nil {
 		log.Fatalf("cannot map response: %v", err)
 	}
 
 	// Print the domain response
-	log.Printf("transfered successfully: %v", *domainResponse)
+	log.Printf("Transfered successfully")
 }

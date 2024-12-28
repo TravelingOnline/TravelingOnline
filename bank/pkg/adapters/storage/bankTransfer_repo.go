@@ -2,6 +2,8 @@ package storage
 
 import (
 	"context"
+	"fmt"
+
 	// "errors"
 
 	"github.com/google/uuid"
@@ -40,7 +42,7 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 	}
 
 	var walletFrom, walletTo *domain.Wallet
-
+	fmt.Printf("\n  f user id :%v  t user id :%v amount   %v\n", tr.FromWallet.UserID, tr.ToWallet.UserID, tr.Amount)
 	// Fetch the source wallet
 	if err := tx.Table("wallets").Where("id=?", tr.FromWallet.ID).First(&walletFrom).Error; err != nil {
 		tx.Rollback()
@@ -100,7 +102,6 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 	// Update transaction status
 	tr.Status = types.TransactionSuccess
 	createdTransaction := mapper.DomainTransactionToTransactionEntity(tr)
-	print(1111111111, "  ", createdTransaction.FromWalletID, "  ", createdTransaction.ToWalletID)
 	if err := tx.WithContext(ctx).Create(&createdTransaction).Error; err != nil {
 		tx.Rollback()
 		return nil, err
