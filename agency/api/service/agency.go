@@ -35,8 +35,31 @@ func (s *AgencyService) CreateAgency(ctx context.Context, req *pb.AgencyCreateRe
 	return nil
 }
 
-func (s *AgencyService) GetAgency(ctx context.Context) {
+func (s *AgencyService) GetAgencyByOwnerID(ctx context.Context, id uint) (*domain.Agency, error) {
+	agency, err := s.svc.GetAgencyByOwnerID(ctx, id)
+	if err != nil {
+		return nil, ErrAgencyNotFound
+	}
 
+	return agency, nil
+}
+
+func (s *AgencyService) GetAgencyByID(ctx context.Context, id uint) (*domain.Agency, error) {
+	agency, err := s.svc.GetAgencyByID(ctx, id)
+	if err != nil {
+		return nil, ErrAgencyNotFound
+	}
+	return agency, nil
+
+}
+
+func (s *AgencyService) GetAll(ctx context.Context, page, pagesize int) ([]domain.Agency, error) {
+	agencies, err := s.svc.GetAllAgencies(ctx, page, pagesize)
+	if err != nil {
+		return nil, ErrAgencyNotFound
+	}
+
+	return agencies, nil
 }
 
 func (s *AgencyService) UpdateAgency(ctx context.Context) {
