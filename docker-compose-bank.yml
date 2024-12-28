@@ -1,31 +1,31 @@
 version: '3.8'
 
 services:
-  # consul:
-  #   image: hashicorp/consul:1.16.0
-  #   command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
-  #   ports:
-  #     - "8500:8500"  
-  #     - "8600:8600/udp" 
-  #   restart: always
-  #   networks:
-  #     - bank-network
+  consul:
+    image: hashicorp/consul:1.16.0
+    command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+    ports:
+      - "8500:8500"  
+      - "8600:8600/udp" 
+    restart: always
+    networks:
+      - bank-network
 
-  # traefik:
-  #   restart: always
-  #   image: traefik:v3.1
-  #   command:
-  #     - "--configFile=/etc/traefik/traefik.yaml"
+  traefik:
+    restart: always
+    image: traefik:v3.1
+    command:
+      - "--configFile=/etc/traefik/traefik.yaml"
 
-  #   ports:
-  #     - "80:80"
-  #     - "8080:8080"
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml
-  #     - ./traefik/dynamic_conf.toml:/etc/traefik/dynamic_conf.toml
-  #   networks:
-  #     - bank-network
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml
+      - ./traefik/dynamic_conf.toml:/etc/traefik/dynamic_conf.toml
+    networks:
+      - bank-network
 
   bank-postgres:
     image: 'postgres:latest'
@@ -34,31 +34,31 @@ services:
       POSTGRES_DB: ${BANK_POSTGRES_DB_NAME}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    # networks:
-    #   - bank-network
+    networks:
+      - bank-network
     ports:
       - '${BANK_POSTGRES_PORT}:5432'
   
-  # bank-service:
-  #   build:
-  #     context: ./bank
-  #   container_name: bank-service
-  #   ports:
-  #     - "8082:8080"
-  #     - "50051:50051"
-  #   environment:
-  #     - ENV=production
-  #     - TZ=Asia/Tehran
-  #     - BANK_CONFIG_PATH=/app/config.json
-  #     - KAFKA_BROKER=kafka:9092
-  #   networks:
-  #     - bank-network
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - bank-postgres
-  #     # - consul
-  #   volumes:
-  #     - ${BANK_CONFIG_PATH}:/app/config.json
+  bank-service:
+    build:
+      context: ./bank
+    container_name: bank-service
+    ports:
+      - "8082:8080"
+      - "50051:50051"
+    environment:
+      - ENV=production
+      - TZ=Asia/Tehran
+      - BANK_CONFIG_PATH=/app/config.json
+      - KAFKA_BROKER=kafka:9092
+    networks:
+      - bank-network
+    restart: unless-stopped
+    depends_on:
+      - bank-postgres
+      - consul
+    volumes:
+      - ${BANK_CONFIG_PATH}:/app/config.json
   rabbitmq:
     image: rabbitmq:3.10.7-management
     restart: always
@@ -70,11 +70,11 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
-    # networks:
-    #   - bank-network
-# networks:
-#   bank-network:
-#     driver: bridge
+    networks:
+      - bank-network
+networks:
+  bank-network:
+    driver: bridge
 volumes:
   rabbitmq-data:
     driver: local

@@ -2,18 +2,12 @@ package storage
 
 import (
 	"context"
-	"fmt"
-
-	// "errors"
 
 	"github.com/google/uuid"
 	"github.com/onlineTraveling/bank/internal/bank/domain"
 	"github.com/onlineTraveling/bank/internal/bank/port"
 	"github.com/onlineTraveling/bank/pkg/adapters/storage/mapper"
 	"github.com/onlineTraveling/bank/pkg/adapters/storage/types"
-
-	// _context "github.com/onlineTraveling/bank/pkg/context"
-
 	"gorm.io/gorm"
 )
 
@@ -42,7 +36,6 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 	}
 
 	var walletFrom, walletTo *domain.Wallet
-	fmt.Printf("\n  f user id :%v  t user id :%v amount   %v\n", tr.FromWallet.UserID, tr.ToWallet.UserID, tr.Amount)
 	// Fetch the source wallet
 	if err := tx.Table("wallets").Where("id=?", tr.FromWallet.ID).First(&walletFrom).Error; err != nil {
 		tx.Rollback()

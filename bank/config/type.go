@@ -25,6 +25,7 @@ type ServiceRegistry struct {
 	Address         string `json:"address"`
 	ServiceName     string `json:"service_name"`
 	BankServiceName string `json:"bank_service_name"`
+	AuthServiceName string `json:"auth_service_name"`
 }
 
 type DBConfig struct {

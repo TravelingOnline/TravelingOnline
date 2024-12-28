@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/onlineTraveling/bank/api/grpc"
+	"github.com/onlineTraveling/bank/api/http"
 	"github.com/onlineTraveling/bank/api/message_broker"
 	"github.com/onlineTraveling/bank/app"
 	"github.com/onlineTraveling/bank/config"
@@ -29,8 +30,11 @@ func main() {
 	logger.Info("Starting the program", nil)
 	appContainer := app.NewMustApp(c)
 	var wg sync.WaitGroup
-	wg.Add(2)
-
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		http.Run(c, appContainer)
+	}()
 	go func() {
 		defer wg.Done()
 		grpc.Run(c, appContainer)
