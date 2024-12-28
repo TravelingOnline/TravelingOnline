@@ -18,3 +18,9 @@ type BankTransaction struct {
 	FromWallet *Wallet
 	ToWallet   *Wallet
 }
+type BankTransferResponse struct {
+	SenderOwnerID   string
+	ReceiverOwnerID string
+	Amount          uint64
+	Status          types.TransferTransactionStatus
+}

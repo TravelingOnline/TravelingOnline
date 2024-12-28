@@ -3,6 +3,7 @@ package mappers
 import (
 	"github.com/google/uuid"
 	"github.com/onlineTraveling/bank/internal/bank/domain"
+	"github.com/onlineTraveling/bank/pkg/adapters/storage/types"
 	"github.com/onlineTraveling/bank/protobufs"
 )
 
@@ -56,4 +57,12 @@ func BankTransactionDomainToTransferResponse(transaction *domain.BankTransaction
 		Amount:          uint64(transaction.Amount),
 		Status:          status,
 	}
+}
+func TransferEntitieToTransferDomain(re *protobufs.TransferResponse) (*domain.BankTransferResponse, error) {
+	return &domain.BankTransferResponse{
+		SenderOwnerID:   re.SenderOwnerID,
+		ReceiverOwnerID: re.ReceiverOwnerID,
+		Amount:          re.Amount,
+		Status:          types.TransferTransactionStatus(re.Status),
+	}, nil
 }
