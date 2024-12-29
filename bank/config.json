@@ -1,6 +1,6 @@
 {
   "bank_db": {
-    "host": "localhost",
+    "host": "bank-postgres",
     "port": 5432,
     "database": "BankDB",
     "schema": "public",

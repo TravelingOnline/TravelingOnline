@@ -129,11 +129,11 @@ func (a *App) BankServiceFromCtx(ctx context.Context) *service.BankService {
 func (a *App) mustRegisterService() {
 	srvCfg := a.cfg.Server
 	registry := consul.NewConsul(srvCfg.ServiceRegistry.Address)
-	println("ooooooooooooo ServiceName", srvCfg.ServiceRegistry.ServiceName)
-	println("ooooooooooooo ServiceHostAddress", srvCfg.ServiceHostAddress)
-	println("ooooooooooooo ServiceHTTPPrefixPath", srvCfg.ServiceHTTPPrefixPath)
-	println("ooooooooooooo ServiceHTTPHealthPath", srvCfg.ServiceHTTPHealthPath)
-	println("ooooooooooooo GRPCPort HttpPort", srvCfg.GRPCPort, srvCfg.HttpPort)
+	// println("ooooooooooooo ServiceName", srvCfg.ServiceRegistry.ServiceName)
+	// println("ooooooooooooo ServiceHostAddress", srvCfg.ServiceHostAddress)
+	// println("ooooooooooooo ServiceHTTPPrefixPath", srvCfg.ServiceHTTPPrefixPath)
+	// println("ooooooooooooo ServiceHTTPHealthPath", srvCfg.ServiceHTTPHealthPath)
+	// println("ooooooooooooo GRPCPort HttpPort", srvCfg.GRPCPort, srvCfg.HttpPort)
 	err := registry.RegisterService(srvCfg.ServiceRegistry.ServiceName, srvCfg.ServiceHostAddress, srvCfg.ServiceHTTPPrefixPath, srvCfg.ServiceHTTPHealthPath, srvCfg.GRPCPort, srvCfg.HttpPort)
 	if err != nil {
 		log.Fatalf("Failed to register service with Consul: %v", err)

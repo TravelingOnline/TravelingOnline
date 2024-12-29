@@ -1,6 +1,6 @@
 {
   "auth_db": {
-    "host": "auth-postgres",
+    "host": "localhost",
     "port": 5432,
     "database": "AuthenticationDB",
     "schema": "public",

@@ -32,8 +32,12 @@ func NewPsqlGormConnection(opt DBConnOptions) (*gorm.DB, error) {
 func GormMigrations(db *gorm.DB) {
 
 	err := db.AutoMigrate(
-
+		&types.Notification{},
 		&types.User{},
+		&types.CodeVerification{},
+		&types.Outbox{},
+		&types.CodeVerificationOutbox{},
+		&types.OutboxData{},
 	)
 	if err != nil {
 		log.Fatalf("failed to migrate models: %v", err)
