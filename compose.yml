@@ -79,11 +79,15 @@ services:
       - online-traveling-network
     ports:
       - '5432:5432'
+    volumes:
+      - vehicle_postgres_data:/var/lib/postgresql/data
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${VEHICLE_POSTGRES_DB_NAME}"]
-      interval: 10s
-      timeout: 5s
+      interval: 5s
+      timeout: 3s
       retries: 5
+  
 
   vehicle-service:
     build:
@@ -97,12 +101,45 @@ services:
     depends_on:
       vehicle-postgres:
         condition: service_healthy
-    # volumes:
-    #   - ${VEHICLE_CONFIG_PATH}:/app/config.json
+    
+  transport-postgres:
+    image: 'docker.arvancloud.ir/postgres:latest'
+    container_name: transport-postgres
+    environment:
+      POSTGRES_DB: ${TRANSPORT_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - online-traveling-network
+    ports:
+      - '5433:5432'
+    volumes:
+      - transport_postgres_data:/var/lib/postgresql/data
 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${TRANSPORT_POSTGRES_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  transport-service:
+    build:
+      context: ./transport
+    container_name: transport-service
+    ports:
+      - "8082:8082"
+    networks:
+      - online-traveling-network
+    restart: unless-stopped
+    depends_on:
+      transport-postgres:
+        condition: service_healthy
+   
 networks:
   online-traveling-network:
     driver: bridge
 volumes:
   redis-data:
     driver: local
+  vehicle_postgres_data:
+  transport_postgres_data:

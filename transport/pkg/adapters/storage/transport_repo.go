@@ -23,34 +23,34 @@ func NewTransportRepo(db *gorm.DB) port.Repo {
 }
 
 func (r *transportRepo) CreateCompany(ctx context.Context, v domain.Company) (domain.CompanyID, error) {
-	// Map the domain.Vehicle to the storage type
-	newVehicle := mapper.DomainCompany2Storage(v)
+	// Map the domain.Company to the storage type
+	newCompany := mapper.DomainCompany2Storage(v)
 
 	// Insert the new company into the database
-	if err := r.db.WithContext(ctx).Model(&types.Company{}).Create(&newVehicle).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(&types.Company{}).Create(&newCompany).Error; err != nil {
 		log.Printf("failed to create company: %v", err)
 		return "", fmt.Errorf("unable to create company in the database: %w", err)
 	}
 
 	// Return the new Company's ID
-	return domain.CompanyID(newVehicle.Id), nil
+	return domain.CompanyID(newCompany.Id), nil
 }
 
 func (r *transportRepo) UpdateCompany(ctx context.Context, company domain.Company) (domain.CompanyID, error) {
 	// Map domain company to storage company model
-	updateVehicle := mapper.DomainCompany2Storage(company)
+	updateCompany := mapper.DomainCompany2Storage(company)
 
 	// Update the company in the database
 	if err := r.db.WithContext(ctx).
-		Model(&updateVehicle).
-		Where("id = ?", updateVehicle.Id).
-		Updates(updateVehicle).Error; err != nil {
-		log.Printf("failed to update company with ID %s: %v", updateVehicle.Id, err)
+		Model(&updateCompany).
+		Where("id = ?", updateCompany.Id).
+		Updates(updateCompany).Error; err != nil {
+		log.Printf("failed to update company with ID %s: %v", updateCompany.Id, err)
 		return domain.CompanyID(""), fmt.Errorf("unable to update company in the database: %w", err)
 	}
 
 	// Return the updated company ID
-	return domain.CompanyID(updateVehicle.Id), nil
+	return domain.CompanyID(updateCompany.Id), nil
 }
 
 func (r *transportRepo) DeleteCompany(ctx context.Context, companyID domain.CompanyID) (domain.CompanyID, error) {
@@ -78,13 +78,13 @@ func (r *transportRepo) GetByIDCompany(ctx context.Context, companyID domain.Com
 	}
 
 	// Initialize a storage model to hold the result
-	var storageVehicle types.Company
+	var storageCompany types.Company
 
 	// Query the database and preload the Owner data
 	if err := r.db.WithContext(ctx).
 		Preload("Owner"). // Preload the associated Owner record
 		Where("id = ?", string(companyID)).
-		First(&storageVehicle).Error; err != nil {
+		First(&storageCompany).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return domain.Company{}, fmt.Errorf("company with ID %s not found", companyID)
 		}
@@ -93,10 +93,10 @@ func (r *transportRepo) GetByIDCompany(ctx context.Context, companyID domain.Com
 	}
 
 	// Map the storage model to the domain model
-	domainVehicle, err := mapper.CompanyStroage2Domain(storageVehicle)
+	domainCompany, err := mapper.CompanyStroage2Domain(storageCompany)
 	if err != nil {
 		return domain.Company{}, fmt.Errorf("error in mapper: %w", err)
 	}
 
-	return domainVehicle, nil
+	return domainCompany, nil
 }

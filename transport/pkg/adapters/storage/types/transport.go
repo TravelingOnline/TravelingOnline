@@ -9,6 +9,7 @@ import (
 type Company struct {
 	Id        string `gorm:"primaryKey"`
 	Name      string
+	OwnerID   uint64
 	Owner     *Owner         `gorm:"foreignKey:OwnerID"`
 	CreatedAt time.Time      `gorm:"autoCreateTime"` // Auto-set when created
 	UpdatedAt time.Time      `gorm:"autoUpdateTime"` // Auto-set when updated

@@ -84,27 +84,27 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 		return domain.Company{}, errors.New("OWNER DETAILS ARE INCOMPLETE")
 	}
 
-	// Construct and return the domain vehicle
-	vehicle := domain.Company{
+	// Construct and return the domain company
+	company := domain.Company{
 		Id:    PBreq.Id,
 		Name:  PBreq.Name,
 		Owner: &domain.Owner{Id: PBreq.Owner.Id, FirstName: PBreq.Owner.FirstName, LastName: PBreq.Owner.LastName, Email: PBreq.Owner.Email},
 	}
 
-	return vehicle, nil
+	return company, nil
 }
 
-func DomainVehicle2PBCreateVehicleRequest(vehicle domain.Company) (*pb.CreateCompanyRequest, error) {
+func DomainCompany2PBCreateCompanyRequest(company domain.Company) (*pb.CreateCompanyRequest, error) {
 	// Validate input
-	if vehicle.Owner == nil {
-		return nil, errors.New("vehicle.Owner cannot be nil")
+	if company.Owner == nil {
+		return nil, errors.New("company.Owner cannot be nil")
 	}
 
-	// Construct and return the protobuf CreateVehicleRequest
+	// Construct and return the protobuf CreateCompanyRequest
 	PBreq := &pb.CreateCompanyRequest{
 		Id:    "",
-		Name:  vehicle.Name,
-		Owner: &pb.Owner{Id: vehicle.Owner.Id, FirstName: vehicle.Owner.FirstName, LastName: vehicle.Owner.LastName, Email: vehicle.Owner.Email},
+		Name:  company.Name,
+		Owner: &pb.Owner{Id: company.Owner.Id, FirstName: company.Owner.FirstName, LastName: company.Owner.LastName, Email: company.Owner.Email},
 	}
 
 	return PBreq, nil
@@ -118,6 +118,7 @@ func DomainCompany2PBCompanyResponse(company domain.Company) (*pb.GetByIDCompany
 
 	// Construct and return the protobuf CreateCompanyResponse
 	PBreq := &pb.GetByIDCompanyResponse{
+		Id:   company.Id,
 		Name: company.Name,
 		Owner: &pb.Owner{
 			Id:        company.Owner.Id,

@@ -1,14 +1,14 @@
 
 db:
-  host: "vehicle-postgres"
+  host: "transport-postgres"
   port: 5432
-  database: "vehicle"
+  database: "transport"
   schema: "public"
   username: "admin"
   password: "12345"
 
 server:
-  httpPort: 8081
+  httpPort: 8082
   secret: "your_secret_key"
   authExpMin: 15
   authExpRefreshMin: 60

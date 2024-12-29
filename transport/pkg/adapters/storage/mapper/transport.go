@@ -20,7 +20,7 @@ func CompanyStroage2Domain(v types.Company) (domain.Company, error) {
 	}
 
 	// Construct the domain company
-	vehicle := domain.Company{
+	company := domain.Company{
 		Id:   v.Id,
 		Name: v.Name,
 		Owner: &domain.Owner{
@@ -32,7 +32,7 @@ func CompanyStroage2Domain(v types.Company) (domain.Company, error) {
 	}
 
 	// Return the constructed company and nil error if no validation failed
-	return vehicle, nil
+	return company, nil
 }
 
 func DomainCompany2Storage(v domain.Company) types.Company {
