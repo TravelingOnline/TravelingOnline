@@ -6,7 +6,7 @@ import (
 	"net"
 
 	"github.com/onlineTraveling/transport/api/handlers/grpc/tour"
-	"github.com/onlineTraveling/transport/api/handlers/grpc/transport"
+	"github.com/onlineTraveling/transport/api/handlers/grpc/company"
 	"github.com/onlineTraveling/transport/api/pb"
 	"github.com/onlineTraveling/transport/api/service"
 	"github.com/onlineTraveling/transport/app"
@@ -23,7 +23,7 @@ func Run(cfg config.Config, app *app.App) {
 	grpcServer := grpc.NewServer()
 	cHandler := service.NewCompanyService(app.CompanyService())
 	tHandler := service.NewTourService(app.TourService())
-	c:= transport.NewGRPCTransportHandler(*cHandler)
+	c:= company.NewGRPCTransportHandler(*cHandler)
 	t:= tour.NewGRPCTourHandler(*tHandler)
 	// pb.RegisterTrasportServiceServer(grpcServer, d)
 	pb.RegisterCompanyServiceServer(grpcServer, c)
