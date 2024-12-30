@@ -88,7 +88,6 @@ services:
       timeout: 3s
       retries: 5
   
-
   vehicle-service:
     build:
       context: ./vehicle
@@ -111,10 +110,14 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - online-traveling-network
+    
     ports:
       - '5433:5432'
     volumes:
       - transport_postgres_data:/var/lib/postgresql/data
+    
+    depends_on:
+      - vehicle-postgres
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${TRANSPORT_POSTGRES_DB_NAME}"]
