@@ -7,7 +7,6 @@ import (
 	"agency/pkg/adapters/storage/types"
 	"context"
 	"errors"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -92,7 +91,7 @@ func (r *agencyRepo) Update(ctx context.Context, agencyDomain *domain.Agency) er
 func (r *agencyRepo) Delete(ctx context.Context, id uint) error {
 
 	err := r.db.WithContext(ctx).Delete(&types.Agency{}, id).Error
-	fmt.Println(err)
+
 	if err != nil {
 		return err
 	}
