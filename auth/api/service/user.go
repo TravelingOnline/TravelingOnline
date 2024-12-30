@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	codeVerficationDomain "github.com/onlineTraveling/auth/internal/codeVerification/domain"
 	codeVerificationPort "github.com/onlineTraveling/auth/internal/codeVerification/port"
 	"github.com/onlineTraveling/auth/internal/user"
@@ -63,8 +64,8 @@ type SignUpSecondResponseWrapper struct {
 func (s *UserService) SignUp(ctx context.Context, req *protobufs.UserSignUpFirstRequest) (*SignUpFirstResponseWrapper, error) {
 	userID, err := s.svc.CreateUser(ctx, domain.User{
 
-		Email:        domain.Email(req.GetEmail()),
-		PasswordHash: req.GetPassword(),
+		Email:    domain.Email(req.GetEmail()),
+		Password: req.GetPassword(),
 	})
 
 	if err != nil {
@@ -74,13 +75,10 @@ func (s *UserService) SignUp(ctx context.Context, req *protobufs.UserSignUpFirst
 	code := strconv.Itoa(helper.GetRandomCode())
 
 	s.codeVerficationServise.Send(ctx, codeVerficationDomain.NewCodeVerification(userID, fmt.Sprint(code), codeVerficationDomain.CodeVerificationTypeEmail, true, time.Minute*2))
-
-	// go helper.SendEmail(req.GetEmail())
-	// go helper.SendEmail(req.GetEmail(), code)
 	response := &SignUpFirstResponseWrapper{
 		RequestTimestamp: time.Now().Unix(),
 		Data: &protobufs.UserSignUpFirstResponse{
-			UserId: uint64(userID),
+			UserId: userID.ConvStr(),
 		},
 	}
 
@@ -88,11 +86,15 @@ func (s *UserService) SignUp(ctx context.Context, req *protobufs.UserSignUpFirst
 }
 
 func (s *UserService) SignUpCodeVerification(ctx context.Context, req *protobufs.UserSignUpSecondRequest) (*SignUpSecondResponseWrapper, error) {
-	_, err := s.svc.GetUserByID(ctx, domain.UserID(req.GetUserId()))
+	uid, err := uuid.Parse(req.GetUserId())
 	if err != nil {
 		return nil, err
 	}
-	ok, err := s.codeVerficationServise.CheckUserCodeVerificationValue(ctx, domain.UserID(req.GetUserId()), req.GetCode())
+	_, err = s.svc.GetUserByID(ctx, domain.UserID(uid))
+	if err != nil {
+		return nil, err
+	}
+	ok, err := s.codeVerficationServise.CheckUserCodeVerificationValue(ctx, domain.UserID(uid), req.GetCode())
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +104,8 @@ func (s *UserService) SignUpCodeVerification(ctx context.Context, req *protobufs
 			RegisteredClaims: jwt2.RegisteredClaims{
 				ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.expMin, true)),
 			},
-			UserID: uint(req.GetUserId()),
+
+			UserID: uid,
 		})
 		if err != nil {
 			return nil, err
@@ -112,7 +115,7 @@ func (s *UserService) SignUpCodeVerification(ctx context.Context, req *protobufs
 			RegisteredClaims: jwt2.RegisteredClaims{
 				ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.refreshExpMin, true)),
 			},
-			UserID: uint(req.GetUserId()),
+			UserID: uid,
 		})
 
 		if err != nil {
@@ -137,7 +140,7 @@ func (s *UserService) SignIn(ctx context.Context, req *protobufs.UserSignInReque
 	if err != nil {
 		return nil, err
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.GetPassword()))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.GetPassword()))
 	if err != nil {
 		return nil, ErrPasswordNotMatch
 	}
@@ -145,7 +148,7 @@ func (s *UserService) SignIn(ctx context.Context, req *protobufs.UserSignInReque
 		RegisteredClaims: jwt2.RegisteredClaims{
 			ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.expMin, true)),
 		},
-		UserID: uint(user.ID),
+		UserID: user.ID,
 	})
 	if err != nil {
 		return nil, err
@@ -155,7 +158,7 @@ func (s *UserService) SignIn(ctx context.Context, req *protobufs.UserSignInReque
 		RegisteredClaims: jwt2.RegisteredClaims{
 			ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.refreshExpMin, true)),
 		},
-		UserID: uint(user.ID),
+		UserID: user.ID,
 	})
 
 	if err != nil {
@@ -173,16 +176,16 @@ func (s *UserService) SignIn(ctx context.Context, req *protobufs.UserSignInReque
 
 }
 
-func (s *UserService) GetByID(ctx context.Context, id uint) (*protobufs.User, error) {
+func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (*protobufs.User, error) {
 	user, err := s.svc.GetUserByID(ctx, domain.UserID(id))
 	if err != nil {
 		return nil, err
 	}
 
 	return &protobufs.User{
-		Id:           uint64(user.ID),
+		Id:           user.ID.String(),
 		Email:        string(user.Email),
-		PasswordHash: user.PasswordHash,
+		PasswordHash: user.Password,
 
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		DeletedAt: timestamppb.New(user.DeletedAt), // Handle DeletedAt if needed
@@ -192,11 +195,11 @@ func (s *UserService) GetByID(ctx context.Context, id uint) (*protobufs.User, er
 
 func (s *UserService) Update(ctx context.Context, user *types.User) error {
 	err := s.svc.UpdateUser(ctx, domain.User{
-		ID:           domain.UserID(user.ID),
-		Email:        domain.Email(user.Email),
-		PasswordHash: user.PasswordHash,
-		CreatedAt:    user.CreatedAt,
-		UpdatedAt:    user.UpdatedAt,
+		ID:        user.ID,
+		Email:     domain.Email(user.Email),
+		Password:  user.PasswordHash,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	})
 	if err != nil {
 		logger.Error("update user error", nil)
@@ -205,13 +208,13 @@ func (s *UserService) Update(ctx context.Context, user *types.User) error {
 	return nil
 }
 
-func (s *UserService) DeleteByID(ctx context.Context, userID int) error {
+func (s *UserService) DeleteByID(ctx context.Context, userID uuid.UUID) error {
 	err := s.svc.DeleteByID(ctx, domain.UserID(userID))
 	if err != nil {
 		logger.Error("can not delete user", nil)
 		return err
 	}
 
-	logger.Info("deleted user with id "+strconv.Itoa(int(userID)), nil)
+	logger.Info("deleted user with id "+userID.String(), nil)
 	return nil
 }

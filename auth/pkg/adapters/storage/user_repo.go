@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/auth/internal/user/domain"
 	"github.com/onlineTraveling/auth/internal/user/port"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/mapper"
@@ -30,14 +31,14 @@ func (r *userRepo) Create(ctx context.Context, userDomain domain.User) (domain.U
 func (r *userRepo) GetByID(ctx context.Context, userID domain.UserID) (*domain.User, error) {
 	var user types.User
 	err := r.db.Debug().Table("users").
-		Where("id = ?", userID).WithContext(ctx).
+		Where("id = ?", uuid.UUID(userID)).WithContext(ctx).
 		First(&user).Error
 
 	if err != nil {
 		return nil, err
 	}
 
-	if user.ID == 0 {
+	if user.ID == uuid.Nil {
 		return nil, nil
 	}
 
@@ -52,7 +53,7 @@ func (r *userRepo) GetByEmail(ctx context.Context, email domain.Email) (*domain.
 		return nil, err
 	}
 
-	if user.ID == 0 {
+	if user.ID == uuid.Nil {
 		return nil, nil
 	}
 
@@ -64,8 +65,8 @@ func (r *userRepo) GetByFilter(ctx context.Context, filter *domain.UserFilter) (
 
 	q := r.db.Table("users").Debug().WithContext(ctx)
 
-	if filter.ID > 0 {
-		q = q.Where("id = ?", filter.ID)
+	if filter.ID != domain.UserID(uuid.Nil) {
+		q = q.Where("id = ?", uuid.UUID(filter.ID))
 	}
 
 	if len(filter.Phone) > 0 {
@@ -78,7 +79,7 @@ func (r *userRepo) GetByFilter(ctx context.Context, filter *domain.UserFilter) (
 		return nil, err
 	}
 
-	if user.ID == 0 {
+	if user.ID == uuid.Nil {
 		return nil, nil
 	}
 
@@ -87,7 +88,7 @@ func (r *userRepo) GetByFilter(ctx context.Context, filter *domain.UserFilter) (
 
 func (r *userRepo) UpdateUser(ctx context.Context, user domain.User) error {
 	var preUpdateUser types.User
-	err := r.db.Model(&types.User{}).Where("id = ?", user.ID).First((&preUpdateUser)).Error
+	err := r.db.Model(&types.User{}).Where("id = ?", uuid.UUID(user.ID)).First((&preUpdateUser)).Error
 	if err != nil {
 		logger.Error(err.Error(), nil)
 		return err
@@ -109,7 +110,7 @@ func (r *userRepo) UpdateUser(ctx context.Context, user domain.User) error {
 	}
 
 	// Update the user record
-	if err := tx.Model(&types.User{}).Where("id = ?", user.ID).Updates(updates).Error; err != nil {
+	if err := tx.Model(&types.User{}).Where("id = ?", uuid.UUID(user.ID)).Updates(updates).Error; err != nil {
 		logger.Error(err.Error(), nil)
 		tx.Rollback()
 		return err
@@ -120,5 +121,5 @@ func (r *userRepo) UpdateUser(ctx context.Context, user domain.User) error {
 }
 
 func (r *userRepo) DeleteByID(ctx context.Context, userID domain.UserID) error {
-	return r.db.Where("id = ?", userID).Delete(&types.User{}).Error
+	return r.db.Where("id = ?", uuid.UUID(userID)).Delete(&types.User{}).Error
 }

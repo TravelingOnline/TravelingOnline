@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/auth/api/service"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/types"
 	"github.com/onlineTraveling/auth/pkg/logger"
@@ -71,12 +72,18 @@ func SignUpCodeVerification(svcGetter ServiceGetter[*service.UserService]) fiber
 func GetUserByID(svcGetter ServiceGetter[*service.UserService]) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		svc := svcGetter(c.UserContext())
-		id, err := c.ParamsInt("id")
+		// Get the "id" parameter from the route
+		idParam := c.Params("id")
+
+		// Parse the id into a uuid.UUID
+		id, err := uuid.Parse(idParam)
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "invalid UUID format",
+			})
 		}
 
-		resp, err := svc.GetByID(c.UserContext(), uint(id))
+		resp, err := svc.GetByID(c.UserContext(), id)
 		if err != nil {
 			if errors.Is(err, service.ErrUserNotFound) {
 				return c.SendStatus(fiber.StatusNotFound)
@@ -107,9 +114,14 @@ func Update(svcGetter ServiceGetter[*service.UserService]) fiber.Handler {
 func DeleteByID(svcGetter ServiceGetter[*service.UserService]) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		svc := svcGetter(c.UserContext())
-		id, err := c.ParamsInt("id")
+		idParam := c.Params("id")
+
+		// Parse the id into a uuid.UUID
+		id, err := uuid.Parse(idParam)
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "invalid UUID format",
+			})
 		}
 		err = svc.DeleteByID(c.UserContext(), id)
 		if err != nil {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/auth/internal/notification/domain"
 	notifPort "github.com/onlineTraveling/auth/internal/notification/port"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/mapper"
@@ -29,11 +30,14 @@ func (r *notifRepo) SendMessage(ctx context.Context, notif domain.Notification) 
 
 func (r *notifRepo) GetUnreadMessages(ctx context.Context, userID string) ([]*domain.Notification, error) {
 	var notif []types.Notification
-
-	err := r.db.Table("inbox").WithContext(ctx).Where("user_id = ? AND read = ?", userID, false).Find(&notif).Error
+	uid, err := uuid.Parse(userID)
+	if err != nil {
+		return nil, err
+	}
+	err = r.db.Table("inbox").WithContext(ctx).Where("user_id = ? AND read = ?", uid, false).Find(&notif).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	r.db.Table("inbox").WithContext(ctx).Where("user_id = ? AND read = ?", userID, false).Updates(map[string]interface{}{"read": true})
+	r.db.Table("inbox").WithContext(ctx).Where("user_id = ? AND read = ?", uid, false).Updates(map[string]interface{}{"read": true})
 	return mapper.NotifStorage2Domain(notif), nil
 }

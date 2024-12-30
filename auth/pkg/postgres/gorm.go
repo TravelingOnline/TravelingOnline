@@ -30,8 +30,11 @@ func NewPsqlGormConnection(opt DBConnOptions) (*gorm.DB, error) {
 	})
 }
 func GormMigrations(db *gorm.DB) {
-
-	err := db.AutoMigrate(
+	err := db.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`).Error
+	if err != nil {
+		log.Fatalf("failed to make uuid-oosp models: %v", err)
+	}
+	err = db.AutoMigrate(
 		&types.Notification{},
 		&types.User{},
 		&types.CodeVerification{},

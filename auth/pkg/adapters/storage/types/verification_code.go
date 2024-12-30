@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/google/uuid"
 	codeVerifDomain "github.com/onlineTraveling/auth/internal/codeVerification/domain"
 	"github.com/onlineTraveling/auth/internal/common"
 	"gorm.io/datatypes"
@@ -32,6 +33,6 @@ type Outbox struct {
 type CodeVerification struct {
 	gorm.Model
 	Content string
-	To      uint
+	To      uuid.UUID
 	Type    uint8
 }

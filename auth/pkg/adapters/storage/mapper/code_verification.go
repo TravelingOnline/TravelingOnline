@@ -3,6 +3,7 @@ package mapper
 import (
 	"encoding/json"
 
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/auth/internal/codeVerification/domain"
 	"github.com/onlineTraveling/auth/internal/common"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/types"
@@ -25,7 +26,7 @@ func CodeVerificationOutbox2Storage(no *domain.CodeVerificationOutbox) (*types.O
 func CodeVerification2Storage(cv *domain.CodeVerification) *types.CodeVerification {
 	return &types.CodeVerification{
 		Content: cv.Content,
-		To:      uint(cv.UserID),
+		To:      uuid.UUID(cv.UserID),
 		Type:    uint8(cv.Type),
 	}
 }

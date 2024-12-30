@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/auth/internal/codeVerification/domain"
 	"github.com/onlineTraveling/auth/internal/codeVerification/port"
 	"github.com/onlineTraveling/auth/internal/common"
@@ -72,8 +73,8 @@ func (r *CodeVerificationRepo) GetUserCodeVerificationValue(ctx context.Context,
 	var code string
 	err := r.db.WithContext(ctx).
 		Table("code_verifications").
-		Select("content").         // Get "content" from the table
-		Where(`"to" = ?`, userID). // Use simple column name
+		Select("content").                    // Get "content" from the table
+		Where(`"to" = ?`, uuid.UUID(userID)). // Use simple column name
 		Where("created_at >= NOW() - INTERVAL '10 minutes'").
 		Scan(&code).Error
 

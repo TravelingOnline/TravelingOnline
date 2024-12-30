@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/auth/internal/user/domain"
 	"github.com/onlineTraveling/auth/internal/user/port"
 
@@ -32,18 +33,18 @@ func NewService(repo port.Repo) port.Service {
 
 func (s *service) CreateUser(ctx context.Context, user domain.User) (domain.UserID, error) {
 	if err := user.Validate(); err != nil {
-		return 0, fmt.Errorf("%w %w", ErrUserCreationValidation, err)
+		return domain.UserID(uuid.Nil), fmt.Errorf("%w %w", ErrUserCreationValidation, err)
 	}
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Println("Error while hashing password : ", err.Error())
-		return 0, ErrUserOnCreate
+		return domain.UserID(uuid.Nil), ErrUserOnCreate
 	}
-	user.PasswordHash = string(hashedPassword)
+	user.Password = string(hashedPassword)
 	userID, err := s.repo.Create(ctx, user)
 	if err != nil {
 		log.Println("error on creating new user : ", err.Error())
-		return 0, ErrUserOnCreate
+		return domain.UserID(uuid.Nil), ErrUserOnCreate
 	}
 
 	return userID, nil
@@ -54,7 +55,7 @@ func (s *service) GetUserByID(ctx context.Context, userID domain.UserID) (*domai
 	if err != nil {
 		return nil, err
 	}
-	if user == nil || user.ID == 0 {
+	if user == nil || user.ID == uuid.Nil {
 		return nil, ErrUserNotFound
 	}
 
@@ -66,7 +67,7 @@ func (s *service) GetUserByEmail(ctx context.Context, email domain.Email) (*doma
 	if err != nil {
 		return nil, err
 	}
-	if user == nil || user.ID == 0 {
+	if user == nil || user.ID == uuid.Nil {
 		return nil, ErrUserNotFound
 	}
 

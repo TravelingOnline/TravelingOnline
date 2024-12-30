@@ -1,15 +1,21 @@
 package types
 
 import (
+	"time"
+
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	Email        string `gorm:"column:email;unique;not null"`
-	PasswordHash string `gorm:"column:password_hash;not null"`
-	IsSuperAdmin bool   `gorm:"not null; default:false"`
-	IsAdmin      bool   `gorm:"not null; default:false"`
+	ID           uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
+	Email        string         `gorm:"column:email;unique;not null"`
+	PasswordHash string         `gorm:"column:password_hash;not null"`
+	IsSuperAdmin bool           `gorm:"not null; default:false"`
+	IsAdmin      bool           `gorm:"not null; default:false"`
 	//Roles        []Role         `gorm:"many2many:user_roles;"`
 	IsBlocked bool `gorm:"not null; default:false"`
 }

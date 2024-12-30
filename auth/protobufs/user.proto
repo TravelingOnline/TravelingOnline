@@ -15,7 +15,7 @@ message UserSignInRequest {
     string password = 2 [json_name = "password"];
 }
 message UserSignUpSecondRequest {
-    uint64 userId = 1 [json_name = "userId"];
+    string userId = 1 [json_name = "userId"];
     string code = 2 [json_name = "code"];
 }
 
@@ -25,16 +25,30 @@ message UserSignUpSecondResponse {
 }
 
 message UserSignUpFirstResponse {
-    uint64 userId = 1 [json_name = "userId"];
+    string userId = 1 [json_name = "userId"];
 }
-
+service AuthService {
+  rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse) {}
+  rpc RefreshToken (RefreshTokenRequest) returns (UserSignUpSecondResponse) {}
+}
 import "google/protobuf/timestamp.proto";
 message User {
-    uint64 id = 1;
+    string id = 1;
     string email = 2;             
     string passwordHash = 3;     
     google.protobuf.Timestamp created_at = 4;
     google.protobuf.Timestamp deleted_at = 5;
     google.protobuf.Timestamp updated_at = 6;
     
+}
+message RefreshTokenRequest {
+  string refreshToken = 1;
+}
+message GetUserByTokenRequest {
+  string token = 1;
+}
+
+message GetUserByTokenResponse {
+  string userId = 1;
+  bool isAdmin = 2;
 }

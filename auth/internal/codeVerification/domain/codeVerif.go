@@ -5,7 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/onlineTraveling/auth/internal/common"
+	"github.com/onlineTraveling/auth/internal/user/domain"
 	userDomain "github.com/onlineTraveling/auth/internal/user/domain"
 )
 
@@ -41,7 +43,7 @@ func (n *CodeVerification) Normalize() {
 }
 
 func (n *CodeVerification) Validate() error {
-	if n.UserID == 0 {
+	if n.UserID == domain.UserID(uuid.Nil) {
 		return errors.New("empty user id")
 	}
 
