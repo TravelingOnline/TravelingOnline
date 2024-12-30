@@ -5,17 +5,17 @@ import (
 
 	"github.com/onlineTraveling/transport/api/pb"
 	"github.com/onlineTraveling/transport/api/service"
-	"github.com/onlineTraveling/transport/internal/transport/domain"
+	"github.com/onlineTraveling/transport/internal/company/domain"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type GRPCTransportHandler struct {
-	pb.UnimplementedTrasportServiceServer
-	transportService *service.TransportService
+	pb.UnimplementedCompanyServiceServer
+	transportService *service.CompanyService
 }
 
-func NewGRPCTransportHandler(trasnsportService service.TransportService) *GRPCTransportHandler {
+func NewGRPCTransportHandler(trasnsportService service.CompanyService) *GRPCTransportHandler {
 	return &GRPCTransportHandler{transportService: &trasnsportService}
 }
 

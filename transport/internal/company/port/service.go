@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	"github.com/onlineTraveling/transport/internal/transport/domain"
+	"github.com/onlineTraveling/transport/internal/company/domain"
 )
 
 type Service interface {

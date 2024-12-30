@@ -1,13 +1,14 @@
-package transport
+package tour
+
 
 import (
 	"errors"
 
 	"github.com/onlineTraveling/transport/api/pb"
-	"github.com/onlineTraveling/transport/internal/company/domain"
+	"github.com/onlineTraveling/transport/internal/tour/domain"
 )
 
-func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error) {
+func PBTourRequest2DomainTour(request interface{}) (domain.Tour, error) {
 	var PBreq struct {
 		Id    string
 		Name  string
@@ -21,7 +22,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 
 	// Map the input to the common structure
 	switch req := request.(type) {
-	case *pb.CreateCompanyRequest:
+	case *pb.CreateTourRequest:
 		PBreq = struct {
 			Id    string
 			Name  string
@@ -46,7 +47,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 				Email:     req.Owner.Email,
 			},
 		}
-	case *pb.UpdateCompanyRequest:
+	case *pb.UpdateTourRequest:
 		PBreq = struct {
 			Id    string
 			Name  string
@@ -73,19 +74,19 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 			},
 		}
 	default:
-		return domain.Company{}, errors.New("unsupported request type")
+		return domain.Tour{}, errors.New("unsupported request type")
 	}
 
 	// Validate input
 	if PBreq.Owner == nil {
-		return domain.Company{}, errors.New("OWNER CANNOT BE NIL")
+		return domain.Tour{}, errors.New("OWNER CANNOT BE NIL")
 	}
 	if PBreq.Owner.Id == 0 || PBreq.Owner.FirstName == "" || PBreq.Owner.LastName == "" || PBreq.Owner.Email == "" {
-		return domain.Company{}, errors.New("OWNER DETAILS ARE INCOMPLETE")
+		return domain.Tour{}, errors.New("OWNER DETAILS ARE INCOMPLETE")
 	}
 
 	// Construct and return the domain company
-	company := domain.Company{
+	company := domain.Tour{
 		Id:    PBreq.Id,
 		Name:  PBreq.Name,
 		Owner: &domain.Owner{Id: PBreq.Owner.Id, FirstName: PBreq.Owner.FirstName, LastName: PBreq.Owner.LastName, Email: PBreq.Owner.Email},
@@ -94,37 +95,37 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 	return company, nil
 }
 
-func DomainCompany2PBCreateCompanyRequest(company domain.Company) (*pb.CreateCompanyRequest, error) {
+func DomainCompany2PBCreateCompanyRequest(tour domain.Tour) (*pb.CreateCompanyRequest, error) {
 	// Validate input
-	if company.Owner == nil {
+	if tour.Owner == nil {
 		return nil, errors.New("company.Owner cannot be nil")
 	}
 
 	// Construct and return the protobuf CreateCompanyRequest
 	PBreq := &pb.CreateCompanyRequest{
 		Id:    "",
-		Name:  company.Name,
-		Owner: &pb.Owner{Id: company.Owner.Id, FirstName: company.Owner.FirstName, LastName: company.Owner.LastName, Email: company.Owner.Email},
+		Name:  tour.Name,
+		Owner: &pb.Owner{Id: tour.Owner.Id, FirstName: tour.Owner.FirstName, LastName: tour.Owner.LastName, Email: tour.Owner.Email},
 	}
 
 	return PBreq, nil
 }
 
-func DomainCompany2PBCompanyResponse(company domain.Company) (*pb.GetByIDCompanyResponse, error) {
+func DomainCompany2PBCompanyResponse(tour domain.Tour) (*pb.GetByIDTourResponse, error) {
 	// Validate input
-	if company.Owner == nil {
+	if tour.Owner == nil {
 		return nil, errors.New("company.Owner cannot be nil")
 	}
 
 	// Construct and return the protobuf CreateCompanyResponse
-	PBreq := &pb.GetByIDCompanyResponse{
-		Id:   company.Id,
-		Name: company.Name,
+	PBreq := &pb.GetByIDTourResponse{
+		Id:   tour.Id,
+		Name: tour.Name,
 		Owner: &pb.Owner{
-			Id:        company.Owner.Id,
-			FirstName: company.Owner.FirstName,
-			LastName:  company.Owner.LastName,
-			Email:     company.Owner.Email,
+			Id:        tour.Owner.Id,
+			FirstName: tour.Owner.FirstName,
+			LastName:  tour.Owner.LastName,
+			Email:     tour.Owner.Email,
 		},
 	}
 

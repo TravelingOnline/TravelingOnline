@@ -1,11 +1,11 @@
-package transport
+package company
 
 import (
 	"context"
 	"log"
 
-	"github.com/onlineTraveling/transport/internal/transport/domain"
-	"github.com/onlineTraveling/transport/internal/transport/port"
+	"github.com/onlineTraveling/transport/internal/company/domain"
+	"github.com/onlineTraveling/transport/internal/company/port"
 )
 
 type service struct {

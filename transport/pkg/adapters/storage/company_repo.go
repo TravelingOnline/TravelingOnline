@@ -5,24 +5,24 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/onlineTraveling/transport/internal/transport/domain"
-	"github.com/onlineTraveling/transport/internal/transport/port"
+	"github.com/onlineTraveling/transport/internal/company/domain"
+	"github.com/onlineTraveling/transport/internal/company/port"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/mapper"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/types"
 	"gorm.io/gorm"
 )
 
-type transportRepo struct {
+type companyRepo struct {
 	db *gorm.DB
 }
 
-func NewTransportRepo(db *gorm.DB) port.Repo {
-	return &transportRepo{
+func NewCompanyRepo(db *gorm.DB) port.Repo {
+	return &companyRepo{
 		db: db,
 	}
 }
 
-func (r *transportRepo) CreateCompany(ctx context.Context, v domain.Company) (domain.CompanyID, error) {
+func (r *companyRepo) CreateCompany(ctx context.Context, v domain.Company) (domain.CompanyID, error) {
 	// Map the domain.Company to the storage type
 	newCompany := mapper.DomainCompany2Storage(v)
 
@@ -36,7 +36,7 @@ func (r *transportRepo) CreateCompany(ctx context.Context, v domain.Company) (do
 	return domain.CompanyID(newCompany.Id), nil
 }
 
-func (r *transportRepo) UpdateCompany(ctx context.Context, company domain.Company) (domain.CompanyID, error) {
+func (r *companyRepo) UpdateCompany(ctx context.Context, company domain.Company) (domain.CompanyID, error) {
 	// Map domain company to storage company model
 	updateCompany := mapper.DomainCompany2Storage(company)
 
@@ -53,7 +53,7 @@ func (r *transportRepo) UpdateCompany(ctx context.Context, company domain.Compan
 	return domain.CompanyID(updateCompany.Id), nil
 }
 
-func (r *transportRepo) DeleteCompany(ctx context.Context, companyID domain.CompanyID) (domain.CompanyID, error) {
+func (r *companyRepo) DeleteCompany(ctx context.Context, companyID domain.CompanyID) (domain.CompanyID, error) {
 	var vID domain.CompanyID
 	// Validate input
 	if companyID == "" {
@@ -71,7 +71,7 @@ func (r *transportRepo) DeleteCompany(ctx context.Context, companyID domain.Comp
 	return vID, nil
 }
 
-func (r *transportRepo) GetByIDCompany(ctx context.Context, companyID domain.CompanyID) (domain.Company, error) {
+func (r *companyRepo) GetByIDCompany(ctx context.Context, companyID domain.CompanyID) (domain.Company, error) {
 	// Validate input
 	if companyID == "" {
 		return domain.Company{}, fmt.Errorf("company ID cannot be empty")

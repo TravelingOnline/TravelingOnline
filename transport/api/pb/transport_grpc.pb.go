@@ -19,215 +19,431 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TrasportService_CreateCompany_FullMethodName  = "/transport.TrasportService/CreateCompany"
-	TrasportService_UpdateCompany_FullMethodName  = "/transport.TrasportService/UpdateCompany"
-	TrasportService_DeleteCompany_FullMethodName  = "/transport.TrasportService/DeleteCompany"
-	TrasportService_GetByIDCompany_FullMethodName = "/transport.TrasportService/GetByIDCompany"
+	CompanyService_CreateCompany_FullMethodName  = "/transport.CompanyService/CreateCompany"
+	CompanyService_UpdateCompany_FullMethodName  = "/transport.CompanyService/UpdateCompany"
+	CompanyService_DeleteCompany_FullMethodName  = "/transport.CompanyService/DeleteCompany"
+	CompanyService_GetByIDCompany_FullMethodName = "/transport.CompanyService/GetByIDCompany"
 )
 
-// TrasportServiceClient is the client API for TrasportService service.
+// CompanyServiceClient is the client API for CompanyService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TrasportServiceClient interface {
+type CompanyServiceClient interface {
 	CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CreateCompanyResponse, error)
 	UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error)
 	DeleteCompany(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteCompanyResponse, error)
 	GetByIDCompany(ctx context.Context, in *GetByIDCompanyRequest, opts ...grpc.CallOption) (*GetByIDCompanyResponse, error)
 }
 
-type trasportServiceClient struct {
+type companyServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTrasportServiceClient(cc grpc.ClientConnInterface) TrasportServiceClient {
-	return &trasportServiceClient{cc}
+func NewCompanyServiceClient(cc grpc.ClientConnInterface) CompanyServiceClient {
+	return &companyServiceClient{cc}
 }
 
-func (c *trasportServiceClient) CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CreateCompanyResponse, error) {
+func (c *companyServiceClient) CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CreateCompanyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateCompanyResponse)
-	err := c.cc.Invoke(ctx, TrasportService_CreateCompany_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CompanyService_CreateCompany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *trasportServiceClient) UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error) {
+func (c *companyServiceClient) UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateCompanyResponse)
-	err := c.cc.Invoke(ctx, TrasportService_UpdateCompany_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CompanyService_UpdateCompany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *trasportServiceClient) DeleteCompany(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteCompanyResponse, error) {
+func (c *companyServiceClient) DeleteCompany(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteCompanyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteCompanyResponse)
-	err := c.cc.Invoke(ctx, TrasportService_DeleteCompany_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CompanyService_DeleteCompany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *trasportServiceClient) GetByIDCompany(ctx context.Context, in *GetByIDCompanyRequest, opts ...grpc.CallOption) (*GetByIDCompanyResponse, error) {
+func (c *companyServiceClient) GetByIDCompany(ctx context.Context, in *GetByIDCompanyRequest, opts ...grpc.CallOption) (*GetByIDCompanyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetByIDCompanyResponse)
-	err := c.cc.Invoke(ctx, TrasportService_GetByIDCompany_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CompanyService_GetByIDCompany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TrasportServiceServer is the server API for TrasportService service.
-// All implementations must embed UnimplementedTrasportServiceServer
+// CompanyServiceServer is the server API for CompanyService service.
+// All implementations must embed UnimplementedCompanyServiceServer
 // for forward compatibility.
-type TrasportServiceServer interface {
+type CompanyServiceServer interface {
 	CreateCompany(context.Context, *CreateCompanyRequest) (*CreateCompanyResponse, error)
 	UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error)
 	DeleteCompany(context.Context, *DeleteCompanyRequest) (*DeleteCompanyResponse, error)
 	GetByIDCompany(context.Context, *GetByIDCompanyRequest) (*GetByIDCompanyResponse, error)
-	mustEmbedUnimplementedTrasportServiceServer()
+	mustEmbedUnimplementedCompanyServiceServer()
 }
 
-// UnimplementedTrasportServiceServer must be embedded to have
+// UnimplementedCompanyServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedTrasportServiceServer struct{}
+type UnimplementedCompanyServiceServer struct{}
 
-func (UnimplementedTrasportServiceServer) CreateCompany(context.Context, *CreateCompanyRequest) (*CreateCompanyResponse, error) {
+func (UnimplementedCompanyServiceServer) CreateCompany(context.Context, *CreateCompanyRequest) (*CreateCompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCompany not implemented")
 }
-func (UnimplementedTrasportServiceServer) UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error) {
+func (UnimplementedCompanyServiceServer) UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCompany not implemented")
 }
-func (UnimplementedTrasportServiceServer) DeleteCompany(context.Context, *DeleteCompanyRequest) (*DeleteCompanyResponse, error) {
+func (UnimplementedCompanyServiceServer) DeleteCompany(context.Context, *DeleteCompanyRequest) (*DeleteCompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCompany not implemented")
 }
-func (UnimplementedTrasportServiceServer) GetByIDCompany(context.Context, *GetByIDCompanyRequest) (*GetByIDCompanyResponse, error) {
+func (UnimplementedCompanyServiceServer) GetByIDCompany(context.Context, *GetByIDCompanyRequest) (*GetByIDCompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByIDCompany not implemented")
 }
-func (UnimplementedTrasportServiceServer) mustEmbedUnimplementedTrasportServiceServer() {}
-func (UnimplementedTrasportServiceServer) testEmbeddedByValue()                         {}
+func (UnimplementedCompanyServiceServer) mustEmbedUnimplementedCompanyServiceServer() {}
+func (UnimplementedCompanyServiceServer) testEmbeddedByValue()                        {}
 
-// UnsafeTrasportServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TrasportServiceServer will
+// UnsafeCompanyServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CompanyServiceServer will
 // result in compilation errors.
-type UnsafeTrasportServiceServer interface {
-	mustEmbedUnimplementedTrasportServiceServer()
+type UnsafeCompanyServiceServer interface {
+	mustEmbedUnimplementedCompanyServiceServer()
 }
 
-func RegisterTrasportServiceServer(s grpc.ServiceRegistrar, srv TrasportServiceServer) {
-	// If the following call pancis, it indicates UnimplementedTrasportServiceServer was
+func RegisterCompanyServiceServer(s grpc.ServiceRegistrar, srv CompanyServiceServer) {
+	// If the following call pancis, it indicates UnimplementedCompanyServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&TrasportService_ServiceDesc, srv)
+	s.RegisterService(&CompanyService_ServiceDesc, srv)
 }
 
-func _TrasportService_CreateCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CompanyService_CreateCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCompanyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TrasportServiceServer).CreateCompany(ctx, in)
+		return srv.(CompanyServiceServer).CreateCompany(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TrasportService_CreateCompany_FullMethodName,
+		FullMethod: CompanyService_CreateCompany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TrasportServiceServer).CreateCompany(ctx, req.(*CreateCompanyRequest))
+		return srv.(CompanyServiceServer).CreateCompany(ctx, req.(*CreateCompanyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TrasportService_UpdateCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CompanyService_UpdateCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateCompanyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TrasportServiceServer).UpdateCompany(ctx, in)
+		return srv.(CompanyServiceServer).UpdateCompany(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TrasportService_UpdateCompany_FullMethodName,
+		FullMethod: CompanyService_UpdateCompany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TrasportServiceServer).UpdateCompany(ctx, req.(*UpdateCompanyRequest))
+		return srv.(CompanyServiceServer).UpdateCompany(ctx, req.(*UpdateCompanyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TrasportService_DeleteCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CompanyService_DeleteCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteCompanyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TrasportServiceServer).DeleteCompany(ctx, in)
+		return srv.(CompanyServiceServer).DeleteCompany(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TrasportService_DeleteCompany_FullMethodName,
+		FullMethod: CompanyService_DeleteCompany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TrasportServiceServer).DeleteCompany(ctx, req.(*DeleteCompanyRequest))
+		return srv.(CompanyServiceServer).DeleteCompany(ctx, req.(*DeleteCompanyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TrasportService_GetByIDCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CompanyService_GetByIDCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetByIDCompanyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TrasportServiceServer).GetByIDCompany(ctx, in)
+		return srv.(CompanyServiceServer).GetByIDCompany(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TrasportService_GetByIDCompany_FullMethodName,
+		FullMethod: CompanyService_GetByIDCompany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TrasportServiceServer).GetByIDCompany(ctx, req.(*GetByIDCompanyRequest))
+		return srv.(CompanyServiceServer).GetByIDCompany(ctx, req.(*GetByIDCompanyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TrasportService_ServiceDesc is the grpc.ServiceDesc for TrasportService service.
+// CompanyService_ServiceDesc is the grpc.ServiceDesc for CompanyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TrasportService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "transport.TrasportService",
-	HandlerType: (*TrasportServiceServer)(nil),
+var CompanyService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "transport.CompanyService",
+	HandlerType: (*CompanyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateCompany",
-			Handler:    _TrasportService_CreateCompany_Handler,
+			Handler:    _CompanyService_CreateCompany_Handler,
 		},
 		{
 			MethodName: "UpdateCompany",
-			Handler:    _TrasportService_UpdateCompany_Handler,
+			Handler:    _CompanyService_UpdateCompany_Handler,
 		},
 		{
 			MethodName: "DeleteCompany",
-			Handler:    _TrasportService_DeleteCompany_Handler,
+			Handler:    _CompanyService_DeleteCompany_Handler,
 		},
 		{
 			MethodName: "GetByIDCompany",
-			Handler:    _TrasportService_GetByIDCompany_Handler,
+			Handler:    _CompanyService_GetByIDCompany_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "transport.proto",
+}
+
+const (
+	TourService_CreateTour_FullMethodName  = "/transport.TourService/CreateTour"
+	TourService_UpdateTour_FullMethodName  = "/transport.TourService/UpdateTour"
+	TourService_DeleteTour_FullMethodName  = "/transport.TourService/DeleteTour"
+	TourService_GetByIDTour_FullMethodName = "/transport.TourService/GetByIDTour"
+)
+
+// TourServiceClient is the client API for TourService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type TourServiceClient interface {
+	CreateTour(ctx context.Context, in *CreateTourRequest, opts ...grpc.CallOption) (*CreateTourResponse, error)
+	UpdateTour(ctx context.Context, in *UpdateTourRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error)
+	DeleteTour(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteTourResponse, error)
+	GetByIDTour(ctx context.Context, in *GetByIDTourRequest, opts ...grpc.CallOption) (*GetByIDTourResponse, error)
+}
+
+type tourServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewTourServiceClient(cc grpc.ClientConnInterface) TourServiceClient {
+	return &tourServiceClient{cc}
+}
+
+func (c *tourServiceClient) CreateTour(ctx context.Context, in *CreateTourRequest, opts ...grpc.CallOption) (*CreateTourResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateTourResponse)
+	err := c.cc.Invoke(ctx, TourService_CreateTour_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tourServiceClient) UpdateTour(ctx context.Context, in *UpdateTourRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateCompanyResponse)
+	err := c.cc.Invoke(ctx, TourService_UpdateTour_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tourServiceClient) DeleteTour(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteTourResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteTourResponse)
+	err := c.cc.Invoke(ctx, TourService_DeleteTour_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tourServiceClient) GetByIDTour(ctx context.Context, in *GetByIDTourRequest, opts ...grpc.CallOption) (*GetByIDTourResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetByIDTourResponse)
+	err := c.cc.Invoke(ctx, TourService_GetByIDTour_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// TourServiceServer is the server API for TourService service.
+// All implementations must embed UnimplementedTourServiceServer
+// for forward compatibility.
+type TourServiceServer interface {
+	CreateTour(context.Context, *CreateTourRequest) (*CreateTourResponse, error)
+	UpdateTour(context.Context, *UpdateTourRequest) (*UpdateCompanyResponse, error)
+	DeleteTour(context.Context, *DeleteCompanyRequest) (*DeleteTourResponse, error)
+	GetByIDTour(context.Context, *GetByIDTourRequest) (*GetByIDTourResponse, error)
+	mustEmbedUnimplementedTourServiceServer()
+}
+
+// UnimplementedTourServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedTourServiceServer struct{}
+
+func (UnimplementedTourServiceServer) CreateTour(context.Context, *CreateTourRequest) (*CreateTourResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTour not implemented")
+}
+func (UnimplementedTourServiceServer) UpdateTour(context.Context, *UpdateTourRequest) (*UpdateCompanyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTour not implemented")
+}
+func (UnimplementedTourServiceServer) DeleteTour(context.Context, *DeleteCompanyRequest) (*DeleteTourResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTour not implemented")
+}
+func (UnimplementedTourServiceServer) GetByIDTour(context.Context, *GetByIDTourRequest) (*GetByIDTourResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByIDTour not implemented")
+}
+func (UnimplementedTourServiceServer) mustEmbedUnimplementedTourServiceServer() {}
+func (UnimplementedTourServiceServer) testEmbeddedByValue()                     {}
+
+// UnsafeTourServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TourServiceServer will
+// result in compilation errors.
+type UnsafeTourServiceServer interface {
+	mustEmbedUnimplementedTourServiceServer()
+}
+
+func RegisterTourServiceServer(s grpc.ServiceRegistrar, srv TourServiceServer) {
+	// If the following call pancis, it indicates UnimplementedTourServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&TourService_ServiceDesc, srv)
+}
+
+func _TourService_CreateTour_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTourRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TourServiceServer).CreateTour(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TourService_CreateTour_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TourServiceServer).CreateTour(ctx, req.(*CreateTourRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TourService_UpdateTour_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTourRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TourServiceServer).UpdateTour(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TourService_UpdateTour_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TourServiceServer).UpdateTour(ctx, req.(*UpdateTourRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TourService_DeleteTour_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCompanyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TourServiceServer).DeleteTour(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TourService_DeleteTour_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TourServiceServer).DeleteTour(ctx, req.(*DeleteCompanyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TourService_GetByIDTour_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByIDTourRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TourServiceServer).GetByIDTour(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TourService_GetByIDTour_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TourServiceServer).GetByIDTour(ctx, req.(*GetByIDTourRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// TourService_ServiceDesc is the grpc.ServiceDesc for TourService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TourService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "transport.TourService",
+	HandlerType: (*TourServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateTour",
+			Handler:    _TourService_CreateTour_Handler,
+		},
+		{
+			MethodName: "UpdateTour",
+			Handler:    _TourService_UpdateTour_Handler,
+		},
+		{
+			MethodName: "DeleteTour",
+			Handler:    _TourService_DeleteTour_Handler,
+		},
+		{
+			MethodName: "GetByIDTour",
+			Handler:    _TourService_GetByIDTour_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

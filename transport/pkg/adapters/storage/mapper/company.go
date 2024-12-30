@@ -3,7 +3,7 @@ package mapper
 import (
 	"errors"
 
-	"github.com/onlineTraveling/transport/internal/transport/domain"
+	"github.com/onlineTraveling/transport/internal/company/domain"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/types"
 )
 

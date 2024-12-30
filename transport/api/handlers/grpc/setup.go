@@ -20,9 +20,12 @@ func Run(cfg config.Config, app *app.App) {
 	}
 
 	grpcServer := grpc.NewServer()
-	cHandler := service.NewTransportService(app.TransportService())
+	cHandler := service.NewCompanyService(app.CompanyService())
+	tHandler := service.NewTourService(app.TourService())
 	d := transport.NewGRPCTransportHandler(*cHandler)
-	pb.RegisterTrasportServiceServer(grpcServer, d)
+	// pb.RegisterTrasportServiceServer(grpcServer, d)
+	pb.RegisterCompanyServiceServer(grpcServer, d)
+	pb.RegisterTourServiceServer(grpcServer, d)
 
 	log.Printf("Server listening at %v", listener.Addr())
 	if err := grpcServer.Serve(listener); err != nil {

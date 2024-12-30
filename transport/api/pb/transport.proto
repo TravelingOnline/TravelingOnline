@@ -4,11 +4,18 @@ package transport;
 
 option go_package = "github.com/onlineTraveling/transport/pb";
 
-service TrasportService{
+service CompanyService{
     rpc CreateCompany (CreateCompanyRequest) returns (CreateCompanyResponse);
     rpc UpdateCompany (UpdateCompanyRequest) returns (UpdateCompanyResponse);
     rpc DeleteCompany (DeleteCompanyRequest) returns (DeleteCompanyResponse);
     rpc GetByIDCompany (GetByIDCompanyRequest) returns (GetByIDCompanyResponse);
+}
+
+service TourService{
+    rpc CreateTour (CreateTourRequest) returns (CreateTourResponse);
+    rpc UpdateTour (UpdateTourRequest) returns (UpdateCompanyResponse);
+    rpc DeleteTour (DeleteCompanyRequest) returns (DeleteTourResponse);
+    rpc GetByIDTour (GetByIDTourRequest) returns (GetByIDTourResponse);
 }
 
 message CreateCompanyRequest{
@@ -58,4 +65,68 @@ message Owner {
     string firstName = 2;
     string lastName = 3;
     string email = 4;  
+}
+
+message CreateTourRequest{
+    string id = 1;
+    string source = 2;
+    string destination = 3;
+    string startDate = 4;
+    string endDate = 5;
+    string type = 6;
+    int32 price = 7;
+    string vehicleUnicode = 8;
+    repeated TechnicalTeam technicalTeam= 9;
+}
+
+message UpdateTourRequest{
+    string id = 1;
+    string source = 2;
+    string destination = 3;
+    string startDate = 4;
+    string endDate = 5;
+    string type = 6;
+    int32 price = 7;
+    string vehicleUnicode = 8;
+    repeated TechnicalTeam technicalTeam= 9;
+}
+
+message CreateTourResponse{
+    string id = 1;
+}
+
+message UpdateTourResponse{
+    string id = 1;
+}
+
+message DeleteTourRequest{
+    string id = 1;
+}
+
+message DeleteTourResponse{
+    string id = 1;
+}
+
+message GetByIDTourRequest{
+    string id = 1;
+}
+
+message GetByIDTourResponse{
+    string id = 1;
+    string source = 2;
+    string destination = 3;
+    string startDate = 4;
+    string endDate = 5;
+    string type = 6;
+    int32 price = 7;
+    string vehicleUnicode = 8;
+    repeated TechnicalTeam technicalTeam= 9;
+}
+
+message TechnicalTeam{
+    uint64 id = 1;
+    string firstName = 2;
+    string lastName = 3;
+    int32 age=4;
+    string expertise = 5;
 }

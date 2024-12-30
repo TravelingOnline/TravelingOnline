@@ -2,8 +2,10 @@ package app
 
 import (
 	"github.com/onlineTraveling/transport/config"
-	"github.com/onlineTraveling/transport/internal/transport"
-	"github.com/onlineTraveling/transport/internal/transport/port"
+	"github.com/onlineTraveling/transport/internal/company"
+	"github.com/onlineTraveling/transport/internal/tour"
+	companyPort "github.com/onlineTraveling/transport/internal/company/port"
+	tourPort "github.com/onlineTraveling/transport/internal/tour/port"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage"
 	"github.com/onlineTraveling/transport/pkg/postgres"
 
@@ -11,9 +13,10 @@ import (
 )
 
 type App struct {
-	db            *gorm.DB
-	cfg           config.Config
-	transportService port.Service
+	db             *gorm.DB
+	cfg            config.Config
+	companyService companyPort.Service
+	tourService    tourPort.Service
 }
 
 func (a *App) setDB() error {
@@ -37,8 +40,12 @@ func (a *App) setDB() error {
 	return nil
 }
 
-func (a *App) TransportService() port.Service {
-	return a.transportService
+func (a *App) CompanyService() companyPort.Service {
+	return a.companyService
+}
+
+func (a *App) TourService() tourPort.Service {
+	return a.tourService
 }
 
 func (a *App) Config() config.Config {
@@ -53,7 +60,8 @@ func NewApp(cfg config.Config) (*App, error) {
 	if err := a.setDB(); err != nil {
 		return nil, err
 	}
-	a.transportService = transport.NewService(storage.NewTransportRepo(a.db))
+	a.companyService = company.NewService(storage.NewCompanyRepo(a.db))
+	a.tourService = tour.NewService(storage.NewTourRepo(a.db))
 	return a, nil
 }
 
