@@ -72,6 +72,7 @@ func (g *GRPCVehicleHandler) GetVehicle(ctx context.Context, vehicleReq *pb.GetV
 }
 
 func (g *GRPCVehicleHandler) RentVehicle(ctx context.Context, passenger *pb.RentVehicleRequest) (*pb.RentVehicleResponse, error) {
+	
 	vehicle, err := g.vehicleService.RentVehicle(ctx, passenger.Passenger)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())

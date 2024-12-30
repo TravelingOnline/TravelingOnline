@@ -80,6 +80,8 @@ message Owner {
 
 message RentVehicleRequest{
     int32 passenger = 1;
+    string type = 2;
+    int32 price = 3;
 }
 
 message RentVehicleResponse {
