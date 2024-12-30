@@ -14,7 +14,7 @@ service CompanyService{
 service TourService{
     rpc CreateTour (CreateTourRequest) returns (CreateTourResponse);
     rpc UpdateTour (UpdateTourRequest) returns (UpdateCompanyResponse);
-    rpc DeleteTour (DeleteCompanyRequest) returns (DeleteTourResponse);
+    rpc DeleteTour (DeleteTourRequest) returns (DeleteTourResponse);
     rpc GetByIDTour (GetByIDTourRequest) returns (GetByIDTourResponse);
 }
 

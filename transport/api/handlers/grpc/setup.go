@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/onlineTraveling/transport/api/handlers/grpc/tour"
 	"github.com/onlineTraveling/transport/api/handlers/grpc/transport"
 	"github.com/onlineTraveling/transport/api/pb"
 	"github.com/onlineTraveling/transport/api/service"
@@ -22,10 +23,11 @@ func Run(cfg config.Config, app *app.App) {
 	grpcServer := grpc.NewServer()
 	cHandler := service.NewCompanyService(app.CompanyService())
 	tHandler := service.NewTourService(app.TourService())
-	d := transport.NewGRPCTransportHandler(*cHandler)
+	c:= transport.NewGRPCTransportHandler(*cHandler)
+	t:= tour.NewGRPCTourHandler(*tHandler)
 	// pb.RegisterTrasportServiceServer(grpcServer, d)
-	pb.RegisterCompanyServiceServer(grpcServer, d)
-	pb.RegisterTourServiceServer(grpcServer, d)
+	pb.RegisterCompanyServiceServer(grpcServer, c)
+	pb.RegisterTourServiceServer(grpcServer, t)
 
 	log.Printf("Server listening at %v", listener.Addr())
 	if err := grpcServer.Serve(listener); err != nil {

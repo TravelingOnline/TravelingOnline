@@ -10,17 +10,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type GRPCTransportHandler struct {
+type GRPCTourHandler struct {
 	pb.UnimplementedTourServiceServer
 	tourService *service.TourService
 }
 
-func NewGRPCTransportHandler(tourService service.TourService) *GRPCTransportHandler {
-	return &GRPCTransportHandler{tourService: &tourService}
+func NewGRPCTourHandler(tourService service.TourService) *GRPCTourHandler {
+	return &GRPCTourHandler{tourService: &tourService}
 }
 
-func (g *GRPCTransportHandler) CreateTour(ctx context.Context, req *pb.CreateTourRequest) (*pb.CreateTourResponse, error) {
-	domainRequest, err := PBCompanyRequest2DomainCompany(req)
+func (g *GRPCTourHandler) CreateTour(ctx context.Context, req *pb.CreateTourRequest) (*pb.CreateTourResponse, error) {
+	domainRequest, err := PBTourRequest2DomainTour(req)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
@@ -33,8 +33,8 @@ func (g *GRPCTransportHandler) CreateTour(ctx context.Context, req *pb.CreateTou
 	}, nil
 }
 
-func (g *GRPCTransportHandler) UpdateTour(ctx context.Context, req *pb.UpdateCompanyRequest) (*pb.UpdateTourResponse, error) {
-	domainRequest, err := PBCompanyRequest2DomainCompany(req)
+func (g *GRPCTourHandler) UpdateTour(ctx context.Context, req *pb.UpdateTourRequest) (*pb.UpdateTourResponse, error) {
+	domainRequest, err := PBTourRequest2DomainTour(req)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
@@ -47,7 +47,7 @@ func (g *GRPCTransportHandler) UpdateTour(ctx context.Context, req *pb.UpdateCom
 	}, nil
 }
 
-func (g *GRPCTransportHandler) DeleteTour(ctx context.Context, delReq *pb.DeleteCompanyRequest) (*pb.DeleteTourResponse, error) {
+func (g *GRPCTourHandler) DeleteTour(ctx context.Context, delReq *pb.DeleteTourRequest) (*pb.DeleteTourResponse, error) {
 	vID := domain.TourID(delReq.Id)
 	deletedTourID, err := g.tourService.DeleteTour(ctx, &vID)
 	if err != nil {
@@ -56,13 +56,13 @@ func (g *GRPCTransportHandler) DeleteTour(ctx context.Context, delReq *pb.Delete
 	return deletedTourID, nil
 }
 
-func (g *GRPCTransportHandler) GetByIDTour(ctx context.Context, CompanyReq *pb.GetByIDTourRequest) (*pb.GetByIDTourResponse, error) {
-	tID := domain.TourID(CompanyReq.Id)
+func (g *GRPCTourHandler) GetByIDTour(ctx context.Context, TourReq *pb.GetByIDTourRequest) (*pb.GetByIDTourResponse, error) {
+	tID := domain.TourID(TourReq.Id)
 	tour, err := g.tourService.GetByIDTour(ctx, &tID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	domaintour, err := DomainCompany2PBCompanyResponse(*tour)
+	domaintour, err := DomainTour2PBTourResponse(*tour)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}

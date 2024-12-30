@@ -246,8 +246,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TourServiceClient interface {
 	CreateTour(ctx context.Context, in *CreateTourRequest, opts ...grpc.CallOption) (*CreateTourResponse, error)
-	UpdateTour(ctx context.Context, in *UpdateTourRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error)
-	DeleteTour(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteTourResponse, error)
+	UpdateTour(ctx context.Context, in *UpdateTourRequest, opts ...grpc.CallOption) (*UpdateTourResponse, error)
+	DeleteTour(ctx context.Context, in *DeleteTourRequest, opts ...grpc.CallOption) (*DeleteTourResponse, error)
 	GetByIDTour(ctx context.Context, in *GetByIDTourRequest, opts ...grpc.CallOption) (*GetByIDTourResponse, error)
 }
 
@@ -269,9 +269,9 @@ func (c *tourServiceClient) CreateTour(ctx context.Context, in *CreateTourReques
 	return out, nil
 }
 
-func (c *tourServiceClient) UpdateTour(ctx context.Context, in *UpdateTourRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error) {
+func (c *tourServiceClient) UpdateTour(ctx context.Context, in *UpdateTourRequest, opts ...grpc.CallOption) (*UpdateTourResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateCompanyResponse)
+	out := new(UpdateTourResponse)
 	err := c.cc.Invoke(ctx, TourService_UpdateTour_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -279,7 +279,7 @@ func (c *tourServiceClient) UpdateTour(ctx context.Context, in *UpdateTourReques
 	return out, nil
 }
 
-func (c *tourServiceClient) DeleteTour(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteTourResponse, error) {
+func (c *tourServiceClient) DeleteTour(ctx context.Context, in *DeleteTourRequest, opts ...grpc.CallOption) (*DeleteTourResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteTourResponse)
 	err := c.cc.Invoke(ctx, TourService_DeleteTour_FullMethodName, in, out, cOpts...)
@@ -304,8 +304,8 @@ func (c *tourServiceClient) GetByIDTour(ctx context.Context, in *GetByIDTourRequ
 // for forward compatibility.
 type TourServiceServer interface {
 	CreateTour(context.Context, *CreateTourRequest) (*CreateTourResponse, error)
-	UpdateTour(context.Context, *UpdateTourRequest) (*UpdateCompanyResponse, error)
-	DeleteTour(context.Context, *DeleteCompanyRequest) (*DeleteTourResponse, error)
+	UpdateTour(context.Context, *UpdateTourRequest) (*UpdateTourResponse, error)
+	DeleteTour(context.Context, *DeleteTourRequest) (*DeleteTourResponse, error)
 	GetByIDTour(context.Context, *GetByIDTourRequest) (*GetByIDTourResponse, error)
 	mustEmbedUnimplementedTourServiceServer()
 }
@@ -320,10 +320,10 @@ type UnimplementedTourServiceServer struct{}
 func (UnimplementedTourServiceServer) CreateTour(context.Context, *CreateTourRequest) (*CreateTourResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTour not implemented")
 }
-func (UnimplementedTourServiceServer) UpdateTour(context.Context, *UpdateTourRequest) (*UpdateCompanyResponse, error) {
+func (UnimplementedTourServiceServer) UpdateTour(context.Context, *UpdateTourRequest) (*UpdateTourResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTour not implemented")
 }
-func (UnimplementedTourServiceServer) DeleteTour(context.Context, *DeleteCompanyRequest) (*DeleteTourResponse, error) {
+func (UnimplementedTourServiceServer) DeleteTour(context.Context, *DeleteTourRequest) (*DeleteTourResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTour not implemented")
 }
 func (UnimplementedTourServiceServer) GetByIDTour(context.Context, *GetByIDTourRequest) (*GetByIDTourResponse, error) {
@@ -387,7 +387,7 @@ func _TourService_UpdateTour_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _TourService_DeleteTour_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCompanyRequest)
+	in := new(DeleteTourRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -399,7 +399,7 @@ func _TourService_DeleteTour_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: TourService_DeleteTour_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TourServiceServer).DeleteTour(ctx, req.(*DeleteCompanyRequest))
+		return srv.(TourServiceServer).DeleteTour(ctx, req.(*DeleteTourRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

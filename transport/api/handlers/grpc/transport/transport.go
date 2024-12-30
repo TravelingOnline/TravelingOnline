@@ -28,7 +28,6 @@ func (g *GRPCTransportHandler) CreateCompany(ctx context.Context, req *pb.Create
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	// log.Println(">>>>>>>>>>>>", string(*vID))
 	return &pb.CreateCompanyResponse{
 		Id: string(*vID),
 	}, nil
@@ -43,7 +42,6 @@ func (g *GRPCTransportHandler) UpdateCompany(ctx context.Context, req *pb.Update
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	// log.Println(">>>>>>>>>>>>", string(*vID))
 	return &pb.UpdateCompanyResponse{
 		Id: string(*vID),
 	}, nil

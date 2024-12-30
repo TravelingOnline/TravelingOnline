@@ -1,6 +1,5 @@
 package tour
 
-
 import (
 	"errors"
 
@@ -9,125 +8,97 @@ import (
 )
 
 func PBTourRequest2DomainTour(request interface{}) (domain.Tour, error) {
-	var PBreq struct {
-		Id    string
-		Name  string
-		Owner *struct {
-			Id        uint64
-			FirstName string
-			LastName  string
-			Email     string
-		}
-	}
+	var domainTour domain.Tour
 
-	// Map the input to the common structure
 	switch req := request.(type) {
 	case *pb.CreateTourRequest:
-		PBreq = struct {
-			Id    string
-			Name  string
-			Owner *struct {
-				Id        uint64
-				FirstName string
-				LastName  string
-				Email     string
-			}
-		}{
-			Id:   req.Id,
-			Name: req.Name,
-			Owner: &struct {
-				Id        uint64
-				FirstName string
-				LastName  string
-				Email     string
-			}{
-				Id:        req.Owner.Id,
-				FirstName: req.Owner.FirstName,
-				LastName:  req.Owner.LastName,
-				Email:     req.Owner.Email,
-			},
-		}
-	case *pb.UpdateTourRequest:
-		PBreq = struct {
-			Id    string
-			Name  string
-			Owner *struct {
-				Id        uint64
-				FirstName string
-				LastName  string
-				Email     string
-			}
-		}{
-			Id:   req.Id,
-			Name: req.Name,
-
-			Owner: &struct {
-				Id        uint64
-				FirstName string
-				LastName  string
-				Email     string
-			}{
-				Id:        req.Owner.Id,
-				FirstName: req.Owner.FirstName,
-				LastName:  req.Owner.LastName,
-				Email:     req.Owner.Email,
-			},
+		// Map the CreateTourRequest fields to the domain.Tour struct
+		domainTour = domain.Tour{
+			Id:             req.Id,
+			Source:         req.Source,
+			Destination:    req.Destination,
+			StartDate:      req.StartDate,
+			EndDate:        req.EndDate,
+			Type:           req.Type,
+			Price:          req.Price,
+			VehicleUnicode: req.VehicleUnicode,
+			TechnicalTeam: func() []*domain.TechnicalTeam {
+				team := make([]*domain.TechnicalTeam, len(req.TechnicalTeam))
+				for i, t := range req.TechnicalTeam {
+					team[i] = &domain.TechnicalTeam{
+						Id:        t.Id,
+						FirstName: t.FirstName,
+						LastName:  t.LastName,
+						Age:       t.Age,
+						Expertise: t.Expertise,
+					}
+				}
+				return team
+			}(),
 		}
 	default:
 		return domain.Tour{}, errors.New("unsupported request type")
 	}
 
-	// Validate input
-	if PBreq.Owner == nil {
-		return domain.Tour{}, errors.New("OWNER CANNOT BE NIL")
-	}
-	if PBreq.Owner.Id == 0 || PBreq.Owner.FirstName == "" || PBreq.Owner.LastName == "" || PBreq.Owner.Email == "" {
-		return domain.Tour{}, errors.New("OWNER DETAILS ARE INCOMPLETE")
-	}
-
-	// Construct and return the domain company
-	company := domain.Tour{
-		Id:    PBreq.Id,
-		Name:  PBreq.Name,
-		Owner: &domain.Owner{Id: PBreq.Owner.Id, FirstName: PBreq.Owner.FirstName, LastName: PBreq.Owner.LastName, Email: PBreq.Owner.Email},
-	}
-
-	return company, nil
+	return domainTour, nil
 }
 
-func DomainCompany2PBCreateCompanyRequest(tour domain.Tour) (*pb.CreateCompanyRequest, error) {
-	// Validate input
-	if tour.Owner == nil {
-		return nil, errors.New("company.Owner cannot be nil")
-	}
-
-	// Construct and return the protobuf CreateCompanyRequest
-	PBreq := &pb.CreateCompanyRequest{
-		Id:    "",
-		Name:  tour.Name,
-		Owner: &pb.Owner{Id: tour.Owner.Id, FirstName: tour.Owner.FirstName, LastName: tour.Owner.LastName, Email: tour.Owner.Email},
+func DomainTour2PBCreateTourRequest(tour domain.Tour) (*pb.CreateTourRequest, error) {
+	// Map the domain.Tour to pb.CreateTourRequest
+	PBreq := &pb.CreateTourRequest{
+		Id:             tour.Id,
+		Source:         tour.Source,
+		Destination:    tour.Destination,
+		StartDate:      tour.StartDate,
+		EndDate:        tour.EndDate,
+		Type:           tour.Type,
+		Price:          tour.Price,
+		VehicleUnicode: tour.VehicleUnicode,
+		TechnicalTeam: func() []*pb.TechnicalTeam {
+			team := make([]*pb.TechnicalTeam, len(tour.TechnicalTeam))
+			for i, t := range tour.TechnicalTeam {
+				team[i] = &pb.TechnicalTeam{
+					Id:        t.Id,
+					FirstName: t.FirstName,
+					LastName:  t.LastName,
+					Age:       t.Age,
+					Expertise: t.Expertise,
+				}
+			}
+			return team
+		}(),
 	}
 
 	return PBreq, nil
 }
 
-func DomainCompany2PBCompanyResponse(tour domain.Tour) (*pb.GetByIDTourResponse, error) {
-	// Validate input
-	if tour.Owner == nil {
-		return nil, errors.New("company.Owner cannot be nil")
+
+func DomainTour2PBTourResponse(tour domain.Tour) (*pb.GetByIDTourResponse, error) {
+	// Map the domain.Tour to pb.GetByIDTourResponse
+	PBresp := &pb.GetByIDTourResponse{
+		Id:             tour.Id,
+		Source:         tour.Source,
+		Destination:    tour.Destination,
+		StartDate:      tour.StartDate,
+		EndDate:        tour.EndDate,
+		Type:           tour.Type,
+		Price:          tour.Price,
+		VehicleUnicode: tour.VehicleUnicode,
+		TechnicalTeam: func() []*pb.TechnicalTeam {
+			team := make([]*pb.TechnicalTeam, len(tour.TechnicalTeam))
+			for i, t := range tour.TechnicalTeam {
+				team[i] = &pb.TechnicalTeam{
+					Id:        t.Id,
+					FirstName: t.FirstName,
+					LastName:  t.LastName,
+					Age:       t.Age,
+					Expertise: t.Expertise,
+				}
+			}
+			return team
+		}(),
 	}
 
-	// Construct and return the protobuf CreateCompanyResponse
-	PBreq := &pb.GetByIDTourResponse{
-		Id:   tour.Id,
-		Name: tour.Name,
-		Owner: &pb.Owner{
-			Id:        tour.Owner.Id,
-			FirstName: tour.Owner.FirstName,
-			LastName:  tour.Owner.LastName,
-			Email:     tour.Owner.Email,
-		},
-	}
-
-	return PBreq, nil
+	return PBresp, nil
 }
+
