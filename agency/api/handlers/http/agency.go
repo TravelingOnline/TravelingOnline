@@ -97,3 +97,14 @@ func GetAgency(svcGetter ServiceGetter[*service.AgencyService]) fiber.Handler {
 		return c.SendStatus(http.StatusNotFound)
 	}
 }
+
+// func UpdateAgency(svcGetter ServiceGetter[*service.AgencyService]) fiber.Handler {
+// 	return func(c *fiber.Ctx) error {
+// 		id , err := strconv.Atoi(c.Params("id"))
+// 		if err != nil {
+// 			return err 
+// 		}
+
+		
+// 	}
+// }

@@ -8,6 +8,7 @@ message AgencyCreateRequest {
 
 message AgencyUpdateRequest {
     string name = 1 [json_name = "agencyName"];
+    uint64 id = 2 [json_name = "id"];
 }
 
 message AgencyCreateRespone {

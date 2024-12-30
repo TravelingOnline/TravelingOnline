@@ -62,9 +62,12 @@ func (s *AgencyService) GetAll(ctx context.Context, page, pagesize int) ([]domai
 	return agencies, nil
 }
 
-func (s *AgencyService) UpdateAgency(ctx context.Context) {
-
-}
+// func (s *AgencyService) UpdateAgency(ctx context.Context, req *pb.AgencyUpdateRequest) error {
+// 	err := s.svc.UpdateAgency(ctx, &domain.Agency{
+// 		ID:   req.GetID(),
+		
+// 	})
+// }
 
 func (s *AgencyService) DeleteAgency(ctx context.Context, id uint) error {
 	err := s.svc.DeleteAgency(ctx, id)
