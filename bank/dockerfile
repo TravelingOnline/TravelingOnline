@@ -3,11 +3,11 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o vehicle ./cmd/vehicle/main.go
+RUN go build -o bank ./cmd/webApp/main.go
 
 FROM docker.arvancloud.ir/alpine:latest
 WORKDIR /app/
-COPY --from=builder /app/vehicle .
-COPY --from=builder /app/config.yml .
+COPY --from=builder /app/bank .
+COPY --from=builder /app/config.json .
 EXPOSE 8082
 CMD ["./bank"]
