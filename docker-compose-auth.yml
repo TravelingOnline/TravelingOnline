@@ -9,9 +9,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - online-traveling-network
+      - auth-network
     ports:
-      - '${POSTGRES_PORT}:5432'
+      - '${AUTH_POSTGRES_PORT}:5432'
   
   auth-service:
     build:
@@ -25,7 +25,7 @@ services:
       - AUTH_CONFIG_PATH=/app/config.json
       - KAFKA_BROKER=kafka:9092
     networks:
-      - online-traveling-network
+      - auth-network
     restart: unless-stopped
     depends_on:
       - auth-postgres
@@ -33,5 +33,5 @@ services:
       - ${AUTH_CONFIG_PATH}:/app/config.json
 
 networks:
-  online-traveling-network:
+  auth-network:
     driver: bridge

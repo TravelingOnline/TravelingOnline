@@ -17,11 +17,6 @@ func Run(appContainer app.App, config config.ServerConfig) error {
 	app := fiber.New(fiber.Config{
 		AppName: "Traveling Online v0.0.1",
 	})
-	// app.Use(func(c *fiber.Ctx) error {
-	// 	permissionService := appContainer.PermissionService
-	// 	c.Locals("permissionService", permissionService)
-	// 	return c.Next()
-	// })
 
 	app.Use(TraceMiddleware())
 	app.Use(logger.New(logger.Config{
@@ -50,16 +45,24 @@ func Run(appContainer app.App, config config.ServerConfig) error {
 
 	registerAPI(appContainer, config, api)
 
-	certFile := "/app/server.crt"
-	keyFile := "/app/server.key"
+	// certFile := "/app/server.crt"
+	// keyFile := "/app/server.key"
 
-	return app.ListenTLS(fmt.Sprintf(":%d", config.HttpPort), certFile, keyFile)
+	// return app.ListenTLS(fmt.Sprintf(":%d", config.HttpPort), certFile, keyFile)
+	return app.Listen(fmt.Sprintf(":%d", config.HttpPort))
 }
 func registerAPI(appContainer app.App, cfg config.ServerConfig, api fiber.Router) {
-	// userRouter := api.Group("/user")
-	// userSvcGetter := userServiceGetter(appContainer, cfg)
-
-	// userRouter.Post("/sign-up", SignUp(userSvcGetter))
-	// userRouter.Post("/sign-in", SignIn(userSvcGetter))
-
+	userRouter := api.Group("/user")
+	notifRouter := api.Group("/notif")
+	userSvcGetter := userServiceGetter(appContainer, cfg)
+	notifSvcGetter := notificationServiceGetter(appContainer, cfg)
+	//user
+	userRouter.Post("/sign-up", SignUp(userSvcGetter))
+	userRouter.Post("/sign-in", SignIn(userSvcGetter))
+	userRouter.Post("/sign-up-code-verification", SignUpCodeVerification(userSvcGetter))
+	userRouter.Get("/users/:id", GetUserByID(userSvcGetter))
+	userRouter.Put("/user/update", Update(userSvcGetter))
+	//notif
+	notifRouter.Post("/send_message", SendMessage(notifSvcGetter))
+	notifRouter.Get("/unread-messages/:user_id", GetUnreadMessages(notifSvcGetter))
 }

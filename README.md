@@ -1,4 +1,4 @@
-# Online Survey System
+# Traveling Online System
 
 This project is a Golang-based online traveling system that uses Docker for containerization. The application connects to PostgreSQL database on port 8080.
 
