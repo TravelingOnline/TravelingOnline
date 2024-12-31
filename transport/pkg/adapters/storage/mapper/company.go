@@ -15,7 +15,7 @@ func CompanyStroage2Domain(v types.Company) (domain.Company, error) {
 	if v.Owner == nil {
 		return domain.Company{}, errors.New("owner information is missing")
 	}
-	if v.Owner.Id == 0 || v.Owner.FirstName == "" || v.Owner.LastName == "" || v.Owner.Email == "" {
+	if v.Owner.Id == "" || v.Owner.FirstName == "" || v.Owner.LastName == "" || v.Owner.Email == "" {
 		return domain.Company{}, errors.New("owner details are incomplete")
 	}
 

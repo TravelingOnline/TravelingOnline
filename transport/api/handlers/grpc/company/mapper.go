@@ -12,7 +12,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 		Id    string
 		Name  string
 		Owner *struct {
-			Id        uint64
+			Id        string
 			FirstName string
 			LastName  string
 			Email     string
@@ -26,7 +26,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 			Id    string
 			Name  string
 			Owner *struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -35,7 +35,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 			Id:   req.Id,
 			Name: req.Name,
 			Owner: &struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -51,7 +51,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 			Id    string
 			Name  string
 			Owner *struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -61,7 +61,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 			Name: req.Name,
 
 			Owner: &struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -80,7 +80,7 @@ func PBCompanyRequest2DomainCompany(request interface{}) (domain.Company, error)
 	if PBreq.Owner == nil {
 		return domain.Company{}, errors.New("OWNER CANNOT BE NIL")
 	}
-	if PBreq.Owner.Id == 0 || PBreq.Owner.FirstName == "" || PBreq.Owner.LastName == "" || PBreq.Owner.Email == "" {
+	if PBreq.Owner.Id == "" || PBreq.Owner.FirstName == "" || PBreq.Owner.LastName == "" || PBreq.Owner.Email == "" {
 		return domain.Company{}, errors.New("OWNER DETAILS ARE INCOMPLETE")
 	}
 

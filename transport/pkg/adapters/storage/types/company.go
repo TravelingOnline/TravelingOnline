@@ -17,7 +17,7 @@ type Company struct {
 }
 
 type Owner struct {
-	Id        uint64 `gorm:"primaryKey"` // Primary key
+	Id        string `gorm:"primaryKey"` // Primary key
 	FirstName string
 	LastName  string
 	Email     string
