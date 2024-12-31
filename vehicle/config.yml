@@ -8,7 +8,7 @@ db:
   password: "12345"
 
 server:
-  httpPort: 8081
+  httpPort: 8085
   secret: "your_secret_key"
   authExpMin: 15
   authExpRefreshMin: 60
