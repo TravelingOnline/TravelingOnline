@@ -29,7 +29,7 @@
     "service_grpc_health_path": "",
     "service_host_address": "172.19.0.11",
     "service_registry":{
-      "address": "172.19.0.11:8500",
+      "address": "172.19.0.5:8500",
       "service_name": "bank-service"}
   },
   "scylla": {

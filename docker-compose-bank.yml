@@ -19,7 +19,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - online-traveling-network
+      online-traveling-network:
+        ipv4_address: 172.19.0.2
+
     ports:
       - '${AUTH_POSTGRES_PORT}:5432'
   auth-service:
@@ -50,9 +52,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - online-traveling-network
+      online-traveling-network:
+        ipv4_address: 172.19.0.3
     ports:
       - '${BANK_POSTGRES_PORT}:5432'
+    
     # healthcheck:
     #   test: ["CMD-SHELL", "pg_isready -U ${BANK_POSTGRES_DB_NAME}"]
     #   interval: 10s
@@ -80,6 +84,12 @@ services:
       - consul
     volumes:
       - ${BANK_CONFIG_PATH}:/app/config.json
+    entrypoint: >
+      /bin/sh -c "until curl -s http://172.19.0.5:8500/v1/status/leader; do
+      echo waiting for consul;
+      sleep 5;
+      done;
+      exec ./your-bank-service-binary"
   rabbitmq:
     image: rabbitmq:3.10.7-management
     restart: always

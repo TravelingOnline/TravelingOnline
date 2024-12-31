@@ -2,22 +2,27 @@ package app
 
 import (
 	"context"
+	"log"
 
 	"github.com/onlineTraveling/auth/config"
-
 	"github.com/onlineTraveling/auth/internal/codeVerification"
 	"github.com/onlineTraveling/auth/internal/common"
 	notifPort "github.com/onlineTraveling/auth/internal/notification/port"
-
 	"github.com/onlineTraveling/auth/internal/user"
 	userPort "github.com/onlineTraveling/auth/internal/user/port"
+
 	"github.com/onlineTraveling/auth/pkg/adapters/storage"
+	"github.com/onlineTraveling/auth/pkg/consul"
+	"github.com/onlineTraveling/auth/pkg/ports"
+	"github.com/onlineTraveling/auth/pkg/ports/clients/clients"
 	"github.com/onlineTraveling/auth/pkg/postgres"
 
 	codeVerificationPort "github.com/onlineTraveling/auth/internal/codeVerification/port"
 
 	"github.com/go-co-op/gocron/v2"
 	"github.com/onlineTraveling/auth/internal/notification"
+	"github.com/onlineTraveling/auth/pkg/adapters/clients/grpc"
+	"github.com/onlineTraveling/auth/pkg/adapters/rabbitmq"
 	appCtx "github.com/onlineTraveling/auth/pkg/context"
 	"gorm.io/gorm"
 )
@@ -28,9 +33,10 @@ type app struct {
 	userService       userPort.Service
 	notifService      notifPort.Service
 	codeVrfctnService codeVerificationPort.Service
+	serviceRegistry   ports.IServiceRegistry
+	bankClient        clients.IBankClient
+	messageBroker     ports.IMessageBroker
 }
-
-// CodeVerificationService implements App.
 
 func (a *app) DB() *gorm.DB {
 	return a.db
@@ -105,10 +111,6 @@ func (a *app) setDB() error {
 
 	a.db = db
 
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -124,6 +126,9 @@ func NewApp(cfg config.Config) (App, error) {
 	a.userService = user.NewService(storage.NewUserRepo(a.db))
 	a.codeVrfctnService = codeVerification.NewService(a.userService, storage.NewOutboxRepo(a.db), storage.NewCodeVerificationRepo(a.db))
 	a.notifService = notification.NewService(storage.NewNotifRepo(a.db))
+	a.mustRegisterService()
+	a.setBankClient(cfg.Server.ServiceRegistry.BankServiceName)
+	a.setMessageBroker()
 	return a, a.registerOutboxHandlers()
 }
 
@@ -134,7 +139,34 @@ func NewMustApp(cfg config.Config) App {
 	}
 	return app
 }
+func (a *app) mustRegisterService() {
+	srvCfg := a.cfg.Server
+	registry := consul.NewConsul(srvCfg.ServiceRegistry.Address)
+	// println("ooooooooooooo ServiceName", srvCfg.ServiceRegistry.ServiceName)
+	// println("ooooooooooooo ServiceHostAddress", srvCfg.ServiceHostAddress)
+	// println("ooooooooooooo ServiceHTTPPrefixPath", srvCfg.ServiceHTTPPrefixPath)
+	// println("ooooooooooooo ServiceHTTPHealthPath", srvCfg.ServiceHTTPHealthPath)
+	// println("ooooooooooooo GRPCPort HttpPort", srvCfg.GRPCPort, srvCfg.HttpPort)
+	err := registry.RegisterService(srvCfg.ServiceRegistry.ServiceName, srvCfg.ServiceHostAddress, srvCfg.ServiceHTTPPrefixPath, srvCfg.ServiceHTTPHealthPath, srvCfg.GRPCPort, int(srvCfg.HttpPort))
+	if err != nil {
+		log.Fatalf("Failed to register service with Consul: %v", err)
+	}
+	a.serviceRegistry = registry
+}
+func (a *app) setBankClient(authServiceName string) {
+	if a.bankClient != nil {
+		return
+	}
+	a.bankClient = grpc.NewGRPCAuthClient(a.serviceRegistry, authServiceName)
+}
 
+func (a *app) setMessageBroker() {
+	messageBrokerCfg := a.cfg.MessageBroker
+	if a.messageBroker != nil {
+		return
+	}
+	a.messageBroker = rabbitmq.NewRabbitMQ(messageBrokerCfg.Username, messageBrokerCfg.Password, messageBrokerCfg.Host, messageBrokerCfg.Port)
+}
 func (a *app) registerOutboxHandlers() error {
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
