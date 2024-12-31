@@ -14,7 +14,7 @@ func Run(appContainer app.App, cfg config.ServerConfig) error {
 	api := router.Group("/api/", setUserContext)
 
 	registerAgencyAPI(appContainer, api)
-
+	registerTourAPI(appContainer, api)
 	return router.Listen(fmt.Sprintf(":%d", cfg.HttpPort))
 }
 
@@ -28,4 +28,9 @@ func registerAgencyAPI(appContainer app.App, router fiber.Router) {
 	// router.Patch("/agency/:id", setTransaction(appContainer.DB()))
 	router.Delete("/agency/:id", setTransaction(appContainer.DB()), DeleteAgency(agencySvcGetter))
 
+}
+
+func registerTourAPI(appContainer app.App, router fiber.Router) {
+	tourSvcGetter := tourServiceGetter(appContainer)
+	router.Post("/tour", setTransaction(appContainer.DB()), CreateTour(tourSvcGetter))
 }
