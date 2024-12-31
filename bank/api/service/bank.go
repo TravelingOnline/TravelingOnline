@@ -46,7 +46,7 @@ func (s *BankService) GetUserWalletCards(ctx context.Context, userID uuid.UUID) 
 	return userWalletCards, nil
 }
 
-func (s *BankService) Deposit(ctx context.Context, card *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (s *BankService) Deposit(ctx context.Context, card *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error) {
 	userWallet, err := s.walletService.Deposit(ctx, card, amount, userID)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (s *BankService) Deposit(ctx context.Context, card *domain.CreditCard, amou
 	return userWallet, nil
 }
 
-func (s *BankService) Withdraw(ctx context.Context, card *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (s *BankService) Withdraw(ctx context.Context, card *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error) {
 	userWallet, err := s.walletService.Withdraw(ctx, card, amount, userID)
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (s *BankService) GetWallet(ctx context.Context, userID uuid.UUID) (*domain.
 	return userWallet, nil
 }
 
-func (s *BankService) Transfer(ctx context.Context, tr *domain.BankTransaction) (*domain.BankTransaction, error) {
+func (s *BankService) Transfer(ctx context.Context, tr *domain.BankTransactionRequest) (*domain.BankTransactionRequest, error) {
 	createdTransaction, err := s.bankTransactionService.Transfer(ctx, tr)
 	if err != nil {
 		return nil, err

@@ -22,11 +22,11 @@ func (o *WalletService) Create(ctx context.Context, wallet *domain.Wallet) (*dom
 	return o.repo.Create(ctx, wallet)
 }
 
-func (o *WalletService) Deposit(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (o *WalletService) Deposit(ctx context.Context, creditCard *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error) {
 	return o.repo.Deposit(ctx, creditCard, amount, userID)
 }
 
-func (o *WalletService) Withdraw(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (o *WalletService) Withdraw(ctx context.Context, creditCard *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error) {
 	return o.repo.Withdraw(ctx, creditCard, amount, userID)
 }
 
@@ -68,6 +68,6 @@ func NewBankTransactionService(repo port.BankTransactionRepo) *BankTransactionSe
 		repo: repo,
 	}
 }
-func (b *BankTransactionService) Transfer(ctx context.Context, transaction *domain.BankTransaction) (*domain.BankTransaction, error) {
+func (b *BankTransactionService) Transfer(ctx context.Context, transaction *domain.BankTransactionRequest) (*domain.BankTransactionRequest, error) {
 	return b.repo.Transfer(ctx, transaction)
 }

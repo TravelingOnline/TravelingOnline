@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/onlineTraveling/bank/api/service"
 	"github.com/onlineTraveling/bank/internal/bank/domain"
+	"github.com/onlineTraveling/bank/pkg/adapters/storage/types"
 )
 
 type BankHandler struct {
@@ -39,7 +40,7 @@ func (h *BankHandler) Transfer(transferdata []byte) {
 	type TransferRequest struct {
 		FromWalletID string `json:"wallet_id_from"`
 		ToWalletID   string `json:"wallet_id_to"`
-		Amount       uint   `json:"amount"`
+		Amount       uint64 `json:"amount"`
 	}
 	var req TransferRequest
 	err := json.Unmarshal(transferdata, &req)
@@ -58,9 +59,10 @@ func (h *BankHandler) Transfer(transferdata []byte) {
 	}
 	// log.Printf("Transfering money from ID: %s to %s", req.FromWalletID, req.ToWalletID)
 
-	h.bankService.Transfer(context.Background(), &domain.BankTransaction{
-		FromWallet: &domain.Wallet{ID: &uidFrom},
-		ToWallet:   &domain.Wallet{ID: &uidTo},
+	h.bankService.Transfer(context.Background(), &domain.BankTransactionRequest{
+		FromUserID: uidFrom,
+		ToUserID:   uidTo,
 		Amount:     req.Amount,
+		Status:     types.Failed,
 	})
 }

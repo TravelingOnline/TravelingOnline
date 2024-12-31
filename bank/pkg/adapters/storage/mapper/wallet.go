@@ -40,24 +40,24 @@ func CreditCardDomainToEntity(domainWallet *domain.CreditCard) *types.CreditCard
 	}
 }
 
-func DomainTransactionToTransactionEntity(domainTr *domain.BankTransaction) *types.BankTransaction {
+func DomainTransactionToTransactionEntity(domainTr *domain.BankTransactionRequest, senderWallet *domain.Wallet, recieverWallet *domain.Wallet) *types.BankTransaction {
 	fw := &types.Wallet{
-		ID:      *domainTr.FromWallet.ID,
-		UserID:  &domainTr.FromWallet.UserID,
-		Balance: domainTr.FromWallet.Balance,
+		ID:      *senderWallet.ID,
+		UserID:  &senderWallet.UserID,
+		Balance: senderWallet.Balance,
 	}
 
 	tw := &types.Wallet{
-		ID:      *domainTr.ToWallet.ID,
-		UserID:  &domainTr.ToWallet.UserID,
-		Balance: domainTr.ToWallet.Balance,
+		ID:      *recieverWallet.ID,
+		UserID:  &recieverWallet.UserID,
+		Balance: senderWallet.Balance,
 	}
 	return &types.BankTransaction{
 		Amount:       domainTr.Amount,
 		FromWallet:   fw,
 		ToWallet:     tw,
-		FromWalletID: domainTr.FromWallet.ID,
-		ToWalletID:   domainTr.ToWallet.ID,
+		FromWalletID: senderWallet.ID,
+		ToWalletID:   recieverWallet.ID,
 		Status:       domainTr.Status,
 	}
 }

@@ -4,19 +4,16 @@ package auth;
 option go_package = "github.com/onlineTraveling/auth/protobufs";
 
 message UserSignUpFirstRequest {
-
-    string email = 1 [json_name = "email"];
-    string password = 2 [json_name = "password"];
-
-
-}
-message UserSignInRequest {
     string email = 1 [json_name = "email"];
     string password = 2 [json_name = "password"];
 }
 message UserSignUpSecondRequest {
     string userId = 1 [json_name = "userId"];
     string code = 2 [json_name = "code"];
+}
+message UserSignInRequest {
+    string email = 1 [json_name = "email"];
+    string password = 2 [json_name = "password"];
 }
 
 message UserSignUpSecondResponse {

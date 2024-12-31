@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/onlineTraveling/bank/internal/bank/domain"
@@ -28,7 +29,7 @@ func (r *bankTransactionRepo) GetTransactionsByUserId(ctx context.Context, userI
 	}
 	return mapper.TransactionEntitiesToDomainTransactions(transactions), nil
 }
-func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTransaction) (*domain.BankTransaction, error) {
+func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTransactionRequest) (*domain.BankTransactionRequest, error) {
 	// Begin a transaction
 	tx := r.db.Begin()
 	if tx.Error != nil {
@@ -36,14 +37,15 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 	}
 
 	var walletFrom, walletTo *domain.Wallet
+	fmt.Printf("\n  f user id :%v  t user id :%v amount   %v\n", tr.FromUserID, tr.ToUserID, tr.Amount)
 	// Fetch the source wallet
-	if err := tx.Table("wallets").Where("id=?", tr.FromWallet.ID).First(&walletFrom).Error; err != nil {
+	if err := tx.Table("wallets").Where("user_id=?", tr.FromUserID).First(&walletFrom).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
 	// Fetch the destination wallet
-	if err := tx.Table("wallets").Where("id=?", tr.ToWallet.ID).First(&walletTo).Error; err != nil {
+	if err := tx.Table("wallets").Where("user_id=?", tr.ToUserID).First(&walletTo).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -94,7 +96,7 @@ func (r *bankTransactionRepo) Transfer(ctx context.Context, tr *domain.BankTrans
 
 	// Update transaction status
 	tr.Status = types.TransactionSuccess
-	createdTransaction := mapper.DomainTransactionToTransactionEntity(tr)
+	createdTransaction := mapper.DomainTransactionToTransactionEntity(tr, walletFrom, walletFrom)
 	if err := tx.WithContext(ctx).Create(&createdTransaction).Error; err != nil {
 		tx.Rollback()
 		return nil, err

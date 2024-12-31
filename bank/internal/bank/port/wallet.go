@@ -18,8 +18,8 @@ var (
 
 type WalletRepo interface {
 	Create(ctx context.Context, user *domain.Wallet) (*domain.Wallet, error)
-	Deposit(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error)
-	Withdraw(ctx context.Context, creditCard *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error)
+	Deposit(ctx context.Context, creditCard *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error)
+	Withdraw(ctx context.Context, creditCard *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error)
 	GetWallet(ctx context.Context, userID uuid.UUID) (*domain.Wallet, error)
 	DeleteWallet(ctx context.Context, userID uuid.UUID) error
 }
