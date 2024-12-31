@@ -15,6 +15,8 @@ type Tour struct {
 	Type            string
 	Price           int32
 	VehicleID       string
+	CompanyID       string  `gorm:"not null"`
+	Company         Company `gorm:"foreignKey:CompanyID;references:Id"`
 	AdminApprove    bool
 	Ended           bool
 	Vehicle         *Vehicle `gorm:"foreignKey:VehicleID"`

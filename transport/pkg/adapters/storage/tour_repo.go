@@ -9,10 +9,11 @@ import (
 	"github.com/onlineTraveling/transport/config"
 	"github.com/onlineTraveling/transport/internal/tour/domain"
 	"github.com/onlineTraveling/transport/internal/tour/port"
+	bpb "github.com/onlineTraveling/transport/pkg/adapters/storage/bank-pb"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/helpers"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/mapper"
-	"github.com/onlineTraveling/transport/pkg/adapters/storage/pb"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/types"
+	vpb "github.com/onlineTraveling/transport/pkg/adapters/storage/vehicle-pb"
 	"gorm.io/gorm"
 )
 
@@ -62,19 +63,6 @@ func (r *tourRepo) UpdateTour(ctx context.Context, tour domain.Tour) (domain.Tou
 	// Map domain tour to storage tour model
 	updateTour := mapper.DomainTour2Storage(tour)
 
-	var oldTour types.Tour
-
-	// Query the database and preload the TechnicalTeamID data
-	if err := r.db.WithContext(ctx).
-		Where("id = ?", string(tour.Id)).
-		First(&oldTour).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return domain.TourID(""), fmt.Errorf("tour with ID %s not found", tour.Id)
-		}
-		log.Printf("failed to fetch tour with ID %s: %v", tour.Id, err)
-		return domain.TourID(""), fmt.Errorf("unable to fetch tour from the database: %w", err)
-	}
-
 	// Update the tour in the database
 	if err := r.db.WithContext(ctx).
 		Model(&updateTour).
@@ -82,6 +70,35 @@ func (r *tourRepo) UpdateTour(ctx context.Context, tour domain.Tour) (domain.Tou
 		Updates(updateTour).Error; err != nil {
 		log.Printf("failed to update tour with ID %s: %v", updateTour.Id, err)
 		return domain.TourID(""), fmt.Errorf("unable to update tour in the database: %w", err)
+	}
+	//Share Money
+	if tour.Ended {
+		var peoples []string
+		senderOwnerID := tour.Company.Owner.Id
+		for _, v := range tour.TechnicalTeam {
+			peoples = append(peoples, v.Id)
+		}
+		portion := int(tour.Price)/len(peoples) + 1
+
+		client, conn, err := helpers.NewBankClient(&r.config.Bank.Host, &r.config.Bank.HttpPort)
+		if err != nil {
+			log.Fatalf("Error creating gRPC client: %v", err)
+		}
+		defer conn.Close()
+		ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+		defer cancel()
+		for _, v := range peoples {
+			req := &bpb.TransferRequest{
+				SenderOwnerID:   senderOwnerID,
+				ReceiverOwnerID: v,
+				Amount:          uint64(portion),
+			}
+			res, err := client.Transfer(ctx, req)
+			if err != nil {
+				log.Fatalf("Failed to Transfer money: %v", err)
+			}
+			log.Printf("Transfer Money: %v", res)
+		}
 	}
 
 	// Return the updated company ID
@@ -137,14 +154,14 @@ func (r *tourRepo) GetByIDTour(ctx context.Context, tourID domain.TourID) (domai
 }
 
 func (r *tourRepo) RentCar(ctx context.Context, tType string, passenger int, price int) (domain.Tour, error) {
-	client, conn, err := helpers.NewClient(&r.config.Vehicle.Host, &r.config.Vehicle.HttpPort)
+	client, conn, err := helpers.NewVehicleClient(&r.config.Vehicle.Host, &r.config.Vehicle.HttpPort)
 	if err != nil {
 		log.Fatalf("Error creating gRPC client: %v", err)
 	}
 	defer conn.Close()
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
-	rentReq := &pb.RentVehicleRequest{
+	rentReq := &vpb.RentVehicleRequest{
 		Passenger: int32(passenger),
 		Type:      tType,
 		Price:     int32(price),

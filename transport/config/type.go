@@ -4,6 +4,7 @@ type Config struct {
 	DB      DBConfig      `json:"db"  yaml:"db"`
 	Server  ServerConfig  `json:"server"  yaml:"server"`
 	Vehicle VehicleConfig `json:"vehicle"  yaml:"vehicle"`
+	Bank    Bank          `json:"bank"  yaml:"bank"`
 }
 
 type DBConfig struct {
@@ -25,6 +26,11 @@ type ServerConfig struct {
 }
 
 type VehicleConfig struct {
+	HttpPort uint   `json:"httpPort"  yaml:"httpPort"`
+	Host     string `json:"host"  yaml:"host"`
+}
+
+type Bank struct {
 	HttpPort uint   `json:"httpPort"  yaml:"httpPort"`
 	Host     string `json:"host"  yaml:"host"`
 }

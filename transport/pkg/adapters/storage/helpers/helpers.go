@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/onlineTraveling/transport/pkg/adapters/storage/pb"
+	vpb "github.com/onlineTraveling/transport/pkg/adapters/storage/vehicle-pb"
+	bpb "github.com/onlineTraveling/transport/pkg/adapters/storage/bank-pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewClient(host *string, port *uint) (pb.VehicleServiceClient, *grpc.ClientConn, error) {
+func NewVehicleClient(host *string, port *uint) (vpb.VehicleServiceClient, *grpc.ClientConn, error) {
 	// Dial the gRPC server using the provided configuration
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%s:%d", *host, *port), // Format HttpPort as an int
@@ -19,7 +20,21 @@ func NewClient(host *string, port *uint) (pb.VehicleServiceClient, *grpc.ClientC
 		return nil, nil, fmt.Errorf("failed to connect to VehicleService: %w", err)
 	}
 
-	client := pb.NewVehicleServiceClient(conn)
+	client := vpb.NewVehicleServiceClient(conn)
+	return client, conn, nil
+}
+
+func NewBankClient(host *string, port *uint) (bpb.BankServiceClient, *grpc.ClientConn, error) {
+	// Dial the gRPC server using the provided configuration
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%s:%d", *host, *port), // Format HttpPort as an int
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to connect to BankService: %w", err)
+	}
+
+	client := bpb.NewBankServiceClient(conn)
 	return client, conn, nil
 }
 

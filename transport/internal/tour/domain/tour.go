@@ -1,4 +1,7 @@
 package domain
+import 	(
+	company_domain "github.com/onlineTraveling/transport/internal/company/domain"
+)
 
 type TourID string
 
@@ -14,11 +17,12 @@ type Tour struct {
 	Capacity      int32
 	AdminApprove  bool
 	Ended         bool
+	Company       *company_domain.Company
 	TechnicalTeam []*TechnicalTeam
 }
 
 type TechnicalTeam struct {
-	Id        uint64
+	Id        string
 	FirstName string
 	LastName  string
 	Age       int32
