@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  auth-postgres:
+    image: 'postgres:latest'
+    container_name: auth-postgres
+    environment:
+      POSTGRES_DB: ${AUTH_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - online-traveling-network
+    ports:
+      - '${POSTGRES_PORT}:5432'
+  
+  auth-service:
+    build:
+      context: ./auth
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      - ENV=production
+      - TZ=Asia/Tehran
+      - AUTH_CONFIG_PATH=/app/config.json
+      - KAFKA_BROKER=kafka:9092
+    networks:
+      - online-traveling-network
+    restart: unless-stopped
+    depends_on:
+      - auth-postgres
+    volumes:
+      - ${AUTH_CONFIG_PATH}:/app/config.json
+
+networks:
+  online-traveling-network:
+    driver: bridge
