@@ -65,7 +65,9 @@ func WalletCards(walletService *service.BankService) fiber.Handler {
 			// apply trace ID here .... TODO
 			return presenter.InternalServerError(c, err)
 		}
-
+		if userWalletCards == nil {
+			return presenter.OK(c, "No cards found for this user", nil)
+		}
 		res := presenter.CardsToWalletCardsResp(userWalletCards)
 		return presenter.OK(c, "Cards successfully fetched", res)
 	}

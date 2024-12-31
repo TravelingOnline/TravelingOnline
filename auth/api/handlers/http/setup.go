@@ -15,7 +15,7 @@ import (
 
 func Run(appContainer app.App, config config.ServerConfig) error {
 	app := fiber.New(fiber.Config{
-		AppName: "Traveling Online v0.0.1",
+		AppName: "Traveling Online v0.0.1 | Auth service",
 	})
 
 	app.Use(TraceMiddleware())

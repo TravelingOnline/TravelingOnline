@@ -5,10 +5,10 @@
     "database": "BankDB",
     "schema": "public",
     "user": "admin",
-    "password": "12345"
+    "password": "12345" 
   },
   "rabbitmq":{
-    "host": "localhost",
+    "host": "rabbitmq", 
     "port": 5672,
     "username": "guest",
     "password": "guest",
@@ -21,20 +21,15 @@
     "WorkerPoolSize": 24},
   "server": {
     "grpcPort":50051,
-    "httpPort": 8080,
-    "host": "0.0.0.0",
+    "httpPort": 8082,
     "rate_limit_max_attempt": 10,
     "ratelimit_time_period": 30,
     "service_host_name": "bank",
     "service_grpc_health_path": "",
-    "service_host_address": "172.21.0.1",
+    "service_host_address": "172.19.0.11",
     "service_registry":{
-      "address": "0.0.0.0:8500",
+      "address": "172.19.0.5:8500",
       "service_name": "bank-service"}
-    },
-  "service_registry":{
-    "address": "http://consul:8500",
-    "service_name": "bank-service"
   },
   "scylla": {
     "host": "scylladb",
