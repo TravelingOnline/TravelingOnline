@@ -9,7 +9,7 @@ services:
       - "8600:8600/udp" 
     restart: always
     networks:
-       bank-network:
+       online-traveling-network:
          ipv4_address: 172.19.0.5
   auth-postgres:
     image: 'postgres:latest'
@@ -19,7 +19,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - bank-network
+      - online-traveling-network
     ports:
       - '${AUTH_POSTGRES_PORT}:5432'
   auth-service:
@@ -27,14 +27,15 @@ services:
       context: ./auth
     container_name: auth-service
     ports:
-      - "8081:8080"
+      - "8081:8081"
+      - "50051:50051"
     environment:
       - ENV=production
       - TZ=Asia/Tehran
       - AUTH_CONFIG_PATH=/app/config.json
       # - KAFKA_BROKER=kafka:9092
     networks:
-      bank-network:
+      online-traveling-network:
         ipv4_address: 172.19.0.10
     restart: unless-stopped
     depends_on:
@@ -49,11 +50,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - bank-network
+      - online-traveling-network
     ports:
       - '${BANK_POSTGRES_PORT}:5432'
     # healthcheck:
-    #   test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+    #   test: ["CMD-SHELL", "pg_isready -U ${BANK_POSTGRES_DB_NAME}"]
     #   interval: 10s
     #   timeout: 5s
     #   retries: 5
@@ -63,15 +64,15 @@ services:
       context: ./bank
     container_name: bank-service
     ports:
-      - "8082:8080"
-      - "50051:50051"
+      - "8082:8082"
+      - "50052:50052"
     environment:
       - ENV=production
       - TZ=Asia/Tehran
       - BANK_CONFIG_PATH=/app/config.json
       - KAFKA_BROKER=kafka:9092
     networks:
-      bank-network:
+      online-traveling-network:
         ipv4_address: 172.19.0.11
     restart: unless-stopped
     depends_on:
@@ -91,9 +92,9 @@ services:
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     networks:
-      - bank-network
+      - online-traveling-network
 networks:
-  bank-network:
+  online-traveling-network:
     driver: bridge
     ipam:
       config:

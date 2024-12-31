@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Create a gRPC connection to the bank service
-	conn, err := grpc.Dial("0.0.0.0:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("0.0.0.0:50052", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("client cannot connect to gRPC server: %v", err)
 	}

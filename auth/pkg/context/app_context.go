@@ -10,7 +10,6 @@ import (
 type appContext struct {
 	context.Context
 	db           *gorm.DB
-	secretDB     *gorm.DB
 	shouldCommit bool
 }
 
@@ -33,14 +32,13 @@ func NewAppContext(parent context.Context, opts ...AppContextOpt) context.Contex
 	return ctx
 }
 
-func SetDB(ctx context.Context, db *gorm.DB, secretDB *gorm.DB, shouldCommit bool) {
+func SetDB(ctx context.Context, db *gorm.DB, shouldCommit bool) {
 	appCtx, ok := ctx.(*appContext)
 	if !ok {
 		return
 	}
 
 	appCtx.db = db
-	appCtx.secretDB = secretDB
 	appCtx.shouldCommit = shouldCommit
 }
 
@@ -52,14 +50,6 @@ func GetDB(ctx context.Context) *gorm.DB {
 
 	return appCtx.db
 }
-func GetSecretDB(ctx context.Context) *gorm.DB {
-	appCtx, ok := ctx.(*appContext)
-	if !ok {
-		return nil
-	}
-
-	return appCtx.secretDB
-}
 
 func Commit(ctx context.Context) error {
 	appCtx, ok := ctx.(*appContext)
@@ -70,10 +60,7 @@ func Commit(ctx context.Context) error {
 	if er != nil {
 		return er
 	}
-	er = appCtx.secretDB.Commit().Error
-	if er != nil {
-		return er
-	}
+
 	return nil
 }
 
@@ -86,10 +73,7 @@ func Rollback(ctx context.Context) error {
 	if er != nil {
 		return er
 	}
-	er = appCtx.secretDB.Rollback().Error
-	if er != nil {
-		return er
-	}
+
 	return nil
 }
 
