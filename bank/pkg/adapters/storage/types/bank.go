@@ -14,7 +14,7 @@ type Wallet struct {
 	UpdatedAt      time.Time
 	DeletedAt      gorm.DeletedAt `gorm:"index"`
 	UserID         *uuid.UUID     `gorm:"uniqueIndex"`
-	Balance        uint
+	Balance        uint64
 	CreditCards    []*CreditCard `gorm:"many2many:wallet_credit_cards;"`
 }
 
@@ -55,7 +55,7 @@ type BankTransaction struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
-	Amount       uint
+	Amount       uint64
 	Status       TransferTransactionStatus
 	FromWalletID *uuid.UUID
 	FromWallet   *Wallet `gorm:"foreignKey:FromWalletID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
@@ -66,5 +66,5 @@ type BankTransaction struct {
 
 type Commission struct {
 	gorm.Model
-	AppCommissionPercentage uint
+	AppCommissionPercentage uint64
 }
