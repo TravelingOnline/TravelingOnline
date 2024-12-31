@@ -61,7 +61,7 @@ func NewApp(cfg config.Config) (*App, error) {
 		return nil, err
 	}
 	a.companyService = company.NewService(storage.NewCompanyRepo(a.db))
-	a.tourService = tour.NewService(storage.NewTourRepo(a.db))
+	a.tourService = tour.NewService(storage.NewTourRepo(a.db, a.cfg))
 	return a, nil
 }
 

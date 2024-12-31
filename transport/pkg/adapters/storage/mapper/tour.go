@@ -15,20 +15,29 @@ func TourStroage2Domain(t types.Tour) (domain.Tour, error) {
 		return domain.Tour{}, errors.New("tour ID is required")
 	}
 	if t.TechnicalTeam == nil {
-		return domain.Tour{}, errors.New("Techteam information is missing")
+		return domain.Tour{}, errors.New("Techteam Information Is Missing")
 	}
 
 	// Construct the domain company
 	company := domain.Tour{
-		Id:             t.Id,
-		Source:         t.Source,
-		Destination:    t.Destination,
-		StartDate:      t.StartDate,
-		EndDate:        t.EndDate,
-		Type:           t.Type,
-		Price:          t.Price,
-		VehicleUnicode: t.VehicleUnicode,
-		TechnicalTeam:  []*domain.TechnicalTeam{},
+		Id:          t.Id,
+		Source:      t.Source,
+		Destination: t.Destination,
+		StartDate:   t.StartDate,
+		EndDate:     t.EndDate,
+		Type:        t.Type,
+		Price:       t.Price,
+		Vehicle: domain.Vehicle{
+			Id:              t.Vehicle.Id,
+			Unicode:         t.Vehicle.Unicode,
+			RequiredExperts: t.Vehicle.RequiredExperts,
+			Speed:           t.Vehicle.Speed,
+			RentPrice:       t.Vehicle.RentPrice,
+			Type:            t.Vehicle.Type,
+			Passenger:       t.Vehicle.Passenger,
+			Model:           t.Vehicle.Model,
+		},
+		TechnicalTeam: []*domain.TechnicalTeam{},
 	}
 
 	// Return the constructed company and nil error if no validation failed
@@ -36,18 +45,31 @@ func TourStroage2Domain(t types.Tour) (domain.Tour, error) {
 }
 
 func DomainTour2Storage(t domain.Tour) types.Tour {
+
 	return types.Tour{
-		Id:             t.Id,
-		Source:         t.Source,
-		Destination:    t.Destination,
-		StartDate:      t.StartDate,
-		EndDate:        t.EndDate,
-		Type:           t.Type,
-		Price:          t.Price,
-		VehicleUnicode: t.VehicleUnicode,
-		TechnicalTeam:  []*types.TechnicalTeam{},
-		CreatedAt:      time.Time{},
-		UpdatedAt:      time.Time{},
-		DeletedAt:      gorm.DeletedAt{},
+		Id:          t.Id,
+		Source:      t.Source,
+		Destination: t.Destination,
+		StartDate:   t.StartDate,
+		EndDate:     t.EndDate,
+		Type:        t.Type,
+		Price:       t.Price,
+		Vehicle: &types.Vehicle{
+			Id:              t.Vehicle.Id,
+			Unicode:         t.Vehicle.Unicode,
+			RequiredExperts: t.Vehicle.RequiredExperts,
+			Speed:           t.Vehicle.Speed,
+			RentPrice:       t.Vehicle.RentPrice,
+			Type:            t.Vehicle.Type,
+			Passenger:       t.Vehicle.Passenger,
+			Model:           t.Vehicle.Model,
+			CreatedAt:       time.Time{},
+			UpdatedAt:       time.Time{},
+			DeletedAt:       gorm.DeletedAt{},
+		},
+		TechnicalTeam: []*types.TechnicalTeam{},
+		CreatedAt:     time.Time{},
+		UpdatedAt:     time.Time{},
+		DeletedAt:     gorm.DeletedAt{},
 	}
 }

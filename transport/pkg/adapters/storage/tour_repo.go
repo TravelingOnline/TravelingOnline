@@ -4,27 +4,39 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
-	"github.com/onlineTraveling/transport/internal/tour/port"
+	"github.com/onlineTraveling/transport/config"
 	"github.com/onlineTraveling/transport/internal/tour/domain"
+	"github.com/onlineTraveling/transport/internal/tour/port"
+	"github.com/onlineTraveling/transport/pkg/adapters/storage/helpers"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/mapper"
+	"github.com/onlineTraveling/transport/pkg/adapters/storage/pb"
 	"github.com/onlineTraveling/transport/pkg/adapters/storage/types"
 	"gorm.io/gorm"
 )
 
 type tourRepo struct {
-	db *gorm.DB
+	db     *gorm.DB
+	config config.Config
 }
 
-func NewTourRepo(db *gorm.DB) port.Repo {
+func NewTourRepo(db *gorm.DB, config config.Config) port.Repo {
 	return &tourRepo{
-		db: db,
+		db:     db,
+		config: config,
 	}
 }
 
-func (r *tourRepo) CreateTour(ctx context.Context, t domain.Tour) (domain.TourID, error) {
+func (r *tourRepo) CreateTour(ctx context.Context, tour domain.Tour) (domain.TourID, error) {
+	if !helpers.ValidDate(tour.StartDate) {
+		return domain.TourID(""), fmt.Errorf("Wrong StartDate format")
+	}
+	if !helpers.ValidDate(tour.EndDate) {
+		return domain.TourID(""), fmt.Errorf("Wrong EndDate format")
+	}
 	// Map the domain.Tour to the storage type
-	newTour := mapper.DomainTour2Storage(t)
+	newTour := mapper.DomainTour2Storage(tour)
 
 	// Insert the new tour into the database
 	if err := r.db.WithContext(ctx).Model(&types.Company{}).Create(&newTour).Error; err != nil {
@@ -37,8 +49,31 @@ func (r *tourRepo) CreateTour(ctx context.Context, t domain.Tour) (domain.TourID
 }
 
 func (r *tourRepo) UpdateTour(ctx context.Context, tour domain.Tour) (domain.TourID, error) {
+	// Validate input
+	if tour.Id == "" {
+		return domain.TourID(""), fmt.Errorf("TOUR ID CANNOT BE EMPTY")
+	}
+	if !helpers.ValidDate(tour.StartDate) {
+		return domain.TourID(""), fmt.Errorf("WRONG STARTDATE FORMAT")
+	}
+	if !helpers.ValidDate(tour.EndDate) {
+		return domain.TourID(""), fmt.Errorf("WRONG ENDDATE FORMAT")
+	}
 	// Map domain tour to storage tour model
 	updateTour := mapper.DomainTour2Storage(tour)
+
+	var oldTour types.Tour
+
+	// Query the database and preload the TechnicalTeamID data
+	if err := r.db.WithContext(ctx).
+		Where("id = ?", string(tour.Id)).
+		First(&oldTour).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.TourID(""), fmt.Errorf("tour with ID %s not found", tour.Id)
+		}
+		log.Printf("failed to fetch tour with ID %s: %v", tour.Id, err)
+		return domain.TourID(""), fmt.Errorf("unable to fetch tour from the database: %w", err)
+	}
 
 	// Update the tour in the database
 	if err := r.db.WithContext(ctx).
@@ -99,4 +134,37 @@ func (r *tourRepo) GetByIDTour(ctx context.Context, tourID domain.TourID) (domai
 	}
 
 	return domainTour, nil
+}
+
+func (r *tourRepo) RentCar(ctx context.Context, tType string, passenger int, price int) (domain.Tour, error) {
+	client, conn, err := helpers.NewClient(&r.config.Vehicle.Host, &r.config.Vehicle.HttpPort)
+	if err != nil {
+		log.Fatalf("Error creating gRPC client: %v", err)
+	}
+	defer conn.Close()
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+	rentReq := &pb.RentVehicleRequest{
+		Passenger: int32(passenger),
+		Type:      tType,
+		Price:     int32(price),
+	}
+	rentResp, err := client.RentVehicle(ctx, rentReq)
+	if err != nil {
+		log.Fatalf("Failed to rent vehicle: %v", err)
+	}
+
+	log.Printf("Rent Vehicle: %v", rentResp)
+	return domain.Tour{
+		Vehicle: domain.Vehicle{
+			Id:              rentResp.Id,
+			Unicode:         rentResp.Unicode,
+			RequiredExperts: rentResp.RequiredExperts,
+			Speed:           rentResp.Speed,
+			RentPrice:       rentResp.RentPrice,
+			Type:            rentReq.Type,
+			Passenger:       rentReq.Passenger,
+			Model:           rentResp.Model,
+		},
+	}, nil
 }

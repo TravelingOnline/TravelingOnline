@@ -13,7 +13,7 @@ service CompanyService{
 
 service TourService{
     rpc CreateTour (CreateTourRequest) returns (CreateTourResponse);
-    rpc UpdateTour (UpdateTourRequest) returns (UpdateCompanyResponse);
+    rpc UpdateTour (UpdateTourRequest) returns (UpdateTourResponse);
     rpc DeleteTour (DeleteTourRequest) returns (DeleteTourResponse);
     rpc GetByIDTour (GetByIDTourRequest) returns (GetByIDTourResponse);
 }
@@ -75,8 +75,21 @@ message CreateTourRequest{
     string endDate = 5;
     string type = 6;
     int32 price = 7;
-    string vehicleUnicode = 8;
-    repeated TechnicalTeam technicalTeam= 9;
+    int32 capacity = 8;
+    Vehicle vehicle = 9;
+    repeated TechnicalTeam technicalTeam= 10;
+}
+
+message Vehicle{
+    string id = 1;
+    string unicode = 2;
+    int32 required_experts = 3;
+    int32 speed = 4;
+    int32 rent_price = 5;
+    string type = 7;
+    int32 passenger = 9;
+    int32 model = 10;
+    
 }
 
 message UpdateTourRequest{
@@ -87,8 +100,11 @@ message UpdateTourRequest{
     string endDate = 5;
     string type = 6;
     int32 price = 7;
-    string vehicleUnicode = 8;
-    repeated TechnicalTeam technicalTeam= 9;
+    int32 capacity = 8;
+    Vehicle vehicle = 9;
+    bool adminApprove = 10;
+    repeated TechnicalTeam technicalTeam= 11;
+    bool ended = 12;
 }
 
 message CreateTourResponse{
@@ -119,8 +135,11 @@ message GetByIDTourResponse{
     string endDate = 5;
     string type = 6;
     int32 price = 7;
-    string vehicleUnicode = 8;
-    repeated TechnicalTeam technicalTeam= 9;
+    int32 capacity = 8;
+    Vehicle vehicle = 9;
+    bool adminApprove = 10;
+    repeated TechnicalTeam technicalTeam= 11;
+    bool ended = 12;
 }
 
 message TechnicalTeam{

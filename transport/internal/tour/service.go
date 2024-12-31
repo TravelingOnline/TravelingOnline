@@ -21,7 +21,13 @@ func NewService(repo port.Repo) port.Service {
 
 func (s *service) CreateTourService(ctx context.Context, tour domain.Tour) (domain.TourID, error) {
 	var TourID domain.TourID
-	TourID, err := s.repo.CreateTour(ctx, tour)
+	v, err := s.repo.RentCar(ctx, tour.Type, int(tour.Capacity), int(tour.Price))
+	if err != nil {
+		log.Fatalf("Unable to Create Tour, error: %v", err)
+		return TourID, err
+	}
+	tour.Vehicle = v.Vehicle
+	TourID, err = s.repo.CreateTour(ctx, tour)
 	if err != nil {
 		log.Fatalf("Unable to Create Tour, error: %v", err)
 		return TourID, err
