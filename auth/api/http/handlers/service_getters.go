@@ -1,4 +1,4 @@
-package http
+package handlers
 
 import (
 	"context"
@@ -9,14 +9,14 @@ import (
 )
 
 // user service transient instance handler
-func userServiceGetter(appContainer app.App, cfg config.ServerConfig) ServiceGetter[*service.UserService] {
+func UserServiceGetter(appContainer app.App, cfg config.ServerConfig) ServiceGetter[*service.UserService] {
 	return func(ctx context.Context) *service.UserService {
 		return service.NewUserService(appContainer.UserService(ctx),
 			cfg.Secret, cfg.AuthExpMinute, cfg.AuthRefreshMinute, appContainer.CodeVerificationService(ctx))
 	}
 }
 
-func notificationServiceGetter(appContainer app.App, cfg config.ServerConfig) ServiceGetter[*service.NotificationService] {
+func NotificationServiceGetter(appContainer app.App, cfg config.ServerConfig) ServiceGetter[*service.NotificationService] {
 	return func(ctx context.Context) *service.NotificationService {
 		return service.NewNotificationSerivce(appContainer.NotifService(ctx), cfg.Secret, cfg.AuthExpMinute, cfg.AuthRefreshMinute)
 	}

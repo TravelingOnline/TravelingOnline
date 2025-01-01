@@ -5,11 +5,10 @@ import (
 	"log"
 	"net"
 
-	"github.com/onlineTraveling/bank/api/grpc/handlers"
-	"github.com/onlineTraveling/bank/app"
-	"github.com/onlineTraveling/bank/config"
+	"github.com/onlineTraveling/auth/api/grpc/handlers"
+	"github.com/onlineTraveling/auth/app"
+	"github.com/onlineTraveling/auth/config"
 
-	"github.com/onlineTraveling/bank/protobufs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
@@ -28,10 +27,10 @@ func Run(cfg config.Config, app *app.App) {
 
 	reflection.Register(s)
 
-	log.Println("Bank | GRPC server started..")
+	log.Println("Auth GRPC server started..")
 
-	bankHandler := handlers.NewGRPCBankHandler(app.BankService())
-	protobufs.RegisterBankServiceServer(s, bankHandler)
+	// userHandler := handlers.NewGRPCUserHandler(app.UserService(context.Background()))
+	// protobufs.RegisterAuthServiceServer(s, userHandler)
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)

@@ -4,7 +4,7 @@
     "rate_limit_max_attempt": 10,
     "ratelimit_time_period": 30,
     "grpcPort":50051,
-    "secret": "ah3*&*&^&^&$uy42891809^%$$@$EGJNnjhjkh876$%#@#%",
+    "secret": "ah3*&891809^%$$@$EGJNnjhjkh876$%#@#%",
     "service_host_name": "auth-service",
     "service_grpc_health_path": "",
     "service_host_address": "172.19.0.10",
@@ -13,7 +13,7 @@
       "service_name": "auth-service"}
   },
   "auth_db": {
-    "host": "auth-postgres",
+    "host": "localhost",
     "port": 5432,
     "database": "AuthenticationDB",
     "schema": "public",
@@ -31,5 +31,16 @@
     "level": "INFO",
     "output": "console",
     "path": ""
-  }
+  },
+  "rabbitmq":{
+    "host": "rabbitmq", 
+    "port": 15672,
+    "username": "guest",
+    "password": "guest",
+    "Exchange": "auth-exchange",
+    "Queue": "auth-queue",
+    "RoutingKey": "auth-routing-key",
+    "ConsumerTag": "auth-consumer",
+    "UserQueueName":"auth-service/user",
+    "WorkerPoolSize": 24}
 }

@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,6 +11,7 @@ import (
 	"github.com/onlineTraveling/auth/internal/user/port"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/mapper"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/types"
+	"github.com/onlineTraveling/auth/pkg/jwt"
 	"github.com/onlineTraveling/auth/pkg/logger"
 	"gorm.io/gorm"
 )
@@ -18,17 +20,19 @@ type userRepo struct {
 	db *gorm.DB
 }
 
+// GetUserIDByToken implements port.Repo.
+
 func NewUserRepo(db *gorm.DB) port.Repo {
 	return &userRepo{db}
 
 }
 
-func (r *userRepo) Create(ctx context.Context, userDomain domain.User) (domain.UserID, error) {
+func (r *userRepo) CreateUser(ctx context.Context, userDomain domain.User) (domain.UserID, error) {
 	user := mapper.UserDomain2Storage(userDomain)
 	return domain.UserID(user.ID), r.db.Table("users").WithContext(ctx).Create(user).Error
 }
 
-func (r *userRepo) GetByID(ctx context.Context, userID domain.UserID) (*domain.User, error) {
+func (r *userRepo) GetUserByID(ctx context.Context, userID domain.UserID) (*domain.User, error) {
 	var user types.User
 	err := r.db.Debug().Table("users").
 		Where("id = ?", uuid.UUID(userID)).WithContext(ctx).
@@ -44,7 +48,31 @@ func (r *userRepo) GetByID(ctx context.Context, userID domain.UserID) (*domain.U
 
 	return mapper.UserStorage2Domain(user), nil
 }
-func (r *userRepo) GetByEmail(ctx context.Context, email domain.Email) (*domain.User, error) {
+func (r *userRepo) GetUserIDByToken(ctx context.Context, token string) (*jwt.UserClaims, error) {
+
+	var user types.User
+	secret := "ah3*&891809^%$$@$EGJNnjhjkh876$%#@#%"
+	claims, err := jwt.ParseToken(token, []byte(secret))
+	if err != nil {
+		log.Println("Error:", err)
+		return nil, err
+	}
+
+	err = r.db.Debug().Table("users").
+		Where("id = ?", uuid.UUID(claims.UserID)).WithContext(ctx).
+		First(&user).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	if user.ID == uuid.Nil {
+		return nil, nil
+	}
+
+	return claims, nil
+}
+func (r *userRepo) GetUserByEmail(ctx context.Context, email domain.Email) (*domain.User, error) {
 	var user types.User
 	err := r.db.Table("users").
 		Where("email = ?", email).
@@ -60,7 +88,7 @@ func (r *userRepo) GetByEmail(ctx context.Context, email domain.Email) (*domain.
 	return mapper.UserStorage2Domain(user), nil
 }
 
-func (r *userRepo) GetByFilter(ctx context.Context, filter *domain.UserFilter) (*domain.User, error) {
+func (r *userRepo) GetUserByFilter(ctx context.Context, filter *domain.UserFilter) (*domain.User, error) {
 	var user types.User
 
 	q := r.db.Table("users").Debug().WithContext(ctx)

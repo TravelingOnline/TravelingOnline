@@ -1,4 +1,4 @@
-package http
+package handlers
 
 import (
 	"errors"
@@ -77,6 +77,7 @@ func GetUserByID(svcGetter ServiceGetter[*service.UserService]) fiber.Handler {
 
 		// Parse the id into a uuid.UUID
 		id, err := uuid.Parse(idParam)
+
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "invalid UUID format",

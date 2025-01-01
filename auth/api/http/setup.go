@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/onlineTraveling/auth/api/http/handlers"
+	"github.com/onlineTraveling/auth/api/http/middlewares"
 	"github.com/onlineTraveling/auth/app"
 	"github.com/onlineTraveling/auth/config"
 
@@ -18,7 +20,7 @@ func Run(appContainer app.App, config config.ServerConfig) error {
 		AppName: "Traveling Online v0.0.1 | Auth service",
 	})
 
-	app.Use(TraceMiddleware())
+	app.Use(middlewares.TraceMiddleware())
 	app.Use(logger.New(logger.Config{
 		Format: "[${time}] ${status} - ${latency} ${method} ${path} TraceID: ${locals:traceID}\n",
 		Output: os.Stdout,
@@ -54,15 +56,15 @@ func Run(appContainer app.App, config config.ServerConfig) error {
 func registerAPI(appContainer app.App, cfg config.ServerConfig, api fiber.Router) {
 	userRouter := api.Group("/user")
 	notifRouter := api.Group("/notif")
-	userSvcGetter := userServiceGetter(appContainer, cfg)
-	notifSvcGetter := notificationServiceGetter(appContainer, cfg)
+	userSvcGetter := handlers.UserServiceGetter(appContainer, cfg)
+	notifSvcGetter := handlers.NotificationServiceGetter(appContainer, cfg)
 	//user
-	userRouter.Post("/sign-up", SignUp(userSvcGetter))
-	userRouter.Post("/sign-in", SignIn(userSvcGetter))
-	userRouter.Post("/sign-up-code-verification", SignUpCodeVerification(userSvcGetter))
-	userRouter.Get("/users/:id", GetUserByID(userSvcGetter))
-	userRouter.Put("/user/update", Update(userSvcGetter))
+	userRouter.Post("/sign-up", handlers.SignUp(userSvcGetter))
+	userRouter.Post("/sign-in", handlers.SignIn(userSvcGetter))
+	userRouter.Post("/sign-up-code-verification", handlers.SignUpCodeVerification(userSvcGetter))
+	userRouter.Get("/users/:id", handlers.GetUserByID(userSvcGetter))
+	userRouter.Put("/user/update", handlers.Update(userSvcGetter))
 	//notif
-	notifRouter.Post("/send_message", SendMessage(notifSvcGetter))
-	notifRouter.Get("/unread-messages/:user_id", GetUnreadMessages(notifSvcGetter))
+	notifRouter.Post("/send_message", handlers.SendMessage(notifSvcGetter))
+	notifRouter.Get("/unread-messages/:user_id", handlers.GetUnreadMessages(notifSvcGetter))
 }

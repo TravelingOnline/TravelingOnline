@@ -2,6 +2,8 @@ module github.com/onlineTraveling/auth
 
 go 1.22.5
 
+replace github.com/onlineTraveling/bank => ../bank
+
 require (
 	github.com/go-co-op/gocron/v2 v2.14.0
 	// github.com/gofiber/contrib/jwt v1.0.10
@@ -50,6 +52,8 @@ require (
 
 require (
 	github.com/hashicorp/consul/api v1.31.0
+	github.com/onlineTraveling/bank v0.0.0-00010101000000-000000000000
+	github.com/rabbitmq/amqp091-go v1.10.0
 	google.golang.org/grpc v1.69.2
 )
 

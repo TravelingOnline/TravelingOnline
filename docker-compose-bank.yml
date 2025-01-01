@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  consul:
-    image: hashicorp/consul:1.16.0
-    command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
-    ports:
-      - "8500:8500"  
-      - "8600:8600/udp" 
-    restart: always
-    networks:
-       online-traveling-network:
-         ipv4_address: 172.19.0.5
+  # consul:
+  #   image: hashicorp/consul:1.16.0
+  #   command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+  #   ports:
+  #     - "8500:8500"  
+  #     - "8600:8600/udp" 
+  #   restart: always
+  #   networks:
+  #      online-traveling-network:
+  #        ipv4_address: 172.19.0.5
   auth-postgres:
     image: 'postgres:latest'
     container_name: auth-postgres
@@ -19,8 +19,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      online-traveling-network:
-        ipv4_address: 172.19.0.2
+      - online-traveling-network
+        # ipv4_address: 172.19.0.2
 
     ports:
       - '${AUTH_POSTGRES_PORT}:5432'
@@ -37,8 +37,8 @@ services:
       - AUTH_CONFIG_PATH=/app/config.json
       # - KAFKA_BROKER=kafka:9092
     networks:
-      online-traveling-network:
-        ipv4_address: 172.19.0.10
+      - online-traveling-network
+        # ipv4_address: 172.19.0.10
     restart: unless-stopped
     depends_on:
       - auth-postgres
@@ -52,8 +52,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      online-traveling-network:
-        ipv4_address: 172.19.0.3
+      - online-traveling-network
+        # ipv4_address: 172.19.0.3
     ports:
       - '${BANK_POSTGRES_PORT}:5432'
     
@@ -74,22 +74,22 @@ services:
       - ENV=production
       - TZ=Asia/Tehran
       - BANK_CONFIG_PATH=/app/config.json
-      - KAFKA_BROKER=kafka:9092
+      # - KAFKA_BROKER=kafka:9092
     networks:
-      online-traveling-network:
-        ipv4_address: 172.19.0.11
+      - online-traveling-network
+        # ipv4_address: 172.19.0.11
     restart: unless-stopped
     depends_on:
       - bank-postgres
-      - consul
+      # - consul
     volumes:
       - ${BANK_CONFIG_PATH}:/app/config.json
-    entrypoint: >
-      /bin/sh -c "until curl -s http://172.19.0.5:8500/v1/status/leader; do
-      echo waiting for consul;
-      sleep 5;
-      done;
-      exec ./your-bank-service-binary"
+    # entrypoint: >
+    #   /bin/sh -c "until curl -s http://172.19.0.5:8500/v1/status/leader; do
+    #   echo waiting for consul;
+    #   sleep 5;
+    #   done;
+    #   exec ./your-bank-service-binary"
   rabbitmq:
     image: rabbitmq:3.10.7-management
     restart: always
@@ -106,9 +106,9 @@ services:
 networks:
   online-traveling-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.19.0.0/16
+    # ipam:
+    #   config:
+    #     - subnet: 172.19.0.0/16
 volumes:
   rabbitmq-data:
     driver: local

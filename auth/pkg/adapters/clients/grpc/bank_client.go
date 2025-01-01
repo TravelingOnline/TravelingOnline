@@ -8,7 +8,7 @@ import (
 	"github.com/onlineTraveling/auth/internal/user/domain"
 	"github.com/onlineTraveling/auth/pkg/adapters/clients/grpc/mappers"
 	"github.com/onlineTraveling/auth/pkg/ports"
-	"github.com/onlineTraveling/auth/protobufs"
+	"github.com/onlineTraveling/bank/protobufs"
 	"google.golang.org/grpc"
 )
 

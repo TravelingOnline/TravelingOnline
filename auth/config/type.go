@@ -51,6 +51,7 @@ type MessageBrokerConfig struct {
 	Port                  int    `json:"port"`
 	CreateWalletQueueName string `json:"CreateWalletQueueName"`
 	TransferQueueName     string `json:"TransferQueueName"`
+	UserQueueName         string `json:"UserQueueName"`
 }
 
 type LoggerConfig struct {

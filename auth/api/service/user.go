@@ -192,6 +192,18 @@ func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (*protobufs.Use
 		UpdatedAt: timestamppb.New(user.UpdatedAt),
 	}, nil
 }
+func (s *UserService) GetUserIDFromToken(ctx context.Context, token string) (*protobufs.GetUserByTokenResponse, error) {
+	print("***here\n")
+	user, err := s.svc.GetUserIDFromToken(ctx, token)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protobufs.GetUserByTokenResponse{
+		UserId:  user.UserID.String(),
+		IsAdmin: user.IsAdmin,
+	}, nil
+}
 
 func (s *UserService) Update(ctx context.Context, user *types.User) error {
 	err := s.svc.UpdateUser(ctx, domain.User{

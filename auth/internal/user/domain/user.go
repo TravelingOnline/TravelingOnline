@@ -19,6 +19,7 @@ var (
 	ErrEmailAlreadyExists    = errors.New("email already exists")
 	ErrInvalidAuthentication = errors.New("email and password doesn't match")
 	ErrInvalidUserID         = errors.New("invalid user id")
+	ErrInvalidUserToken      = errors.New("invalid user token")
 )
 
 type UserFilter struct {
@@ -196,4 +197,8 @@ func (u *User) Validate() error {
 	}
 
 	return nil
+}
+
+type Token struct {
+	Token string
 }

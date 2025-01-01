@@ -1,14 +1,14 @@
 {
   "bank_db": {
-    "host": "bank-postgres",
-    "port": 5432,
+    "host": "localhost",
+    "port": 5434,
     "database": "BankDB",
     "schema": "public",
     "user": "admin",
     "password": "12345" 
   },
   "rabbitmq":{
-    "host": "rabbitmq", 
+    "host": "localhost", 
     "port": 5672,
     "username": "guest",
     "password": "guest",

@@ -26,8 +26,8 @@ func main() {
 
 	// Prepare the request
 	in := &protobufs.TransferRequest{
-		SenderOwnerID:   "f3e6b4d6-7887-4214-b3e7-04afb7e1e6be",
-		ReceiverOwnerID: "4e09cacc-eb58-4796-a9d8-e678034a484c",
+		SenderOwnerID:   "e5824ec0-48ae-4712-9178-48f96e33328c",
+		ReceiverOwnerID: "f2fc63c0-443e-4181-b0c9-2316a4a9845c",
 		Amount:          120,
 	}
 

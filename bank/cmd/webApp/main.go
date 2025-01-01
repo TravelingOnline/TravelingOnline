@@ -27,7 +27,7 @@ func main() {
 	if err != nil {
 		log.Fatal("can not initialize logger")
 	}
-	logger.Info("Starting the program", nil)
+	logger.Info("StartingBank Service..", nil)
 	appContainer := app.NewMustApp(c)
 	var wg sync.WaitGroup
 	wg.Add(3)

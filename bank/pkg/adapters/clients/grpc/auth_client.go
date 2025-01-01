@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/onlineTraveling/auth/protobufs"
 	"github.com/onlineTraveling/bank/internal/user/domain"
 	"github.com/onlineTraveling/bank/pkg/adapters/clients/grpc/mappers"
 	"github.com/onlineTraveling/bank/pkg/ports"
-	"github.com/onlineTraveling/bank/protobufs"
 	"google.golang.org/grpc"
 )
 
@@ -21,10 +21,12 @@ func NewGRPCAuthClient(serviceRegistry ports.IServiceRegistry, authServiceName s
 }
 
 func (g *GRPCAuthClient) GetUserByToken(token string) (*domain.User, error) {
-	port, ip, err := g.ServiceRegistry.DiscoverService(g.AuthServiceName)
-	if err != nil {
-		return nil, err
-	}
+	// port, ip, err := g.ServiceRegistry.DiscoverService(g.AuthServiceName)
+	port := 50052
+	ip := "localhost"
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	conn, err := grpc.Dial(fmt.Sprintf("%v:%v", ip, port), grpc.WithInsecure())
 	if err != nil {
@@ -47,6 +49,8 @@ func (g *GRPCAuthClient) GetUserByToken(token string) (*domain.User, error) {
 	// Call the GetUserByToken method
 	response, err := client.GetUserByToken(ctx, request)
 	if err != nil {
+		print(22222222222222, request.Token)
+
 		return nil, domain.ErrInvalidToken
 	}
 	domainUser, err := mappers.UserClaimsToDomain(response)

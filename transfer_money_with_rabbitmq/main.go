@@ -12,9 +12,9 @@ type CreateWalletRequest struct {
 	UserID string `json:"user_id"`
 }
 type TransferRequest struct {
-	WalletIDFrom string `json:"wallet_id_from"`
-	WalletIDTo   string `json:"wallet_id_to"`
-	Amount       int    `json:"amount"`
+	SenderOwnerID   string `json:"wallet_id_from"`
+	ReceiverOwnerID string `json:"wallet_id_to"`
+	Amount          int    `json:"amount"`
 }
 
 // Function to publish a message to RabbitMQ
@@ -68,9 +68,9 @@ func publishToRabbitMQ(queueName string, message []byte) error {
 func main() {
 
 	request := TransferRequest{
-		WalletIDFrom: "bd8873c8-be31-4285-b8ef-b7ed2ac82be8",
-		WalletIDTo:   "5f664e09-e970-48c2-8fc2-dceb3096bd52",
-		Amount:       120,
+		SenderOwnerID:   "e5824ec0-48ae-4712-9178-48f96e33328c",
+		ReceiverOwnerID: "f2fc63c0-443e-4181-b0c9-2316a4a9845c",
+		Amount:          120,
 	}
 	// Serialize the message to JSON
 	message, err := json.Marshal(request)
