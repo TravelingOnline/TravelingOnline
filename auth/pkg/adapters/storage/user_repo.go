@@ -11,8 +11,10 @@ import (
 	"github.com/onlineTraveling/auth/internal/user/port"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/mapper"
 	"github.com/onlineTraveling/auth/pkg/adapters/storage/types"
+	"github.com/onlineTraveling/auth/pkg/helper"
 	"github.com/onlineTraveling/auth/pkg/jwt"
 	"github.com/onlineTraveling/auth/pkg/logger"
+
 	"gorm.io/gorm"
 )
 
@@ -29,7 +31,16 @@ func NewUserRepo(db *gorm.DB) port.Repo {
 
 func (r *userRepo) CreateUser(ctx context.Context, userDomain domain.User) (domain.UserID, error) {
 	user := mapper.UserDomain2Storage(userDomain)
-	return domain.UserID(user.ID), r.db.Table("users").WithContext(ctx).Create(user).Error
+	er := r.db.Table("users").WithContext(ctx).Create(user).Error
+	if er != nil {
+		return domain.UserID(uuid.Nil), er
+	}
+	er = helper.CreateWalletGrpc(ctx, user.ID)
+	if er != nil {
+		return domain.UserID(user.ID), er
+	}
+
+	return domain.UserID(user.ID), nil
 }
 
 func (r *userRepo) GetUserByID(ctx context.Context, userID domain.UserID) (*domain.User, error) {

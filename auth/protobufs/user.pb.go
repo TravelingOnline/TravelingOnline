@@ -83,7 +83,7 @@ type UserSignUpSecondRequest struct {
 	Code   string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
 }
 
-func (x *UserSignUpSecondRequest) Reset() {
+func (x *UserSignUpSecondRequest) Reset() { 
 	*x = UserSignUpSecondRequest{}
 	mi := &file_user_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))

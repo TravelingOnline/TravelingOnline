@@ -1,12 +1,19 @@
 package helper
 
 import (
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
 	"io"
+	"log"
+
+	"github.com/google/uuid"
+	"github.com/onlineTraveling/bank/pkg/adapters/clients/grpc/mappers"
+	"github.com/onlineTraveling/bank/protobufs"
+	"google.golang.org/grpc"
 )
 
 func EncryptAES(plaintext string, key []byte) (string, error) {
@@ -81,4 +88,37 @@ func GenerateRandomKey(size int) ([]byte, error) {
 		return nil, err
 	}
 	return key, nil
+}
+func CreateWalletGrpc(cntx context.Context, userID uuid.UUID) error {
+	conn, err := grpc.Dial("0.0.0.0:50052", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("client cannot connect to gRPC server: %v", err)
+	}
+	defer conn.Close()
+
+	// Create a new BankService client
+	client := protobufs.NewBankServiceClient(conn)
+
+	// Prepare the request
+	in := &protobufs.CreateWalletRequest{
+		UserID: userID.String(),
+	}
+
+	// Call the CreateWallet method
+	response, err := client.CreateWallet(cntx, in)
+	if err != nil {
+		log.Fatalf("cannot create wallet: %v", err)
+	}
+
+	// Map the response to the domain model
+	domainResponse, err := mappers.CreateWalletResponseToMessageDomain(response)
+	if err != nil {
+		log.Fatalf("cannot map response: %v", err)
+
+		return err
+	}
+
+	// Print the domain response
+	log.Printf("Wallet created successfully: %v", *domainResponse)
+	return nil
 }

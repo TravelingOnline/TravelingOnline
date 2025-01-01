@@ -62,8 +62,8 @@ func registerAPI(appContainer app.App, cfg config.ServerConfig, api fiber.Router
 	userRouter.Post("/sign-up", handlers.SignUp(userSvcGetter))
 	userRouter.Post("/sign-in", handlers.SignIn(userSvcGetter))
 	userRouter.Post("/sign-up-code-verification", handlers.SignUpCodeVerification(userSvcGetter))
-	userRouter.Get("/users/:id", handlers.GetUserByID(userSvcGetter))
-	userRouter.Put("/user/update", handlers.Update(userSvcGetter))
+	userRouter.Get("/:id", handlers.GetUserByID(userSvcGetter))
+	userRouter.Put("/update", handlers.Update(userSvcGetter))
 	//notif
 	notifRouter.Post("/send_message", handlers.SendMessage(notifSvcGetter))
 	notifRouter.Get("/unread-messages/:user_id", handlers.GetUnreadMessages(notifSvcGetter))
