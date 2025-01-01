@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package transport;
+
+option go_package = "github.com/onlineTraveling/transport/pb";
+
+service CompanyService{
+    rpc CreateCompany (CreateCompanyRequest) returns (CreateCompanyResponse);
+    rpc UpdateCompany (UpdateCompanyRequest) returns (UpdateCompanyResponse);
+    rpc DeleteCompany (DeleteCompanyRequest) returns (DeleteCompanyResponse);
+    rpc GetByIDCompany (GetByIDCompanyRequest) returns (GetByIDCompanyResponse);
+}
+
+service TourService{
+    rpc CreateTour (CreateTourRequest) returns (CreateTourResponse);
+    rpc UpdateTour (UpdateTourRequest) returns (UpdateTourResponse);
+    rpc DeleteTour (DeleteTourRequest) returns (DeleteTourResponse);
+    rpc GetByIDTour (GetByIDTourRequest) returns (GetByIDTourResponse);
+}
+
+message CreateCompanyRequest{
+    string id = 1;
+    string name = 2;
+    Owner owner = 3;
+
+}
+
+message CreateCompanyResponse{
+    string id = 1;
+}
+
+message UpdateCompanyRequest{
+    string id = 1;
+    string name = 2;
+    Owner owner = 3;
+
+}
+
+message UpdateCompanyResponse{
+    string id = 1;
+}
+
+message DeleteCompanyRequest{
+    string id = 1;
+}
+
+
+message DeleteCompanyResponse{
+    string id = 1;
+}
+
+message GetByIDCompanyRequest{
+    string id = 1;
+}
+
+message GetByIDCompanyResponse{
+    string id = 1;
+    string name = 2;
+    Owner owner = 3;
+
+}
+
+message Owner {
+    string id = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string email = 4;  
+}
+
+message CreateTourRequest{
+    string id = 1;
+    string source = 2;
+    string destination = 3;
+    string startDate = 4;
+    string endDate = 5;
+    string type = 6;
+    int32 price = 7;
+    int32 capacity = 8;
+    Vehicle vehicle = 9;
+    repeated TechnicalTeam technicalTeam= 10;
+    string companyID = 11;
+}
+
+message Vehicle{
+    string id = 1;
+    string unicode = 2;
+    int32 required_experts = 3;
+    int32 speed = 4;
+    int32 rent_price = 5;
+    string type = 7;
+    int32 passenger = 9;
+    int32 model = 10;
+    
+}
+
+message UpdateTourRequest{
+    string id = 1;
+    string source = 2;
+    string destination = 3;
+    string startDate = 4;
+    string endDate = 5;
+    string type = 6;
+    int32 price = 7;
+    int32 capacity = 8;
+    Vehicle vehicle = 9;
+    bool adminApprove = 10;
+    repeated TechnicalTeam technicalTeam= 11;
+    bool ended = 12;
+    string companyID = 13;
+}
+
+message CreateTourResponse{
+    string id = 1;
+}
+
+message UpdateTourResponse{
+    string id = 1;
+}
+
+message DeleteTourRequest{
+    string id = 1;
+}
+
+message DeleteTourResponse{
+    string id = 1;
+}
+
+message GetByIDTourRequest{
+    string id = 1;
+}
+
+message GetByIDTourResponse{
+    string id = 1;
+    string source = 2;
+    string destination = 3;
+    string startDate = 4;
+    string endDate = 5;
+    string type = 6;
+    int32 price = 7;
+    int32 capacity = 8;
+    Vehicle vehicle = 9;
+    bool adminApprove = 10;
+    repeated TechnicalTeam technicalTeam= 11;
+    bool ended = 12;
+    string companyID = 13;
+}
+
+message TechnicalTeam{
+    string id = 1;
+    string firstName = 2;
+    string lastName = 3;
+    int32 age=4;
+    string expertise = 5;
+}
