@@ -4,6 +4,10 @@
     "rate_limit_max_attempt": 10,
     "ratelimit_time_period": 30,
     "grpcPort":50051,
+
+    "auth_exp_minute": 30,
+    "auth_refresh_minute": 180,
+
     "secret": "ah3*&891809^%$$@$EGJNnjhjkh876$%#@#%",
     "service_host_name": "auth-service",
     "service_grpc_health_path": "",

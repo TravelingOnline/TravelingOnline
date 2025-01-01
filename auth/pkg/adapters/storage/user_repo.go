@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -127,6 +128,7 @@ func (r *userRepo) GetUserByFilter(ctx context.Context, filter *domain.UserFilte
 
 func (r *userRepo) UpdateUser(ctx context.Context, user domain.User) error {
 	var preUpdateUser types.User
+	fmt.Printf("111111,    %v\n     %v",uuid.UUID(user.ID),user.ID)
 	err := r.db.Model(&types.User{}).Where("id = ?", uuid.UUID(user.ID)).First((&preUpdateUser)).Error
 	if err != nil {
 		logger.Error(err.Error(), nil)

@@ -49,7 +49,7 @@ func (g *GRPCAuthClient) GetUserByToken(token string) (*domain.User, error) {
 	// Call the GetUserByToken method
 	response, err := client.GetUserByToken(ctx, request)
 	if err != nil {
-		print(22222222222222, request.Token)
+		// print("token", request.Token)
 
 		return nil, domain.ErrInvalidToken
 	}
