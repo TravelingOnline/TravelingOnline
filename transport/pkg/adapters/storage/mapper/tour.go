@@ -2,7 +2,6 @@ package mapper
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/onlineTraveling/transport/internal/tour/domain"

@@ -2,7 +2,6 @@ package vehicle
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/onlineTraveling/vehicle/api/pb"
 	"github.com/onlineTraveling/vehicle/api/service"

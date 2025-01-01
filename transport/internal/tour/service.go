@@ -2,7 +2,6 @@ package tour
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/onlineTraveling/transport/internal/tour/domain"

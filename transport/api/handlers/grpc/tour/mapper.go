@@ -2,7 +2,6 @@ package tour
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/onlineTraveling/transport/api/pb"
