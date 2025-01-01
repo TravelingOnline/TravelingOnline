@@ -55,8 +55,8 @@ func (v *VehicleService) GetVehicle(ctx context.Context, vID *domain.VehicleID) 
 	return &vehicle, nil
 }
 
-func (v *VehicleService) RentVehicle(ctx context.Context, passengerNo int32) (*domain.Vehicle, error) {
-	bestVehicle, err := v.srv.RentVehicleService(ctx, passengerNo)
+func (v *VehicleService) RentVehicle(ctx context.Context, rentReq domain.Vehicle) (*domain.Vehicle, error) {
+	bestVehicle, err := v.srv.RentVehicleService(ctx, rentReq)
 	if err != nil {
 		return &domain.Vehicle{}, err
 	}

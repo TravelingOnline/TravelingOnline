@@ -2,6 +2,8 @@ package tour
 
 import (
 	"errors"
+	"fmt"
+	"log"
 
 	"github.com/onlineTraveling/transport/api/pb"
 	"github.com/onlineTraveling/transport/internal/tour/domain"
@@ -12,86 +14,94 @@ func PBTourRequest2DomainTour(request interface{}) (domain.Tour, error) {
 
 	switch req := request.(type) {
 	case *pb.CreateTourRequest:
-
-		// Map the CreateTourRequest fields to the domain.Tour struct
-		domainTour = domain.Tour{
-			Id:           req.Id,
-			Source:       req.Source,
-			Destination:  req.Destination,
-			StartDate:    req.StartDate,
-			EndDate:      req.EndDate,
-			Type:         req.Type,
-			Price:        req.Price,
-			Capacity:     req.Capacity,
-			AdminApprove: false,
-			Ended:        false,
-			Vehicle: domain.Vehicle{
-				Id:              req.Vehicle.Id,
-				Unicode:         req.Vehicle.Unicode,
-				RequiredExperts: req.Vehicle.RequiredExperts,
-				Speed:           req.Vehicle.Speed,
-				RentPrice:       req.Vehicle.RentPrice,
-				Type:            req.Vehicle.Type,
-				Passenger:       req.Vehicle.Passenger,
-				Model:           req.Vehicle.Model,
-			},
-			TechnicalTeam: func() []*domain.TechnicalTeam {
-				team := make([]*domain.TechnicalTeam, len(req.TechnicalTeam))
-				for i, t := range req.TechnicalTeam {
-					team[i] = &domain.TechnicalTeam{
-						Id:        t.Id,
-						FirstName: t.FirstName,
-						LastName:  t.LastName,
-						Age:       t.Age,
-						Expertise: t.Expertise,
-					}
-				}
-				return team
-			}(),
-		}
+		domainTour = mapCreateTourRequest(req)
 	case *pb.UpdateTourRequest:
-		// Map the UpdateTourRequest fields to the domain.Tour struct
-		domainTour = domain.Tour{
-			Id:           req.Id,
-			Source:       req.Source,
-			Destination:  req.Destination,
-			StartDate:    req.StartDate,
-			EndDate:      req.EndDate,
-			Type:         req.Type,
-			Price:        req.Price,
-			Capacity:     req.Capacity,
-			AdminApprove: req.AdminApprove,
-			Ended:        req.Ended,
-			Vehicle: domain.Vehicle{
-				Id:              req.Vehicle.Id,
-				Unicode:         req.Vehicle.Unicode,
-				RequiredExperts: req.Vehicle.RequiredExperts,
-				Speed:           req.Vehicle.Speed,
-				RentPrice:       req.Vehicle.RentPrice,
-				Type:            req.Vehicle.Type,
-				Passenger:       req.Vehicle.Passenger,
-				Model:           req.Vehicle.Model,
-			},
-			TechnicalTeam: func() []*domain.TechnicalTeam {
-				team := make([]*domain.TechnicalTeam, len(req.TechnicalTeam))
-				for i, t := range req.TechnicalTeam {
-					team[i] = &domain.TechnicalTeam{
-						Id:        t.Id,
-						FirstName: t.FirstName,
-						LastName:  t.LastName,
-						Age:       t.Age,
-						Expertise: t.Expertise,
-					}
-				}
-				return team
-			}(),
-		}
-
+		domainTour = mapUpdateTourRequest(req)
 	default:
+		log.Printf("unsupported request type: %T", request)
 		return domain.Tour{}, errors.New("unsupported request type")
 	}
 
 	return domainTour, nil
+}
+
+func mapUpdateTourRequest(req *pb.UpdateTourRequest) domain.Tour {
+	return domain.Tour{
+		Id:           req.Id,
+		Source:       req.Source,
+		Destination:  req.Destination,
+		StartDate:    req.StartDate,
+		EndDate:      req.EndDate,
+		Type:         req.Type,
+		Price:        req.Price,
+		Capacity:     req.Capacity,
+		AdminApprove: req.AdminApprove,
+		Ended:        req.Ended,
+		CompanyID:    req.CompanyID,
+		Vehicle: func() domain.Vehicle {
+			if req.Vehicle != nil {
+				return domain.Vehicle{
+					Id:              req.Vehicle.Id,
+					Unicode:         req.Vehicle.Unicode,
+					RequiredExperts: req.Vehicle.RequiredExperts,
+					Speed:           req.Vehicle.Speed,
+					RentPrice:       req.Vehicle.RentPrice,
+					Type:            req.Vehicle.Type,
+					Passenger:       req.Vehicle.Passenger,
+					Model:           req.Vehicle.Model,
+				}
+			}
+			return domain.Vehicle{} // Return an empty Vehicle if none is provided
+		}(),
+		TechnicalTeam: mapTechnicalTeam(req.TechnicalTeam),
+	}
+}
+
+func mapCreateTourRequest(req *pb.CreateTourRequest) domain.Tour {
+	return domain.Tour{
+		Id:           req.Id,
+		Source:       req.Source,
+		Destination:  req.Destination,
+		StartDate:    req.StartDate,
+		EndDate:      req.EndDate,
+		Type:         req.Type,
+		Price:        req.Price,
+		Capacity:     req.Capacity,
+		AdminApprove: false,
+		Ended:        false,
+		CompanyID:    req.CompanyID,
+		Vehicle: func() domain.Vehicle {
+			if req.Vehicle != nil {
+				return domain.Vehicle{
+					Id:              req.Vehicle.Id,
+					Unicode:         req.Vehicle.Unicode,
+					RequiredExperts: req.Vehicle.RequiredExperts,
+					Speed:           req.Vehicle.Speed,
+					RentPrice:       req.Vehicle.RentPrice,
+					Type:            req.Vehicle.Type,
+					Passenger:       req.Vehicle.Passenger,
+					Model:           req.Vehicle.Model,
+				}
+			}
+			return domain.Vehicle{}
+		}(),
+		TechnicalTeam: mapTechnicalTeam(req.TechnicalTeam),
+	}
+}
+
+func mapTechnicalTeam(teams []*pb.TechnicalTeam) []*domain.TechnicalTeam {
+	result := make([]*domain.TechnicalTeam, len(teams))
+	for i, t := range teams {
+		result[i] = &domain.TechnicalTeam{
+			Id:        t.Id,
+			FirstName: t.FirstName,
+			LastName:  t.LastName,
+			Age:       t.Age,
+			Expertise: t.Expertise,
+		}
+	}
+
+	return result
 }
 
 func DomainTour2PBCreateTourRequest(tour domain.Tour) (*pb.CreateTourRequest, error) {
@@ -106,6 +116,7 @@ func DomainTour2PBCreateTourRequest(tour domain.Tour) (*pb.CreateTourRequest, er
 		Type:        tour.Type,
 		Price:       tour.Price,
 		Capacity:    tour.Capacity,
+		CompanyID:   tour.CompanyID,
 		Vehicle: &pb.Vehicle{
 			Id:              tour.Vehicle.Id,
 			Unicode:         tour.Vehicle.Unicode,
@@ -147,6 +158,7 @@ func DomainTour2PBTourResponse(tour domain.Tour) (*pb.GetByIDTourResponse, error
 		Capacity:     tour.Capacity,
 		Ended:        tour.Ended,
 		AdminApprove: tour.AdminApprove,
+		CompanyID:    tour.CompanyID,
 		Vehicle: &pb.Vehicle{
 			Id:              tour.Vehicle.Id,
 			Unicode:         tour.Vehicle.Unicode,

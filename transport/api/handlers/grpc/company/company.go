@@ -24,12 +24,12 @@ func (g *GRPCTransportHandler) CreateCompany(ctx context.Context, req *pb.Create
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	vID, err := g.transportService.CreateCompany(ctx, &domainRequest)
+	cID, err := g.transportService.CreateCompany(ctx, &domainRequest)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	return &pb.CreateCompanyResponse{
-		Id: string(*vID),
+		Id: string(*cID),
 	}, nil
 }
 

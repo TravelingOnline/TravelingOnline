@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/onlineTraveling/transport/internal/tour/domain"
@@ -14,9 +15,6 @@ func TourStroage2Domain(t types.Tour) (domain.Tour, error) {
 	if t.Id == "" {
 		return domain.Tour{}, errors.New("tour ID is required")
 	}
-	if t.TechnicalTeam == nil {
-		return domain.Tour{}, errors.New("Techteam Information Is Missing")
-	}
 
 	// Construct the domain company
 	company := domain.Tour{
@@ -27,6 +25,7 @@ func TourStroage2Domain(t types.Tour) (domain.Tour, error) {
 		EndDate:     t.EndDate,
 		Type:        t.Type,
 		Price:       t.Price,
+		CompanyID:   t.CompanyID,
 		Vehicle: domain.Vehicle{
 			Id:              t.Vehicle.Id,
 			Unicode:         t.Vehicle.Unicode,
@@ -37,7 +36,7 @@ func TourStroage2Domain(t types.Tour) (domain.Tour, error) {
 			Passenger:       t.Vehicle.Passenger,
 			Model:           t.Vehicle.Model,
 		},
-		TechnicalTeam: []*domain.TechnicalTeam{},
+		// TechnicalTeam: []*domain.TechnicalTeam{},
 	}
 
 	// Return the constructed company and nil error if no validation failed
@@ -45,7 +44,19 @@ func TourStroage2Domain(t types.Tour) (domain.Tour, error) {
 }
 
 func DomainTour2Storage(t domain.Tour) types.Tour {
+	// Map TechnicalTeam from domain to storage
+	technicalTeams := make([]*types.TechnicalTeam, len(t.TechnicalTeam))
+	for i, team := range t.TechnicalTeam {
+		technicalTeams[i] = &types.TechnicalTeam{
+			Id:        team.Id,
+			FirstName: team.FirstName,
+			LastName:  team.LastName,
+			Age:       team.Age,
+			Expertise: team.Expertise,
+		}
+	}
 
+	// Map Tour
 	return types.Tour{
 		Id:          t.Id,
 		Source:      t.Source,
@@ -54,6 +65,7 @@ func DomainTour2Storage(t domain.Tour) types.Tour {
 		EndDate:     t.EndDate,
 		Type:        t.Type,
 		Price:       t.Price,
+		CompanyID:   t.CompanyID,
 		Vehicle: &types.Vehicle{
 			Id:              t.Vehicle.Id,
 			Unicode:         t.Vehicle.Unicode,
@@ -67,7 +79,7 @@ func DomainTour2Storage(t domain.Tour) types.Tour {
 			UpdatedAt:       time.Time{},
 			DeletedAt:       gorm.DeletedAt{},
 		},
-		TechnicalTeam: []*types.TechnicalTeam{},
+		TechnicalTeam: technicalTeams,
 		CreatedAt:     time.Time{},
 		UpdatedAt:     time.Time{},
 		DeletedAt:     gorm.DeletedAt{},

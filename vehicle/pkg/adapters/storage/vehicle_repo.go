@@ -22,9 +22,12 @@ func NewVehicleRepo(db *gorm.DB) port.Repo {
 	}
 }
 
-func (r *vehicleRepo) CreateVehicle(ctx context.Context, v domain.Vehicle) (domain.VehicleID, error) {
+func (r *vehicleRepo) CreateVehicle(ctx context.Context, vehicle domain.Vehicle) (domain.VehicleID, error) {
+	if err:=mapper.VehicleValidator(vehicle); err!=nil{
+		return domain.VehicleID(""), err
+	}
 	// Map the domain.Vehicle to the storage type
-	newVehicle := mapper.DomainVehicle2Storage(v)
+	newVehicle := mapper.DomainVehicle2Storage(vehicle)
 
 	// Insert the new vehicle into the database
 	if err := r.db.WithContext(ctx).Model(&types.Vehicle{}).Create(&newVehicle).Error; err != nil {
@@ -37,6 +40,9 @@ func (r *vehicleRepo) CreateVehicle(ctx context.Context, v domain.Vehicle) (doma
 }
 
 func (r *vehicleRepo) UpdateVehicle(ctx context.Context, vehicle domain.Vehicle) (domain.VehicleID, error) {
+	if err:=mapper.VehicleValidator(vehicle); err!=nil{
+		return domain.VehicleID(""), err
+	}
 	// Map domain vehicle to storage vehicle model
 	updateVehicle := mapper.DomainVehicle2Storage(vehicle)
 
@@ -57,7 +63,7 @@ func (r *vehicleRepo) DeleteVehicle(ctx context.Context, vehicleID domain.Vehicl
 	var vID domain.VehicleID
 	// Validate input
 	if vehicleID == "" {
-		return vID, fmt.Errorf("vehicle ID cannot be empty")
+		return vID, fmt.Errorf("VEHICLE ID CANNOT BE EMPTY")
 	}
 
 	// Delete the vehicle from the database
@@ -74,7 +80,7 @@ func (r *vehicleRepo) DeleteVehicle(ctx context.Context, vehicleID domain.Vehicl
 func (r *vehicleRepo) GetByIDVehicle(ctx context.Context, vehicleID domain.VehicleID) (domain.Vehicle, error) {
 	// Validate input
 	if vehicleID == "" {
-		return domain.Vehicle{}, fmt.Errorf("vehicle ID cannot be empty")
+		return domain.Vehicle{}, fmt.Errorf("VEHICLE ID CANNOT BE EMPTY")
 	}
 
 	// Initialize a storage model to hold the result
@@ -86,7 +92,7 @@ func (r *vehicleRepo) GetByIDVehicle(ctx context.Context, vehicleID domain.Vehic
 		Where("id = ?", string(vehicleID)).
 		First(&storageVehicle).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return domain.Vehicle{}, fmt.Errorf("vehicle with ID %s not found", vehicleID)
+			return domain.Vehicle{}, fmt.Errorf("vehicle with ID %s not found", string(vehicleID))
 		}
 		log.Printf("failed to fetch vehicle with ID %s: %v", vehicleID, err)
 		return domain.Vehicle{}, fmt.Errorf("unable to fetch vehicle from the database: %w", err)
@@ -101,27 +107,34 @@ func (r *vehicleRepo) GetByIDVehicle(ctx context.Context, vehicleID domain.Vehic
 	return domainVehicle, nil
 }
 
-func (r *vehicleRepo) RentVehicle(ctx context.Context, passengerNo int32) (domain.Vehicle, error) {
-	var bestVehicle domain.Vehicle
+func (r *vehicleRepo) RentVehicle(ctx context.Context, rentReq domain.Vehicle) (domain.Vehicle, error) {
+	var bestVehicle types.Vehicle // Use the storage type for querying the database
 
-	// Query the database with filtering and ordering
-	err := r.db.WithContext(ctx).
-		Where("passenger >= ?", passengerNo).    // Match vehicles with sufficient passenger capacity
-		Where("is_active = true"). 				 // Vehicle must be active
-		Order("passenger ASC").                  // Closest matching passenger capacity first
-		Order("rent_price ASC").                 // Cheapest rent price
-		Order("model ASC").                      // Oldest model
-		Order("created_at ASC").                 // Earliest creation date
-		First(&bestVehicle).                     // Get the best match
-		Error
-
-	if err != nil {
+	// Query the database with filtering and ordering=
+	if err := r.db.WithContext(ctx).
+		Preload("Owner").                           // Preload the associated Owner record
+		Where("passenger >= ?", rentReq.Passenger). // Match vehicles with sufficient passenger capacity
+		Where("rent_price <= ?", rentReq.RentPrice).
+		Where("type = ?", rentReq.Type).
+		Where("is_active = true"). // Vehicle must be active
+		Order("passenger ASC").    // Closest matching passenger capacity first
+		Order("rent_price ASC").   // Cheapest rent price
+		Order("model ASC").        // Oldest model
+		Order("created_at ASC").   // Earliest creation date
+		First(&bestVehicle).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return domain.Vehicle{}, fmt.Errorf("no vehicle found for passenger count %d", passengerNo)
+			return domain.Vehicle{}, fmt.Errorf("no vehicle found for passenger count %d", rentReq.Passenger)
 		}
 		log.Printf("Failed to fetch the best vehicle: %v", err)
-		return domain.Vehicle{}, err
+		return domain.Vehicle{}, fmt.Errorf("unable to fetch vehicle from the database: %w", err)
 	}
 
-	return bestVehicle, nil
+	// Map the storage model to the domain model
+	domainVehicle, err := mapper.VehicleStroage2Domain(bestVehicle)
+	if err != nil {
+		return domain.Vehicle{}, fmt.Errorf("error in mapper: %w", err)
+	}
+
+
+	return domainVehicle, nil
 }

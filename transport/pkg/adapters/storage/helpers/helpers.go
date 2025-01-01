@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	vpb "github.com/onlineTraveling/transport/pkg/adapters/storage/vehicle-pb"
 	bpb "github.com/onlineTraveling/transport/pkg/adapters/storage/bank-pb"
+	vpb "github.com/onlineTraveling/transport/pkg/adapters/storage/vehicle-pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -39,11 +39,7 @@ func NewBankClient(host *string, port *uint) (bpb.BankServiceClient, *grpc.Clien
 }
 
 func ValidDate(date string) bool {
-	layout := time.RFC3339
+	layout := "2006-01-02"
 	_, err := time.Parse(layout, date)
-	if err != nil {
-		return false
-	} else {
-		return true
-	}
+	return err == nil
 }

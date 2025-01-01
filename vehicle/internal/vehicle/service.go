@@ -57,8 +57,8 @@ func (s *service) GetByIDVehicleService(ctx context.Context, vehicleID domain.Ve
 	return vehicle, nil
 }
 
-func (s *service) RentVehicleService(ctx context.Context, passengerNo int32) (domain.Vehicle, error) {
-	bestVehicle, err := s.repo.RentVehicle(ctx, passengerNo)
+func (s *service) RentVehicleService(ctx context.Context, rentReq domain.Vehicle) (domain.Vehicle, error) {
+	bestVehicle, err := s.repo.RentVehicle(ctx, rentReq)
 	if err!=nil{
 		log.Fatalf("Unable to Get Best Vehicle, error: %v", err)
 		return domain.Vehicle{}, err

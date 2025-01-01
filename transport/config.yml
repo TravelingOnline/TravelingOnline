@@ -14,3 +14,11 @@ server:
   authExpRefreshMin: 60
   rate_limit_max_attempt: 5
   ratelimit_time_period: 60
+
+vehicle:
+  httpPort: 8085
+  host: "vehicle-service"
+
+bank:
+  httpPort: 8082
+  host: "bank-service-host"

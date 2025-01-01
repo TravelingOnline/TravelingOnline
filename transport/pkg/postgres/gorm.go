@@ -28,6 +28,10 @@ func NewPsqlGormConnection(opt DBConnOptions) (*gorm.DB, error) {
 func GormMigrations(db *gorm.DB) {
 
 	db.AutoMigrate(
+		&types.Tour{},
+		&types.TechnicalTeam{},
+		&types.Owner{},
+		&types.Vehicle{},
 		&types.Company{},
 	)
 }

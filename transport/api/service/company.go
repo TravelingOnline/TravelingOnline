@@ -21,11 +21,11 @@ func NewCompanyService(srv port.Service) *CompanyService {
 
 func (v *CompanyService) CreateCompany(ctx context.Context, req *domain.Company) (*domain.CompanyID, error) {
 	req.Id = uuid.New().String()
-	vID, err := v.srv.CreateCompanyService(ctx, *req)
+	cID, err := v.srv.CreateCompanyService(ctx, *req)
 	if err != nil {
 		return nil, err
 	}
-	return &vID, nil
+	return &cID, nil
 }
 
 func (v *CompanyService) UpdateCompany(ctx context.Context, req *domain.Company) (*domain.CompanyID, error) {

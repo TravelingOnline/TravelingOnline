@@ -16,7 +16,7 @@ type Vehicle struct {
 }
 
 type Owner struct {
-	Id        uint64
+	Id        string
 	FirstName string
 	LastName  string
 	Email     string

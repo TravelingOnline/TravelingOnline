@@ -72,7 +72,7 @@ message DeleteVehicleResponse {
 }
 
 message Owner {
-    uint64 id = 1;
+    string id = 1;
     string firstName = 2;
     string lastName = 3;
     string email = 4;  

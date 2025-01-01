@@ -1,26 +1,11 @@
 package mapper
 
 import (
-	"errors"
-
 	"github.com/onlineTraveling/vehicle/internal/vehicle/domain"
 	"github.com/onlineTraveling/vehicle/pkg/adapters/storage/types"
 )
 
 func VehicleStroage2Domain(v types.Vehicle) (domain.Vehicle, error) {
-	// Check if the required fields are valid
-	if v.Id == "" {
-		return domain.Vehicle{}, errors.New("vehicle ID is required")
-	}
-	if v.Unicode == "" {
-		return domain.Vehicle{}, errors.New("vehicle Unicode is required")
-	}
-	if v.Owner == nil {
-		return domain.Vehicle{}, errors.New("owner information is missing")
-	}
-	if v.Owner.Id == 0 || v.Owner.FirstName == "" || v.Owner.LastName == "" || v.Owner.Email == "" {
-		return domain.Vehicle{}, errors.New("owner details are incomplete")
-	}
 
 	// Construct the domain vehicle
 	vehicle := domain.Vehicle{
@@ -56,7 +41,7 @@ func DomainVehicle2Storage(v domain.Vehicle) types.Vehicle {
 		Type:            v.Type,
 		Passenger:       v.Passenger,
 		Model:           v.Model,
-		Owner: &types.Owner{
+		Owner: types.Owner{
 			Id:        v.Owner.Id,
 			FirstName: v.Owner.FirstName,
 			LastName:  v.Owner.LastName,

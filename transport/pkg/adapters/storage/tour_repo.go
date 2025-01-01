@@ -30,17 +30,14 @@ func NewTourRepo(db *gorm.DB, config config.Config) port.Repo {
 }
 
 func (r *tourRepo) CreateTour(ctx context.Context, tour domain.Tour) (domain.TourID, error) {
-	if !helpers.ValidDate(tour.StartDate) {
-		return domain.TourID(""), fmt.Errorf("Wrong StartDate format")
-	}
-	if !helpers.ValidDate(tour.EndDate) {
-		return domain.TourID(""), fmt.Errorf("Wrong EndDate format")
+	if err := mapper.TourValidator(tour); err != nil {
+		return domain.TourID(""), err
 	}
 	// Map the domain.Tour to the storage type
 	newTour := mapper.DomainTour2Storage(tour)
 
 	// Insert the new tour into the database
-	if err := r.db.WithContext(ctx).Model(&types.Company{}).Create(&newTour).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(&types.Tour{}).Create(&newTour).Error; err != nil {
 		log.Printf("failed to create tour: %v", err)
 		return "", fmt.Errorf("unable to create tour in the database: %w", err)
 	}
@@ -50,15 +47,8 @@ func (r *tourRepo) CreateTour(ctx context.Context, tour domain.Tour) (domain.Tou
 }
 
 func (r *tourRepo) UpdateTour(ctx context.Context, tour domain.Tour) (domain.TourID, error) {
-	// Validate input
-	if tour.Id == "" {
-		return domain.TourID(""), fmt.Errorf("TOUR ID CANNOT BE EMPTY")
-	}
-	if !helpers.ValidDate(tour.StartDate) {
-		return domain.TourID(""), fmt.Errorf("WRONG STARTDATE FORMAT")
-	}
-	if !helpers.ValidDate(tour.EndDate) {
-		return domain.TourID(""), fmt.Errorf("WRONG ENDDATE FORMAT")
+	if err := mapper.TourValidator(tour); err != nil {
+		return domain.TourID(""), err
 	}
 	// Map domain tour to storage tour model
 	updateTour := mapper.DomainTour2Storage(tour)
@@ -74,7 +64,8 @@ func (r *tourRepo) UpdateTour(ctx context.Context, tour domain.Tour) (domain.Tou
 	//Share Money
 	if tour.Ended {
 		var peoples []string
-		senderOwnerID := tour.Company.Owner.Id
+		// senderOwnerID := tour.Company.Owner.Id
+		senderOwnerID := ""
 		for _, v := range tour.TechnicalTeam {
 			peoples = append(peoples, v.Id)
 		}
@@ -106,10 +97,9 @@ func (r *tourRepo) UpdateTour(ctx context.Context, tour domain.Tour) (domain.Tou
 }
 
 func (r *tourRepo) DeleteTour(ctx context.Context, tourID domain.TourID) (domain.TourID, error) {
-	var vID domain.TourID
 	// Validate input
 	if tourID == "" {
-		return vID, fmt.Errorf("tour ID cannot be empty")
+		return domain.TourID(""), fmt.Errorf("TOUR ID CANNOT BE EMPTY")
 	}
 
 	// Delete the tour from the database
@@ -117,16 +107,16 @@ func (r *tourRepo) DeleteTour(ctx context.Context, tourID domain.TourID) (domain
 		Where("id = ?", string(tourID)).
 		Delete(&types.Tour{}).Error; err != nil {
 		log.Printf("failed to delete tour with ID %s: %v", tourID, err)
-		return vID, fmt.Errorf("unable to delete tour from the database: %w", err)
+		return domain.TourID(""), fmt.Errorf("unable to delete tour from the database: %w", err)
 	}
 
-	return vID, nil
+	return tourID, nil
 }
 
 func (r *tourRepo) GetByIDTour(ctx context.Context, tourID domain.TourID) (domain.Tour, error) {
 	// Validate input
 	if tourID == "" {
-		return domain.Tour{}, fmt.Errorf("tour ID cannot be empty")
+		return domain.Tour{}, fmt.Errorf("TOUR ID CANNOT BE EMPTY")
 	}
 
 	// Initialize a storage model to hold the result
@@ -135,6 +125,7 @@ func (r *tourRepo) GetByIDTour(ctx context.Context, tourID domain.TourID) (domai
 	// Query the database and preload the TechnicalTeamID data
 	if err := r.db.WithContext(ctx).
 		Preload("TechnicalTeam"). // Preload the associated TechnicalTeamID record
+		Preload("Vehicle").
 		Where("id = ?", string(tourID)).
 		First(&storageTour).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -170,8 +161,7 @@ func (r *tourRepo) RentCar(ctx context.Context, tType string, passenger int, pri
 	if err != nil {
 		log.Fatalf("Failed to rent vehicle: %v", err)
 	}
-
-	log.Printf("Rent Vehicle: %v", rentResp)
+	// log.Printf("Rent Vehicle: %v", rentResp)
 	return domain.Tour{
 		Vehicle: domain.Vehicle{
 			Id:              rentResp.Id,

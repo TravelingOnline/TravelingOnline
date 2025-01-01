@@ -97,6 +97,5 @@ func (r *companyRepo) GetByIDCompany(ctx context.Context, companyID domain.Compa
 	if err != nil {
 		return domain.Company{}, fmt.Errorf("error in mapper: %w", err)
 	}
-
 	return domainCompany, nil
 }

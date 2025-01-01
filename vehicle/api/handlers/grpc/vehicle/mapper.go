@@ -19,7 +19,7 @@ func PBVehicleRequest2DomainVehicle(request interface{}) (domain.Vehicle, error)
 		Passenger       int
 		Model           int
 		Owner           *struct {
-			Id        uint64
+			Id        string
 			FirstName string
 			LastName  string
 			Email     string
@@ -40,7 +40,7 @@ func PBVehicleRequest2DomainVehicle(request interface{}) (domain.Vehicle, error)
 			Passenger       int
 			Model           int
 			Owner           *struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -56,7 +56,7 @@ func PBVehicleRequest2DomainVehicle(request interface{}) (domain.Vehicle, error)
 			Passenger:       int(req.Passenger),
 			Model:           int(req.Model),
 			Owner: &struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -79,7 +79,7 @@ func PBVehicleRequest2DomainVehicle(request interface{}) (domain.Vehicle, error)
 			Passenger       int
 			Model           int
 			Owner           *struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -95,7 +95,7 @@ func PBVehicleRequest2DomainVehicle(request interface{}) (domain.Vehicle, error)
 			Passenger:       int(req.Passenger),
 			Model:           int(req.Model),
 			Owner: &struct {
-				Id        uint64
+				Id        string
 				FirstName string
 				LastName  string
 				Email     string
@@ -106,33 +106,85 @@ func PBVehicleRequest2DomainVehicle(request interface{}) (domain.Vehicle, error)
 				Email:     req.Owner.Email,
 			},
 		}
+	case *pb.RentVehicleRequest:
+		PBreq = struct {
+			Id              string
+			Unicode         string
+			RequiredExperts int32
+			Speed           int32
+			RentPrice       int32
+			IsActive        bool
+			Type            string
+			Passenger       int
+			Model           int
+			Owner           *struct {
+				Id        string
+				FirstName string
+				LastName  string
+				Email     string
+			}
+		}{
+			Id:              "",
+			Unicode:         "",
+			RequiredExperts: 0,
+			Speed:           0,
+			RentPrice:       req.Price,
+			IsActive:        true,
+			Type:            req.Type,
+			Passenger:       int(req.Passenger),
+			Model:           0,
+		}
 	default:
 		return domain.Vehicle{}, errors.New("unsupported request type")
 	}
 
 	// Validate input
 	if PBreq.Owner == nil {
-		return domain.Vehicle{}, errors.New("OWNER CANNOT BE NIL")
+		_, ok := request.(*pb.RentVehicleRequest)
+		if !ok {
+			return domain.Vehicle{}, errors.New("OWNER CANNOT BE NIL")
+		}
 	}
 	if PBreq.Unicode == "" {
-		return domain.Vehicle{}, errors.New("UNICODE CANNOT BE EMPTY")
+		_, ok := request.(*pb.RentVehicleRequest)
+		if !ok {
+			return domain.Vehicle{}, errors.New("UNICODE CANNOT BE EMPTY")
+		}
 	}
-	if PBreq.Owner.Id == 0 || PBreq.Owner.FirstName == "" || PBreq.Owner.LastName == "" || PBreq.Owner.Email == "" {
-		return domain.Vehicle{}, errors.New("OWNER DETAILS ARE INCOMPLETE")
+	if _, ok := request.(*pb.RentVehicleRequest); !ok {
+		if PBreq.Owner.Id == "" || PBreq.Owner.FirstName == "" || PBreq.Owner.LastName == "" || PBreq.Owner.Email == "" {
+			return domain.Vehicle{}, errors.New("OWNER DETAILS ARE INCOMPLETE")
+		}
 	}
 
 	// Construct and return the domain vehicle
-	vehicle := domain.Vehicle{
-		Id:              PBreq.Id,
-		Unicode:         PBreq.Unicode,
-		RequiredExperts: PBreq.RequiredExperts,
-		Speed:           PBreq.Speed,
-		RentPrice:       PBreq.RentPrice,
-		IsActive:        PBreq.IsActive,
-		Type:            PBreq.Type,
-		Owner:           &domain.Owner{Id: PBreq.Owner.Id, FirstName: PBreq.Owner.FirstName, LastName: PBreq.Owner.LastName, Email: PBreq.Owner.Email},
-		Passenger:       PBreq.Passenger,
-		Model:           PBreq.Model,
+	var vehicle domain.Vehicle
+	if _, ok := request.(*pb.RentVehicleRequest); !ok {
+		vehicle = domain.Vehicle{
+			Id:              PBreq.Id,
+			Unicode:         PBreq.Unicode,
+			RequiredExperts: PBreq.RequiredExperts,
+			Speed:           PBreq.Speed,
+			RentPrice:       PBreq.RentPrice,
+			IsActive:        PBreq.IsActive,
+			Type:            PBreq.Type,
+			Owner:           &domain.Owner{Id: PBreq.Owner.Id, FirstName: PBreq.Owner.FirstName, LastName: PBreq.Owner.LastName, Email: PBreq.Owner.Email},
+			Passenger:       PBreq.Passenger,
+			Model:           PBreq.Model,
+		}
+	} else {
+
+		vehicle = domain.Vehicle{
+			Id:              PBreq.Id,
+			Unicode:         PBreq.Unicode,
+			RequiredExperts: PBreq.RequiredExperts,
+			Speed:           PBreq.Speed,
+			RentPrice:       PBreq.RentPrice,
+			IsActive:        PBreq.IsActive,
+			Type:            PBreq.Type,
+			Passenger:       PBreq.Passenger,
+			Model:           PBreq.Model,
+		}
 	}
 
 	return vehicle, nil
@@ -169,6 +221,7 @@ func DomainVehicle2PBVehicleResponse(vehicle domain.Vehicle) (*pb.GetVehicleResp
 
 	// Construct and return the protobuf CreateVehicleRequest
 	PBreq := &pb.GetVehicleResponse{
+		Id:              vehicle.Id,
 		Unicode:         vehicle.Unicode,
 		RequiredExperts: vehicle.RequiredExperts,
 		Speed:           vehicle.Speed,
@@ -197,7 +250,7 @@ func DomainVehicle2PBRentVehicleRequest(vehicle domain.Vehicle) (*pb.RentVehicle
 
 	// Construct and return the protobuf CreateVehicleRequest
 	PBreq := &pb.RentVehicleResponse{
-		Id:              "",
+		Id:              vehicle.Id,
 		Unicode:         vehicle.Unicode,
 		RequiredExperts: vehicle.RequiredExperts,
 		Speed:           vehicle.Speed,
@@ -211,4 +264,3 @@ func DomainVehicle2PBRentVehicleRequest(vehicle domain.Vehicle) (*pb.RentVehicle
 
 	return PBreq, nil
 }
-

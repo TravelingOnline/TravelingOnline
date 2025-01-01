@@ -2,6 +2,7 @@ package vehicle
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/onlineTraveling/vehicle/api/pb"
 	"github.com/onlineTraveling/vehicle/api/service"
@@ -28,7 +29,6 @@ func (g *GRPCVehicleHandler) CreateVehicle(ctx context.Context, req *pb.CreateVe
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	// log.Println(">>>>>>>>>>>>", string(*vID))
 	return &pb.CreateVehicleResponse{
 		Id: string(*vID),
 	}, nil
@@ -43,7 +43,6 @@ func (g *GRPCVehicleHandler) UpdateVehicle(ctx context.Context, req *pb.UpdateVe
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	// log.Println(">>>>>>>>>>>>", string(*vID))
 	return &pb.UpdateVehicleResponse{
 		Id: string(*vID),
 	}, nil
@@ -71,9 +70,13 @@ func (g *GRPCVehicleHandler) GetVehicle(ctx context.Context, vehicleReq *pb.GetV
 	return domainVehicle, nil
 }
 
-func (g *GRPCVehicleHandler) RentVehicle(ctx context.Context, passenger *pb.RentVehicleRequest) (*pb.RentVehicleResponse, error) {
-	
-	vehicle, err := g.vehicleService.RentVehicle(ctx, passenger.Passenger)
+func (g *GRPCVehicleHandler) RentVehicle(ctx context.Context, req *pb.RentVehicleRequest) (*pb.RentVehicleResponse, error) {
+
+	rentReq, err := PBVehicleRequest2DomainVehicle(req)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	vehicle, err := g.vehicleService.RentVehicle(ctx, rentReq)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
