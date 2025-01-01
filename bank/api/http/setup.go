@@ -16,7 +16,9 @@ import (
 )
 
 func Run(cfg config.Config, app *app.App) {
-	fiberApp := fiber.New()
+	fiberApp := fiber.New(fiber.Config{
+		AppName: "Traveling Online v0.0.1 | Bank service",
+	})
 
 	api := fiberApp.Group("/api/v1", middlewares.SetUserContext())
 

@@ -10,6 +10,7 @@ import (
 	"github.com/onlineTraveling/auth/internal/user/domain"
 	"github.com/onlineTraveling/auth/internal/user/port"
 
+	"github.com/onlineTraveling/auth/pkg/jwt"
 	"github.com/onlineTraveling/auth/pkg/logger"
 
 	"golang.org/x/crypto/bcrypt"
@@ -41,7 +42,7 @@ func (s *service) CreateUser(ctx context.Context, user domain.User) (domain.User
 		return domain.UserID(uuid.Nil), ErrUserOnCreate
 	}
 	user.Password = string(hashedPassword)
-	userID, err := s.repo.Create(ctx, user)
+	userID, err := s.repo.CreateUser(ctx, user)
 	if err != nil {
 		log.Println("error on creating new user : ", err.Error())
 		return domain.UserID(uuid.Nil), ErrUserOnCreate
@@ -49,9 +50,22 @@ func (s *service) CreateUser(ctx context.Context, user domain.User) (domain.User
 
 	return userID, nil
 }
+func (s *service) GetUserIDFromToken(ctx context.Context, Token string) (*jwt.UserClaims, error) {
+	print("***here  555555\n")
+	user, err := s.repo.GetUserIDByToken(ctx, Token)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil || user.ID == "" {
+		return nil, ErrUserNotFound
+	}
+
+	return user, nil
+
+}
 
 func (s *service) GetUserByID(ctx context.Context, userID domain.UserID) (*domain.User, error) {
-	user, err := s.repo.GetByID(ctx, userID)
+	user, err := s.repo.GetUserByID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +77,7 @@ func (s *service) GetUserByID(ctx context.Context, userID domain.UserID) (*domai
 }
 
 func (s *service) GetUserByEmail(ctx context.Context, email domain.Email) (*domain.User, error) {
-	user, err := s.repo.GetByEmail(ctx, email)
+	user, err := s.repo.GetUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +107,7 @@ func (s *service) DeleteByID(ctx context.Context, userID domain.UserID) error {
 }
 
 func (s *service) GetUserByFilter(ctx context.Context, filter *domain.UserFilter) (*domain.User, error) {
-	user, err := s.repo.GetByFilter(ctx, filter)
+	user, err := s.repo.GetUserByFilter(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

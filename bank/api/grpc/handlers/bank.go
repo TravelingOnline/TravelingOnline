@@ -45,10 +45,9 @@ func (g *GRPCBankHandler) Transfer(ctx context.Context, tr *protobufs.TransferRe
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "%s", err.Error())
 	}
-	receiverOwnerID := ""
-	receiverOwnerID = createdTransaction.ToWallet.UserID.String()
+	receiverOwnerID := createdTransaction.ToUserID.String()
 	return &protobufs.TransferResponse{
-		SenderOwnerID:   createdTransaction.FromWallet.UserID.String(),
+		SenderOwnerID:   createdTransaction.FromUserID.String(),
 		ReceiverOwnerID: receiverOwnerID,
 		Amount:          uint64(createdTransaction.Amount),
 		Status:          string(createdTransaction.Status),

@@ -28,7 +28,7 @@ func Run(cfg config.Config, app *app.App) {
 
 	reflection.Register(s)
 
-	log.Println("GRPC server started..")
+	log.Println("Bank | GRPC server started..")
 
 	bankHandler := handlers.NewGRPCBankHandler(app.BankService())
 	protobufs.RegisterBankServiceServer(s, bankHandler)

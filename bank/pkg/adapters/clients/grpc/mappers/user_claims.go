@@ -1,8 +1,8 @@
 package mappers
 
 import (
+	"github.com/onlineTraveling/auth/protobufs"
 	"github.com/onlineTraveling/bank/internal/user/domain"
-	"github.com/onlineTraveling/bank/protobufs"
 
 	"github.com/google/uuid"
 )

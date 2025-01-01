@@ -10,11 +10,11 @@ type AddCardToWalletReq struct {
 
 type DepositReq struct {
 	CardNumber string `json:"card_number" validate:"required"`
-	Amount     uint   `json:"amount" validate:"required"`
+	Amount     uint64 `json:"amount" validate:"required"`
 }
 type WithdrawReq struct {
 	CardNumber string `json:"card_number" validate:"required"`
-	Amount     uint   `json:"amount" validate:"required"`
+	Amount     uint64 `json:"amount" validate:"required"`
 }
 
 type AddCardToWalletResp struct {

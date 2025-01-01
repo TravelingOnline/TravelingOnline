@@ -47,7 +47,7 @@ func (r *walletRepo) Create(ctx context.Context, wl *domain.Wallet) (*domain.Wal
 	return createdWallet, nil
 }
 
-func (r *walletRepo) Deposit(ctx context.Context, card *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (r *walletRepo) Deposit(ctx context.Context, card *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error) {
 	var userWalletEntity *types.Wallet
 	var cardEntity *types.CreditCard
 
@@ -73,7 +73,7 @@ func (r *walletRepo) Deposit(ctx context.Context, card *domain.CreditCard, amoun
 	return createdWallet, nil
 }
 
-func (r *walletRepo) Withdraw(ctx context.Context, card *domain.CreditCard, amount uint, userID uuid.UUID) (*domain.Wallet, error) {
+func (r *walletRepo) Withdraw(ctx context.Context, card *domain.CreditCard, amount uint64, userID uuid.UUID) (*domain.Wallet, error) {
 	var userWalletEntity *types.Wallet
 	var cardEntity *types.CreditCard
 

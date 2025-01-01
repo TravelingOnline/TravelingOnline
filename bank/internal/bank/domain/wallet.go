@@ -9,14 +9,20 @@ type Wallet struct {
 	ID             *uuid.UUID `json:"id"`
 	IsSystemWallet bool       `json:"is_system_wallet"`
 	UserID         uuid.UUID  `json:"user_id"`
-	Balance        uint       `json:"balance"`
+	Balance        uint64     `json:"balance"`
 }
 
 type BankTransaction struct {
-	Amount     uint
+	Amount     uint64
 	Status     types.TransferTransactionStatus
 	FromWallet *Wallet
 	ToWallet   *Wallet
+}
+type BankTransactionRequest struct {
+	FromUserID uuid.UUID
+	ToUserID   uuid.UUID
+	Amount     uint64
+	Status     types.TransferTransactionStatus
 }
 type BankTransferResponse struct {
 	SenderOwnerID   string

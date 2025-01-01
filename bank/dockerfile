@@ -1,14 +1,13 @@
-FROM golang:1.23-alpine AS builder
+FROM docker.arvancloud.ir/golang:1.23-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum ./
-RUN GO111MODULE=on GOPROXY=https://goproxy.cn,direct go mod download
+RUN go mod download
 COPY . .
-RUN GO111MODULE=on GOPROXY=https://goproxy.cn,direct go build -o server ./cmd/webApp/main.go
+RUN go build -o bank ./cmd/webApp/main.go
 
-FROM alpine:latest
-RUN apk --no-cache add tzdata ca-certificates
-ENV TZ=Asia/Tehran
+FROM docker.arvancloud.ir/alpine:latest
 WORKDIR /app/
-COPY --from=builder /app/server .
-EXPOSE 8080
-CMD ["./server"]
+COPY --from=builder /app/bank .
+COPY --from=builder /app/config.json .
+EXPOSE 8082
+CMD ["./bank"]

@@ -15,5 +15,5 @@ var (
 
 type BankTransactionRepo interface {
 	// GetTransactionsByUserId(ctx context.Context, userID uuid.UUID) ([]domain.BankTransaction, error)
-	Transfer(ctx context.Context, transaction *domain.BankTransaction) (*domain.BankTransaction, error)
+	Transfer(ctx context.Context, transaction *domain.BankTransactionRequest) (*domain.BankTransactionRequest, error)
 }
