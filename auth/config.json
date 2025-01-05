@@ -1,0 +1,46 @@
+{
+  "server": {
+    "httpPort": 8081,
+    "rate_limit_max_attempt": 10,
+    "ratelimit_time_period": 30,
+    "grpcPort":50051,
+    "secret": "ah3*&891809^%$$@$EGJNnjhjkh876$%#@#%",
+    "service_host_name": "auth-service",
+    "service_grpc_health_path": "",
+    "service_host_address": "172.19.0.10",
+    "service_registry":{
+      "address": "172.19.0.5:8500",
+      "service_name": "auth-service"}
+  },
+  "auth_db": {
+    "host": "auth-postgres",
+    "port": 5432,
+    "database": "AuthenticationDB",
+    "schema": "public",
+    "user": "admin",
+    "password": "12345"
+  },
+  "scylla": {
+    "host": "scylladb",
+    "port": 9042
+  },
+  "kafka": {
+    "broker": "kafka:9092"
+  },
+  "logger": {
+    "level": "INFO",
+    "output": "console",
+    "path": ""
+  },
+  "rabbitmq":{
+    "host": "rabbitmq", 
+    "port": 15672,
+    "username": "guest",
+    "password": "guest",
+    "Exchange": "auth-exchange",
+    "Queue": "auth-queue",
+    "RoutingKey": "auth-routing-key",
+    "ConsumerTag": "auth-consumer",
+    "UserQueueName":"auth-service/user",
+    "WorkerPoolSize": 24}
+}

@@ -1,0 +1,189 @@
+version: '3.8'
+
+services:
+  vehicle-postgres:
+    image: 'docker.arvancloud.ir/postgres:latest'
+    container_name: vehicle-postgres
+    environment:
+      POSTGRES_DB: ${VEHICLE_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - online-traveling-network
+    ports:
+      - '${VEHICLE_POSTGRES_PORT}:5432'
+    volumes:
+      - vehicle_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${VEHICLE_POSTGRES_DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  
+  vehicle-service:
+    build:
+      context: ./vehicle
+    container_name: vehicle-service
+    ports:
+      - "8085:8085"
+    networks:
+      - online-traveling-network
+    restart: unless-stopped
+    depends_on:
+      vehicle-postgres:
+        condition: service_healthy
+    
+  transport-postgres:
+    image: 'docker.arvancloud.ir/postgres:latest'
+    container_name: transport-postgres
+    environment:
+      POSTGRES_DB: ${TRANSPORT_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    networks:
+      - online-traveling-network
+    
+    ports:
+      - '${TRANSPORT_POSTGRES_PORT}:5432'
+
+    volumes:
+      - transport_postgres_data:/var/lib/postgresql/data
+    
+    depends_on:
+      - vehicle-postgres
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${TRANSPORT_POSTGRES_DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  
+  transport-service:
+    build:
+      context: ./transport
+    container_name: transport-service
+    ports:
+      - "8086:8086"
+    networks:
+      - online-traveling-network
+    restart: unless-stopped
+    depends_on:
+      transport-postgres:
+        condition: service_healthy
+   
+  consul:
+    image: hashicorp/consul:1.16.0
+    command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+    ports:
+      - "8500:8500"  
+      - "8600:8600/udp" 
+    restart: always
+    networks:
+      - online-traveling-network
+  
+  auth-postgres:
+    image: 'postgres:latest'
+    container_name: auth-postgres
+    environment:
+      POSTGRES_DB: ${AUTH_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - online-traveling-network
+    ports:
+      - '${AUTH_POSTGRES_PORT}:5432'
+  
+  bank-postgres:
+    image: 'postgres:latest'
+    container_name: bank-postgres
+    environment:
+      POSTGRES_DB: ${BANK_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - online-traveling-network
+    ports:
+      - '${BANK_POSTGRES_PORT}:5432'
+
+  bank-service:
+    build:
+      context: ./bank
+    container_name: bank-service
+    ports:
+      - "8082:8080"
+      - "50051:50051"
+    environment:
+      - ENV=production
+      - TZ=Asia/Tehran
+      - BANK_CONFIG_PATH=/app/config.json
+      - KAFKA_BROKER=kafka:9092
+    networks:
+      - online-traveling-network
+    restart: unless-stopped
+    depends_on:
+      - bank-postgres
+      - consul
+    volumes:
+      - ${BANK_CONFIG_PATH}:/app/config.json
+
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672" 
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - online-traveling-network
+
+  hotel-postgres:
+    image: 'postgres:latest'
+    container_name: hotel-postgres
+    environment:
+      POSTGRES_DB: ${HOTEL_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - online-traveling-network
+    ports:
+      - '${HOTEL_POSTGRES_PORT}:5432'
+  
+  hotel-service:
+    build:
+      context: ./hotel
+    container_name: hotel-service
+    ports:
+      - "8081:8080"
+    environment:
+      - ENV=production
+      - TZ=Asia/Tehran
+      - HOTEL_CONFIG_PATH=/app/config.json
+      - KAFKA_BROKER=kafka:9092
+    networks:
+      - online-traveling-network
+    restart: unless-stopped
+    depends_on:
+      - hotel-postgres
+    volumes:
+      - ${HOTEL_CONFIG_PATH}:/app/config.json
+
+networks:
+  online-traveling-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
+  
+  rabbitmq-data:
+    driver: local
+
+  vehicle_postgres_data:
+
+  transport_postgres_data:

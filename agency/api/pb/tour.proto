@@ -1,0 +1,40 @@
+syntax = "proto3"; 
+
+// option go_package = "agency/api/pb"; 
+
+message TourCreateRequest {
+    uint64 capacity = 1 [json_name ="capacity"];
+    uint64 price = 2 [json_name = "price"];
+    bool is_active = 3 [json_name="is_active"];
+    uint64 outbound_ticket_id = 4 [json_name="outbound"]; 
+    uint64 return_ticket_id = 5 [json_name= "return"];
+    uint64 hotel_id = 6 [json_name="hotel"];
+}
+
+message TourFilterRequest {
+    uint64 id = 1 [json_name= "id"];
+    uint64 hotel_id = 2 [json_name="hotel"];
+    uint64 outbound_ticket_id = 3 [json_name="outbound"];
+    uint64 return_ticket_id = 4 [json_name="return"];
+    bool is_active = 5 [json_name="is_active"];
+}
+
+message BuyTourRequest {
+    uint64 id = 1 [json_name="id"];
+}
+
+message BuyTourResponse {
+    bool status = 1 [json_name="status"];
+}
+
+message Tour {
+    uint64 capacity = 1 [json_name ="capacity"];
+    uint64 price = 2 [json_name = "price"];
+    bool is_active = 3 [json_name="is_active"];
+    uint64 outbound_ticket_id = 4 [json_name="outbound"]; 
+    uint64 return_ticket_id = 5 [json_name= "return"];
+    uint64 hotel_id = 6 [json_name="hotel"];
+    uint64 id = 7 [json_name="id"];
+    string uuid = 8 [json_name="uuid"];
+    uint64 agency_id = 9 [json_name="agencyID"];
+}

@@ -1,0 +1,47 @@
+{
+  "bank_db": {
+    "host": "localhost",
+    "port": 5434,
+    "database": "BankDB",
+    "schema": "public",
+    "user": "admin",
+    "password": "12345" 
+  },
+  "rabbitmq":{
+    "host": "rabbitmq",
+    "port": 5672,
+    "username": "guest",
+    "password": "guest",
+    "Exchange": "bank-exchange",
+    "Queue": "bank-queue",
+    "RoutingKey": "bank-routing-key",
+    "ConsumerTag": "bank-consumer",
+    "CreateWalletQueueName":"bank-service/create-wallet",
+    "TransferQueueName":"bank-service/transfer-transaction",
+    "WorkerPoolSize": 24},
+  "server": {
+    "grpcPort":50052,
+    "httpPort": 8082,
+    "secret": "ah3*&*&^&^&$uy42891809^%$$@$EGJNnjhjkh876$%#@#%",
+    "rate_limit_max_attempt": 10,
+    "ratelimit_time_period": 30,
+    "service_host_name": "bank",
+    "service_grpc_health_path": "",
+    "service_host_address": "172.19.0.11",
+    "service_registry":{
+      "address": "172.19.0.5:8500",
+      "service_name": "bank-service"}
+  },
+  "scylla": {
+    "host": "scylladb",
+    "port": 9042
+  },
+  "kafka": {
+    "broker": "kafka:9092"
+  },
+  "logger": {
+    "level": "INFO",
+    "output": "console",
+    "path": ""
+  }
+}

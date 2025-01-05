@@ -1,0 +1,24 @@
+
+db:
+  host: "transport-postgres"
+  port: 5432
+  database: "transport"
+  schema: "public"
+  username: "admin"
+  password: "12345"
+
+server:
+  httpPort: 8086
+  secret: "your_secret_key"
+  authExpMin: 15
+  authExpRefreshMin: 60
+  rate_limit_max_attempt: 5
+  ratelimit_time_period: 60
+
+vehicle:
+  httpPort: 8085
+  host: "vehicle-service"
+
+bank:
+  httpPort: 8082
+  host: "bank-service-host"

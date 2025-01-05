@@ -1,0 +1,26 @@
+syntax = "proto3"; 
+
+option go_package = "agency/api/pb";
+
+message AgencyCreateRequest {
+    string name = 1 [json_name = "agencyName"];
+}
+
+message AgencyUpdateRequest {
+    string name = 1 [json_name = "agencyName"];
+    uint64 id = 2 [json_name = "id"];
+}
+
+message AgencyCreateRespone {
+    string id = 1 [json_name = "agencyId"];
+}
+
+message AgencyUpdateResponse {
+    string id = 1 [json_name= "agencyID"];
+}
+
+message Agency {
+    uint64 id = 1;
+    string name = 2 [json_name = "agencyName"];
+    string ownerID = 3 [json_name ="ownerID"]; 
+}
